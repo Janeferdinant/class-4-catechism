@@ -17,9 +17,12 @@
   <!-- Application Styles -->
   <link rel="stylesheet" href="src/styles/themes.css">
   <link rel="stylesheet" href="src/styles/main.css">
+  <link rel="stylesheet" href="src/styles/mobile.css">
 </head>
 <body>
 
+  <!-- ================= DESKTOP PRESENTATION LAYER ================= -->
+  <div id="desktop-layout-root" class="desktop-layout-root">
   <!-- ================= App Header ================= -->
   <header class="app-header">
     <div class="brand-wrapper">
@@ -67,9 +70,9 @@
       </button>
 
       <!-- Mobile / Desktop View Mode Toggle -->
-      <button id="btn-mobile-toggle" class="btn-mobile-toggle" title="Toggle Mobile / Desktop Optimized View">
+      <button id="btn-mobile-toggle" class="btn-mobile-toggle" title="Preview Mobile Layout in smartphone simulator">
         <span id="mobile-toggle-icon">📱</span>
-        <span id="mobile-toggle-label">Mobile View</span>
+        <span id="mobile-toggle-label">Preview Mobile Layout</span>
       </button>
 
       <!-- Theme Switcher -->
@@ -237,6 +240,133 @@
       </div>
     </div>
   </footer>
+  </div> <!-- end #desktop-layout-root -->
+
+  <!-- ================= DESKTOP MOBILE PREVIEW SIMULATOR TOOLBAR ================= -->
+  <div id="mobile-preview-frame-container" class="mobile-preview-frame-container" style="display: none;">
+    <div class="preview-simulator-bar">
+      <div class="preview-simulator-info">
+        <span class="preview-badge">📱 Mobile Preview</span>
+        <span class="preview-desc">Live Dedicated Mobile Experience</span>
+      </div>
+      <div class="preview-width-presets">
+        <button class="preview-preset-btn" data-width="320">320px</button>
+        <button class="preview-preset-btn" data-width="375">375px</button>
+        <button class="preview-preset-btn active" data-width="390">390px</button>
+        <button class="preview-preset-btn" data-width="430">430px</button>
+      </div>
+      <button id="btn-exit-mobile-preview" class="btn-exit-mobile-preview" title="Exit Mobile Preview and return to desktop layout">
+        ✕ Exit Mobile Preview
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= DEDICATED MOBILE PRESENTATION LAYER ================= -->
+  <div id="mobile-layout-root" class="mobile-layout-root" style="display: none;">
+    <!-- Dedicated Mobile Header -->
+    <header class="mobile-app-header">
+      <div class="mob-brand">
+        <span class="mob-logo">✨</span>
+        <span class="mob-title">Class 4 Catechism</span>
+      </div>
+      <div class="mob-header-actions">
+        <div class="mob-star-badge" title="Collected Stars">
+          <span class="mob-star-icon">⭐</span>
+          <span id="mob-header-star-count">0</span>
+        </div>
+        <button id="mob-btn-stop-audio" class="mob-action-btn" title="Stop Audio" onclick="window.app.stopVoice()">
+          🛑
+        </button>
+        <button id="mob-btn-menu" class="mob-action-btn" title="Settings & Menu" aria-label="Settings">
+          ⚙️
+        </button>
+      </div>
+    </header>
+
+    <!-- Dedicated Mobile Main Workspace -->
+    <main class="mobile-main-workspace" id="mobile-main-workspace">
+      <!-- Dedicated Mobile View 1: Adventure Chapter Deck -->
+      <section id="mob-view-universe" class="mob-view-section active">
+        <div class="mob-hero-banner glass-panel">
+          <div class="mob-hero-title">
+            <h3>🗺️ Chapter Adventure Deck</h3>
+            <p>15 Holy Chapters • 5-Year-Old Stories & Moral Lessons</p>
+          </div>
+          <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle">
+            🌐 Open 3D Map View
+          </button>
+        </div>
+        <div id="mob-3d-view-box" class="mob-3d-view-box glass-panel" style="display: none;">
+          <div class="mob-3d-hint">👆 Touch & drag to orbit • Pinch to zoom</div>
+          <div id="mob-three-container" class="mob-three-container"></div>
+        </div>
+        <div class="mob-chapter-cards-grid" id="mob-chapter-cards-grid">
+          <!-- Populated by MobilePresentation.js -->
+        </div>
+      </section>
+
+      <!-- Dedicated Mobile View 2: Picture Slides -->
+      <section id="mob-view-slides" class="mob-view-section">
+        <div class="mob-slide-card glass-panel" id="mob-slide-card-container">
+          <!-- Populated by MobilePresentation.js -->
+        </div>
+      </section>
+
+      <!-- Dedicated Mobile View 3: Story Lessons -->
+      <section id="mob-view-classroom" class="mob-view-section">
+        <div class="mob-story-strip-container" id="mob-story-strip-container">
+          <!-- Horizontal chapter pills -->
+        </div>
+        <div class="mob-story-lesson-card glass-panel" id="mob-story-lesson-card">
+          <!-- Populated by MobilePresentation.js -->
+        </div>
+      </section>
+
+      <!-- Dedicated Mobile View 4: Exam Solver -->
+      <section id="mob-view-solver" class="mob-view-section">
+        <div class="mob-paper-selector-strip" id="mob-paper-selector-strip">
+          <!-- 5 Exam paper pills -->
+        </div>
+        <div class="mob-solver-search-bar">
+          <input type="text" id="mob-solver-search-input" placeholder="🔍 Search exam questions or topics..." />
+        </div>
+        <div class="mob-exam-questions-list" id="mob-exam-questions-list">
+          <!-- Accordion Q&A cards -->
+        </div>
+      </section>
+
+      <!-- Dedicated Mobile View 5: Star Quizzes -->
+      <section id="mob-view-quiz" class="mob-view-section">
+        <div class="mob-quiz-card glass-panel" id="mob-quiz-card-container">
+          <!-- Populated by MobilePresentation.js -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Dedicated Mobile Bottom Navigation -->
+    <nav class="mob-bottom-nav" id="mob-bottom-nav" aria-label="Mobile Navigation">
+      <button class="mob-nav-btn active" data-mob-view="universe" id="mob-nav-universe">
+        <span class="mob-nav-icon">🗺️</span>
+        <span class="mob-nav-label">Map</span>
+      </button>
+      <button class="mob-nav-btn" data-mob-view="slides" id="mob-nav-slides">
+        <span class="mob-nav-icon">🎞️</span>
+        <span class="mob-nav-label">Slides</span>
+      </button>
+      <button class="mob-nav-btn" data-mob-view="classroom" id="mob-nav-classroom">
+        <span class="mob-nav-icon">📖</span>
+        <span class="mob-nav-label">Stories</span>
+      </button>
+      <button class="mob-nav-btn" data-mob-view="solver" id="mob-nav-solver">
+        <span class="mob-nav-icon">📝</span>
+        <span class="mob-nav-label">Exams</span>
+      </button>
+      <button class="mob-nav-btn" data-mob-view="quiz" id="mob-nav-quiz">
+        <span class="mob-nav-icon">⭐</span>
+        <span class="mob-nav-label">Quiz</span>
+      </button>
+    </nav>
+  </div> <!-- end #mobile-layout-root -->
 
 
   <!-- ================= Dedicated Mobile Bottom Navigation Bar ================= -->

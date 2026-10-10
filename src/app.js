@@ -20,6 +20,9 @@ import { VoiceoverManager } from './components/VoiceoverManager.js';
 import { SoundEffects } from './components/SoundEffects.js';
 import { GeminiAIService } from './services/GeminiAIService.js';
 import { MotionGraphicsEngine } from './components/MotionGraphicsEngine.js';
+import { LayoutSelector } from './presentation/LayoutSelector.js';
+import { MobilePresentation } from './presentation/MobilePresentation.js';
+import { DesktopPresentation } from './presentation/DesktopPresentation.js';
 
 class AppController {
   constructor() {
@@ -34,6 +37,15 @@ class AppController {
     this.solver = new ExamSolverView(EXAM_PAPERS_DATA);
     this.quiz = new QuizEngine();
 
+    this.desktopPres = new DesktopPresentation(this);
+    this.mobilePres = new MobilePresentation(this);
+    this.layoutSelector = new LayoutSelector({
+      mobileBreakpoint: 768,
+      onLayoutChange: (layout) => {
+        this.handleLayoutChange(layout);
+      }
+    });
+
     this.threeUniverse = null;
     this.motionCanvas = null;
     this.currentTheme = 'dark';
@@ -46,8 +58,14 @@ class AppController {
   init() {
     this.loadSavedStars();
     this.setupTheme();
-    this.setupViewMode();
     this.setupNavigation();
+    this.desktopPres.init();
+    this.mobilePres.init();
+    this.layoutSelector.init();
+    if (typeof window !== 'undefined') {
+      window.mobileApp = this.mobilePres;
+    }
+    this.setupViewMode();
     this.setupGeminiKeyUI();
     this.initMotionCanvas();
     this.initThreeUniverse();
@@ -77,12 +95,26 @@ class AppController {
     this.starsCount += amount;
     localStorage.setItem('adventure-stars', this.starsCount);
     this.updateHeaderStars();
+    if (this.mobilePres) this.mobilePres.updateStars(this.starsCount);
     this.sfx.playSparkle();
   }
 
   updateHeaderStars() {
     const starEl = document.getElementById('header-star-count');
     if (starEl) starEl.textContent = `${this.starsCount} Stars`;
+    if (this.mobilePres) this.mobilePres.updateStars(this.starsCount);
+  }
+
+  handleLayoutChange(layout) {
+    if (layout === 'mobile' || layout === 'preview') {
+      if (this.mobilePres) {
+        this.mobilePres.updateStars(this.starsCount);
+      }
+    } else {
+      if (this.desktopPres) {
+        this.desktopPres.updateStars(this.starsCount);
+      }
+    }
   }
 
   /* ---------------- Theme Toggle ---------------- */
@@ -117,8 +149,7 @@ class AppController {
   /* ---------------- Mobile / Desktop View Mode Toggle ---------------- */
   setupViewMode() {
     const isNarrow = typeof window !== 'undefined' && window.innerWidth <= 768;
-    // On desktop screens (> 768px), always start in clean desktop mode!
-    // Never trap desktop monitors in 430px mobile mode across browser refreshes.
+    // On desktop screens (> 768px), default to desktop; on narrow screens, mobile.
     let initialMode = isNarrow ? 'mobile' : 'desktop';
     localStorage.setItem('app-view-mode', initialMode);
     this.setViewMode(initialMode, true);
@@ -138,8 +169,17 @@ class AppController {
     this._isTogglingMode = true;
     setTimeout(() => { this._isTogglingMode = false; }, 250);
 
-    const nextMode = this.viewMode === 'mobile' ? 'desktop' : 'mobile';
-    this.setViewMode(nextMode, false);
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 768;
+    if (isSmallScreen) {
+      const nextMode = this.viewMode === 'mobile' ? 'desktop' : 'mobile';
+      this.setViewMode(nextMode, false);
+    } else {
+      if (this.layoutSelector.currentMode === 'preview') {
+        this.setViewMode('desktop', false);
+      } else {
+        this.setViewMode('mobile', false);
+      }
+    }
   }
 
   setViewMode(mode, silent = false) {
@@ -150,14 +190,24 @@ class AppController {
     const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 768;
 
     if (mode === 'mobile') {
+      if (!isSmallScreen && this.layoutSelector) {
+        this.layoutSelector.previewMobile(390);
+      } else if (this.layoutSelector) {
+        this.layoutSelector.applyLayout('mobile');
+      }
       document.documentElement.classList.add('mobile-view-active');
       document.body.classList.add('mobile-view-active');
       document.documentElement.classList.remove('desktop-view-forced');
       document.body.classList.remove('desktop-view-forced');
       if (iconEl) iconEl.textContent = '💻';
-      if (labelEl) labelEl.textContent = 'Desktop View';
-      if (!silent) this.showToast('📱 Switched to Mobile Mode (430px Preview)', '📱');
+      if (labelEl) labelEl.textContent = isSmallScreen ? 'Desktop View' : 'Exit Mobile Preview';
+      if (!silent) this.showToast('📱 Switched to Mobile Mode Preview', '📱');
     } else {
+      if (this.layoutSelector && this.layoutSelector.currentMode === 'preview') {
+        this.layoutSelector.exitPreview();
+      } else if (this.layoutSelector) {
+        this.layoutSelector.applyLayout('desktop');
+      }
       document.documentElement.classList.remove('mobile-view-active');
       document.body.classList.remove('mobile-view-active');
       if (isSmallScreen) {
@@ -168,7 +218,7 @@ class AppController {
         document.body.classList.remove('desktop-view-forced');
       }
       if (iconEl) iconEl.textContent = '📱';
-      if (labelEl) labelEl.textContent = 'Mobile View';
+      if (labelEl) labelEl.textContent = 'Preview Mobile Layout';
       if (!silent) this.showToast('💻 Switched to Desktop Mode', '💻');
     }
 
@@ -290,6 +340,10 @@ class AppController {
     document.querySelectorAll('.view-section').forEach(section => {
       section.classList.toggle('active', section.id === `view-${viewName}`);
     });
+
+    if (this.mobilePres && this.mobilePres.currentView !== viewName) {
+      this.mobilePres.switchMobileView(viewName);
+    }
 
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
