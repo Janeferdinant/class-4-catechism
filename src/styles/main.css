@@ -1979,3 +1979,116 @@ body {
     gap: var(--space-md);
   }
 }
+
+/* ==========================================================================
+   ACADEMIC MENTORSHIP & APPLICATION FOOTER STYLES
+   ========================================================================== */
+.app-footer {
+  margin-top: var(--space-2xl);
+  padding: var(--space-md) var(--space-xl) var(--space-xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1300px;
+  padding: 18px 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.footer-mentor-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mentor-badge-avatar {
+  font-size: 26px;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.25));
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.mentor-info .mentor-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  letter-spacing: -0.01em;
+}
+
+.mentor-info .mentor-dept {
+  font-size: 0.88rem;
+  color: var(--accent-secondary);
+  font-weight: 500;
+}
+
+.footer-affiliation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.affil-tag {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.affil-sep {
+  opacity: 0.5;
+}
+
+/* Slide & Lesson In-Card Academic Footers */
+.slide-academic-footer,
+.lesson-academic-footer,
+.solver-academic-footer {
+  margin-top: 20px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px dashed var(--border-subtle);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.slide-academic-footer strong,
+.lesson-academic-footer strong,
+.solver-academic-footer strong {
+  color: var(--text-primary);
+}
+
+.footer-academic-icon {
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+  }
+}
+

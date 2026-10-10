@@ -97,6 +97,13 @@ export class ExamSolverView {
         <div class="questions-list">
           ${paper.questions.map(q => this.renderQuestionCardHTML(q)).join('')}
         </div>
+
+        <div class="solver-academic-footer">
+          <span class="footer-academic-icon">🎓</span>
+          <div class="footer-academic-text">
+            <strong>Asst. Prof. Jane Rose</strong> &bull; Department of Computer Science & Engineering (CSE)
+          </div>
+        </div>
       </div>
     `;
   }

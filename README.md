@@ -382,6 +382,9 @@ Important documents:
 | Canvas-Confetti | `1.9.4` | Gamified celebratory particle explosions for quizzes |
 
 ## Maintenance
+- **Academic Mentorship / Faculty Guide**:
+  **Asst. Prof. Jane Rose**  
+  *Department of Computer Science & Engineering (CSE)*
 - **Project Owner**: Diocese of Mananthavady Catechetical Commission & EdTech Lab
 - **Maintainer**: Antigravity Multi-Agent Engineering Team
 - **Contact**: `edtech@catechism-academy.org` / Internal EdTech Support Channel
@@ -395,3 +398,12 @@ Important documents:
 
 ## License / Usage
 This repository is proprietary and intended for internal educational and catechism instruction use only. Redistribution or external commercial use is not permitted without explicit authorization from the Diocese of Mananthavady Catechetical Commission.
+
+---
+
+<div align="center">
+
+### Asst. Prof. Jane Rose
+**Department of Computer Science & Engineering (CSE)**
+
+</div>
