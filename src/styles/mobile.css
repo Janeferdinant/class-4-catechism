@@ -124,6 +124,8 @@
 }
 
 .mob-3d-view-box {
+  position: relative;
+  overflow: hidden;
   margin-bottom: 16px;
   padding: 10px;
   border-radius: var(--radius-lg);
@@ -141,7 +143,24 @@
   height: 280px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  touch-action: pan-y;
+  touch-action: none;
+}
+
+.mob-three-node-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  z-index: 50;
+  max-height: 85%;
+  overflow-y: auto;
 }
 
 .mob-chapter-cards-grid {

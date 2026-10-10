@@ -287,15 +287,40 @@ export class ThreeUniverse {
 
     let isDragging = false;
     let prevX = 0;
-    this.container.addEventListener('mousedown', (e) => { isDragging = true; prevX = e.clientX; });
-    window.addEventListener('mouseup', () => { isDragging = false; });
-    this.container.addEventListener('mousemove', (e) => {
+    this.container.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevX = e.clientX;
+    });
+    window.addEventListener('pointerup', () => { isDragging = false; });
+    window.addEventListener('pointercancel', () => { isDragging = false; });
+    this.container.addEventListener('pointermove', (e) => {
       if (isDragging && this.scene) {
         const delta = e.clientX - prevX;
         this.scene.rotation.y += delta * 0.005;
         prevX = e.clientX;
       }
     });
+  }
+
+  resize(width, height) {
+    if (!this.renderer || !this.camera) return;
+    const w = width || (this.container ? this.container.clientWidth : 800) || 800;
+    const h = height || (this.container ? this.container.clientHeight : 500) || 500;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+  }
+
+  attachToContainer(newContainer) {
+    if (!newContainer) return;
+    this.container = newContainer;
+    if (this.renderer && this.renderer.domElement) {
+      if (this.renderer.domElement.parentElement !== newContainer) {
+        newContainer.innerHTML = '';
+        newContainer.appendChild(this.renderer.domElement);
+      }
+      this.resize(newContainer.clientWidth, newContainer.clientHeight);
+    }
   }
 
   animate() {

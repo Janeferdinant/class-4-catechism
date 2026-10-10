@@ -400,10 +400,10 @@ class AppController {
     this.sfx.playPop();
 
     const drawer = document.getElementById('three-node-drawer');
-    if (!drawer) return;
+    const mobDrawer = document.getElementById('mob-three-node-drawer');
 
     // Render drawer HTML
-    drawer.innerHTML = `
+    const drawerHtml = `
       <div class="drawer-header">
         <div class="drawer-emoji-badge">${drawerData.emoji}</div>
         <button class="drawer-close-btn" onclick="window.app.closeUniverseDrawer()" title="Close">✕</button>
@@ -454,7 +454,16 @@ class AppController {
     `;
 
     this.activeDrawerData = drawerData;
-    drawer.classList.add('open');
+
+    if (drawer) {
+      drawer.innerHTML = drawerHtml;
+      drawer.classList.add('open');
+    }
+    if (mobDrawer) {
+      mobDrawer.innerHTML = drawerHtml;
+      mobDrawer.style.display = 'block';
+      mobDrawer.classList.add('open');
+    }
     this.orchestrator.logTrace('3D Knowledge Graph', 'Node Explored', `Opened side-drawer for "${drawerData.title}"`);
   }
 
@@ -462,6 +471,11 @@ class AppController {
     this.sfx.playPop();
     const drawer = document.getElementById('three-node-drawer');
     if (drawer) drawer.classList.remove('open');
+    const mobDrawer = document.getElementById('mob-three-node-drawer');
+    if (mobDrawer) {
+      mobDrawer.classList.remove('open');
+      mobDrawer.style.display = 'none';
+    }
     if (this.threeUniverse) this.threeUniverse.isRotating = true;
   }
 
@@ -484,6 +498,14 @@ class AppController {
     this.sfx.playSparkle();
     this.closeUniverseDrawer();
     this.activeChapter = chNum;
+    if (this.mobilePres) {
+      this.mobilePres.is3dOpen = false;
+      const box3d = document.getElementById('mob-3d-view-box');
+      if (box3d) box3d.style.display = 'none';
+      const toggle3dBtn = document.getElementById('mob-btn-toggle-3d');
+      if (toggle3dBtn) toggle3dBtn.textContent = '🌐 Open 3D Map View';
+      this.mobilePres.jumpToChapterLesson(chNum);
+    }
     this.switchView('classroom');
     this.renderClassroomLesson(chNum);
     this.renderChapterSelectorStrip();
@@ -493,6 +515,16 @@ class AppController {
     this.sfx.playSparkle();
     this.closeUniverseDrawer();
     this.activePaperId = paperId;
+    if (this.mobilePres) {
+      this.mobilePres.is3dOpen = false;
+      const box3d = document.getElementById('mob-3d-view-box');
+      if (box3d) box3d.style.display = 'none';
+      const toggle3dBtn = document.getElementById('mob-btn-toggle-3d');
+      if (toggle3dBtn) toggle3dBtn.textContent = '🌐 Open 3D Map View';
+      this.mobilePres.switchMobileView('solver');
+      this.mobilePres.activePaperId = paperId;
+      this.mobilePres.renderExamSolver();
+    }
     this.switchView('solver');
     this.renderPaperTabs();
     this.renderActivePaper();

@@ -63,7 +63,7 @@ export class MobilePresentation {
         if (this.is3dOpen && this.app?.threeUniverse) {
           const container = document.getElementById('mob-three-container');
           if (container && this.app.threeUniverse.renderer) {
-            container.appendChild(this.app.threeUniverse.renderer.domElement);
+            this.app.threeUniverse.attachToContainer(container);
           }
         }
       });
