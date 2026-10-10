@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Agent Catechism Academy | 3D Interactive Classroom & Exam Solver</title>
+  <meta name="description" content="Ultra-premium multi-agent educational experience teaching Class 4 Catechism Chapters 1-15 with 5-year-old storytelling pedagogy, 3D WebGL knowledge graphs, voiceover, and verified solutions for 5 exam papers (2023-2025).">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gayathri:wght@400;700&family=Inter:wght@400;500;600;700&family=Manjari:wght@400;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js 3D WebGL Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Application Styles -->
+  <link rel="stylesheet" href="src/styles/themes.css">
+  <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+
+  <!-- ================= App Header ================= -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon-orbit">✨</div>
+      <div class="brand-text">
+        <h1>Multi-Agent Catechism Academy</h1>
+        <p>Diocese of Mananthavady • Class 4 • Chapters 1–15 & 5 Solved Papers</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" aria-label="Main Navigation">
+      <button class="tab-btn active" data-view="universe" id="tab-universe">
+        <span>🌐</span> Adventure Map
+      </button>
+      <button class="tab-btn" data-view="slides" id="tab-slides">
+        <span>🎞️</span> Picture Slides
+      </button>
+      <button class="tab-btn" data-view="classroom" id="tab-classroom">
+        <span>📖</span> Story Lessons
+      </button>
+      <button class="tab-btn" data-view="solver" id="tab-solver">
+        <span>📝</span> Exam Papers
+      </button>
+      <button class="tab-btn" data-view="quiz" id="tab-quiz">
+        <span>⭐</span> Star Quizzes
+      </button>
+    </nav>
+
+    <!-- Header Utilities -->
+    <div class="header-actions">
+      <!-- Star Collection Badge -->
+      <div class="header-star-badge" title="Collected Adventure Stars!">
+        <span class="star-icon">⭐</span>
+        <span id="header-star-count">0 Stars</span>
+      </div>
+
+      <!-- Live Audio Waveform HUD -->
+      <canvas id="motion-audio-canvas" title="Real-time Voiceover Waveform"></canvas>
+      <span id="audio-indicator" class="btn-audio-status">🔇 Audio Ready</span>
+
+      <!-- Stop Audio Button -->
+      <button id="btn-stop-audio-global" class="btn-stop-audio" onclick="window.app.stopVoice()" title="Stop playing audio (ഓഡിയോ നിർത്തുക)">
+        🛑 Stop Audio
+      </button>
+
+      <!-- Theme Switcher -->
+      <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-label">Light Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= Main Workspace ================= -->
+  <main class="main-content">
+
+    <!-- VIEW 1: 3D UNIVERSE & MULTI-AGENT LAB -->
+    <section id="view-universe" class="view-section active">
+      <div class="universe-layout">
+        <!-- 3D Canvas Viewport -->
+        <div class="viewport-3d-card glass-panel">
+          <div class="hud-overlay">
+            <div class="hud-pill">
+              <span class="pulse-dot"></span>
+              <span>Galileo Multi-Agent Mesh: Real-Time 3D Simulation</span>
+            </div>
+          </div>
+
+          <div id="three-canvas-container"></div>
+
+          <!-- 3D Node Side-Drawer Overlay -->
+          <div id="three-node-drawer" class="three-node-drawer"></div>
+
+          <!-- Bottom Viewport Controls -->
+          <div class="viewport-controls-bottom">
+            <div class="filter-btn-group">
+              <button class="filter-chip active" data-filter="all" onclick="window.app.filterUniverse('all')">Show All</button>
+              <button class="filter-chip" data-filter="agent" onclick="window.app.filterUniverse('agent')">Agents (6)</button>
+              <button class="filter-chip" data-filter="chapter" onclick="window.app.filterUniverse('chapter')">Chapters (15)</button>
+              <button class="filter-chip" data-filter="sacrament" onclick="window.app.filterUniverse('sacrament')">Sacraments (7)</button>
+              <button class="filter-chip" data-filter="exam" onclick="window.app.filterUniverse('exam')">Exams (5)</button>
+            </div>
+            <div id="node-inspect-box" class="glass-card" style="display:none; padding:8px 14px; font-size:0.8rem;"></div>
+          </div>
+        </div>
+
+        <!-- Multi-Agent Live Orchestrator Console (Galileo Observability) -->
+        <aside class="agent-console-panel glass-panel">
+          <div class="panel-header">
+            <h3>🤖 Galileo Multi-Agent Nexus</h3>
+            <span class="badge-tag">ACTIVE MESH</span>
+          </div>
+
+          <div class="agents-grid-status">
+            <div class="agent-mini-card">
+              <span class="agent-dot" style="background:#6366f1;"></span>
+              <div><strong>Orchestrator</strong><div class="text-muted">Master Router</div></div>
+            </div>
+            <div class="agent-mini-card">
+              <span class="agent-dot" style="background:#ec4899;"></span>
+              <div><strong>Leo (Story)</strong><div class="text-muted">5yo Pedagogy</div></div>
+            </div>
+            <div class="agent-mini-card">
+              <span class="agent-dot" style="background:#10b981;"></span>
+              <div><strong>Sophia (Solver)</strong><div class="text-muted">Citation Engine</div></div>
+            </div>
+            <div class="agent-mini-card">
+              <span class="agent-dot" style="background:#f59e0b;"></span>
+              <div><strong>Barnaby (Quiz)</strong><div class="text-muted">Gamification</div></div>
+            </div>
+          </div>
+
+          <div class="panel-header">
+            <span class="text-muted" style="font-size:0.8rem; font-weight:700;">LIVE ORCHESTRATION STREAM</span>
+            <span class="text-muted" style="font-size:0.75rem;">Memory vs Working Context</span>
+          </div>
+
+          <!-- Trace Feed -->
+          <div id="agent-trace-feed" class="trace-feed-container"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- VIEW 2: 4K / HD PRESENTATION SLIDES -->
+    <section id="view-slides" class="view-section">
+      <div class="slides-wrapper">
+        <div class="slides-toolbar glass-panel">
+          <div class="slide-nav-controls">
+            <button id="btn-slide-prev" class="btn-ctrl">⬅ Previous</button>
+            <span id="slide-indicator" class="font-weight-bold" style="padding:0 12px; font-weight:700;">1 / 15</span>
+            <button id="btn-slide-next" class="btn-ctrl">Next ➡</button>
+          </div>
+          <div class="slide-extra-actions">
+            <button id="btn-slide-voice-mal" class="btn-ctrl" title="Listen in Malayalam">🔊 മലയാളം</button>
+            <button id="btn-slide-voice" class="btn-ctrl" title="Listen in English">🔊 English</button>
+            <button id="btn-slide-stop" class="btn-ctrl" title="Stop audio (നിർത്തുക)">🛑 Stop</button>
+            <button id="btn-slide-fullscreen" class="btn-ctrl">⛶ Fullscreen (4K)</button>
+          </div>
+        </div>
+
+        <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; margin-bottom:12px; overflow:hidden;">
+          <div id="slide-progress-bar" style="height:100%; width:6.66%; background:linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); transition:width 300ms ease;"></div>
+        </div>
+
+        <div id="slide-deck-container" class="slide-deck-frame glass-panel"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: 5-YEAR-OLD STORY CLASSROOM -->
+    <section id="view-classroom" class="view-section">
+      <div class="classroom-wrapper">
+        <div class="classroom-intro-card glass-panel">
+          <h2>🦁 Welcome to the Little Angels Adventure Room!</h2>
+          <p class="text-secondary">Explore all 15 Chapters with playful stories, friendly animal guides, and daily golden rules!</p>
+        </div>
+
+        <!-- Horizontal Chapter Strip -->
+        <div id="classroom-ch-strip" class="chapter-selector-strip"></div>
+
+        <!-- Active Lesson Container -->
+        <div id="classroom-lesson-container"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: EXAM SOLVER & CITATION ENGINE -->
+    <section id="view-solver" class="view-section">
+      <div class="solver-wrapper">
+        <div class="solver-filter-bar glass-panel">
+          <div id="paper-tabs-row" class="paper-tabs-row"></div>
+          <input type="text" id="solver-search-input" class="solver-search-input" placeholder="🔍 Search question or chapter citation...">
+        </div>
+
+        <div id="solver-content-container"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: GAMIFIED QUIZZES -->
+    <section id="view-quiz" class="view-section">
+      <div class="quiz-wrapper">
+        <div id="quiz-content-container"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Application Bootstrap -->
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
