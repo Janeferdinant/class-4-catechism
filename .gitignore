@@ -21,3 +21,5 @@ temp_audio_scratch/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+.vercel

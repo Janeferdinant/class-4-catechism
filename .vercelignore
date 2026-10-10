@@ -1,0 +1,11 @@
+# Ignore raw documents and development assets on Vercel
+requirements.txt
+data/
+docs/
+tests/
+scripts/
+.git/
+.superpowers/
+.tempmediaStorage/
+*.md
+!README.md
