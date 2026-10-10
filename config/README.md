@@ -1,6 +1,6 @@
 # Configuration Directory
 
-This directory contains configuration files for the Multi-Agent Catechism Academy application.
+This directory contains configuration files for the Class 4 Catechism application.
 
 ## Files
 - `app.config.json`: Master application configuration specifying default runtime port, themes, agent personas, neural audio voice profiles, and visual asset paths.

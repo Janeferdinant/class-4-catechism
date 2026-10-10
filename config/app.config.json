@@ -1,6 +1,6 @@
 {
   "application": {
-    "name": "Multi-Agent Catechism Academy",
+    "name": "Class 4 Catechism",
     "version": "1.2.0",
     "environment": "development",
     "port": 8080,

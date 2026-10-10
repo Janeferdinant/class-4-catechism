@@ -1,7 +1,7 @@
-# Multi-Agent Catechism Academy — Architecture Specification
+# Class 4 Catechism — Architecture Specification
 
 ## 1. System Overview
-The **Multi-Agent Catechism Academy** is an interactive educational web platform built upon multi-agent collaboration principles. It transforms traditional grade-school religious curriculum into an engaging 3D multimedia experience tailored for young learners (ages 5–10).
+The **Class 4 Catechism** platform is an interactive educational web platform built upon multi-agent collaboration principles. It transforms traditional grade-school religious curriculum into an engaging 3D multimedia experience tailored for young learners (ages 5–10).
 
 ```
                  ┌─────────────────────────────────┐

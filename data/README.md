@@ -1,6 +1,6 @@
 # Data Directory
 
-This directory stores raw input datasets and generated outputs for the Multi-Agent Catechism Academy application.
+This directory stores raw input datasets and generated outputs for the Class 4 Catechism application.
 
 ## Directory Structure
 - `input/`: Contains original source documents, including:

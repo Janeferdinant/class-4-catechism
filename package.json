@@ -1,7 +1,7 @@
 {
-  "name": "multiagent-catechism-academy",
+  "name": "class-4-catechism",
   "version": "1.2.0",
-  "description": "Multi-Agent Interactive Catechism Academy (Class 4) with 3D WebGL Universe, Neural Malayalam Audio, Exam Solutions, and Gamified Quizzes",
+  "description": "Class 4 Catechism - Multi-Agent Interactive Academy with 3D WebGL Universe, Neural Malayalam Audio, Exam Solutions, and Gamified Quizzes",
   "main": "src/app.js",
   "type": "module",
   "scripts": {

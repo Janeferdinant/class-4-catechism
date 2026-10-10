@@ -1,7 +1,7 @@
-# Multi-Agent Catechism Academy (Class 4 Interactive Classroom)
+# Class 4 Catechism
 
 ## Overview
-The **Multi-Agent Catechism Academy** is an interactive, multi-agent AI educational web application designed for students, teachers, and parents. It transforms the standard Diocese of Mananthavady Class 4 Catechism curriculum into an engaging multimedia learning experience.
+The **Class 4 Catechism** application is an interactive, multi-agent AI educational web platform designed for students, teachers, and parents. It transforms the standard Diocese of Mananthavady Class 4 Catechism curriculum into an engaging multimedia learning experience.
 
 This project is used to teach Class 4 Catechism (Chapters 1–15) using a child-centric 5-year-old storytelling pedagogy, solve and cite questions across five historical examination papers (2023–2025), provide interactive 3D WebGL knowledge exploration, and deliver natural bilingual (Malayalam and English) neural voice narration without requiring active cloud API subscriptions.
 
@@ -22,7 +22,7 @@ The main objectives of this project are:
 
 ## Repository Structure
 ```
-multiagent/
+Class 4 Catechism/
 │
 ├── src/                  # Source code
 │   ├── agents/           # Multi-agent orchestrator & specialized agent definitions
@@ -89,8 +89,8 @@ multiagent/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/example/multiagent-catechism-academy.git
-cd multiagent-catechism-academy
+git clone https://github.com/example/class-4-catechism.git
+cd class-4-catechism
 ```
 
 ### 2. Create the Development Environment
