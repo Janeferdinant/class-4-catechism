@@ -117,8 +117,11 @@ class AppController {
   /* ---------------- Mobile / Desktop View Mode Toggle ---------------- */
   setupViewMode() {
     const isNarrow = typeof window !== 'undefined' && window.innerWidth <= 768;
-    const savedMode = localStorage.getItem('app-view-mode') || (isNarrow ? 'mobile' : 'desktop');
-    this.setViewMode(savedMode, true);
+    // On desktop screens (> 768px), always start in clean desktop mode!
+    // Never trap desktop monitors in 430px mobile mode across browser refreshes.
+    let initialMode = isNarrow ? 'mobile' : 'desktop';
+    localStorage.setItem('app-view-mode', initialMode);
+    this.setViewMode(initialMode, true);
 
     const toggleBtn = document.getElementById('btn-mobile-toggle');
     if (toggleBtn) {
@@ -234,18 +237,25 @@ class AppController {
 
     if (!sheet) return;
 
-    const openSheet = () => {
+    const openSheet = (e) => {
+      if (e) e.stopPropagation();
       if (this.sfx && this.sfx.playPop) this.sfx.playPop();
       sheet.classList.add('active');
+      sheet.style.display = 'block';
       sheet.setAttribute('aria-hidden', 'false');
     };
 
-    const closeSheet = () => {
+    const closeSheet = (e) => {
+      if (e) e.stopPropagation();
       sheet.classList.remove('active');
+      sheet.style.display = 'none';
       sheet.setAttribute('aria-hidden', 'true');
     };
 
-    if (menuBtn) menuBtn.addEventListener('click', openSheet);
+    if (menuBtn) {
+      menuBtn.addEventListener('click', openSheet);
+      menuBtn.onclick = openSheet;
+    }
     if (closeBtn) closeBtn.addEventListener('click', closeSheet);
     if (backdrop) backdrop.addEventListener('click', closeSheet);
 

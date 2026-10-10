@@ -2979,11 +2979,11 @@ body.desktop-view-forced {
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 20000;
+  z-index: 999999;
 }
 
 .mobile-settings-sheet.active {
-  display: block;
+  display: block !important;
 }
 
 .sheet-backdrop {
