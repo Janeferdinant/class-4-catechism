@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Multi-Agent Architecture**: Implemented Orchestrator and 5 specialist agents based on Galileo.ai multi-agent design principles.
-- **15 Chapter Curriculum**: Complete pedagogical coverage of Diocese of Mananthavady Class 4 Catechism textbook.
+- **15 Chapter Curriculum**: Complete pedagogical coverage of Class 4 Catechism textbook.
 - **5 Solved Question Papers**: Detailed solutions and exact textbook citations for First and Second Semester exam papers (2023–2025).
 - **Gamified Star Quiz Engine**: Chapter quizzes with real-time feedback, confetti animations, and sound effects.
 - **3D Three.js Universe**: Interactive particle field and node graph visualizer.

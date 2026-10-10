@@ -124,7 +124,7 @@ export class StoryClassroomManager {
         <div class="lesson-academic-footer">
           <span class="footer-academic-icon">🎓</span>
           <div class="footer-academic-text">
-            <strong>Asst. Prof. Jane Rose</strong> &bull; Department of Computer Science & Engineering (CSE)
+            <strong>Academic Mentor: Asst. Prof. Jane Rose</strong> &bull; Department of Computer Science & Engineering (CSE)
           </div>
         </div>
       </div>

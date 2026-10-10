@@ -1,5 +1,5 @@
 /**
- * Comprehensive Solved Question Papers for Class 4 Catechism (Diocese of Mananthavady)
+ * Comprehensive Solved Question Papers for Class 4 Catechism
  * Covering:
  * 1. 2023 First Semester
  * 2. 2023 Second Semester

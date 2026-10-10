@@ -301,6 +301,64 @@ body.mobile-preview-active .mob-bottom-nav {
   color: var(--text-primary);
 }
 
+.mob-mentor-banner {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  margin-top: 10px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12));
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+
+.mob-mentor-icon {
+  font-size: 1.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.mob-mentor-details {
+  flex: 1;
+}
+
+.mob-mentor-role {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-amber);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-bottom: 4px;
+}
+
+.mob-mentor-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.mob-mentor-dept {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
 /* View 2: Picture Slides */
 .mob-slide-card {
   padding: 14px;

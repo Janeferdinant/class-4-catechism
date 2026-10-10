@@ -154,7 +154,16 @@ export class MobilePresentation {
           </div>
         </div>
       </div>
-    `).join('');
+    `).join('') + `
+      <div class="mob-mentor-banner glass-panel">
+        <span class="mob-mentor-icon">🎓</span>
+        <div class="mob-mentor-details">
+          <span class="mob-mentor-role">Academic Mentor</span>
+          <h4 class="mob-mentor-name">Asst. Prof. Jane Rose</h4>
+          <p class="mob-mentor-dept">Department of Computer Science & Engineering (CSE)</p>
+        </div>
+      </div>
+    `;
   }
 
   /* ---------------- View 2: Picture Slides ---------------- */

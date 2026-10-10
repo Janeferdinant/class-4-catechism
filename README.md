@@ -1,7 +1,7 @@
 # Class 4 Catechism
 
 ## Overview
-The **Class 4 Catechism** application is an interactive, multi-agent AI educational web platform designed for students, teachers, and parents. It transforms the standard Diocese of Mananthavady Class 4 Catechism curriculum into an engaging multimedia learning experience.
+The **Class 4 Catechism** application is an interactive, multi-agent AI educational web platform designed for students, teachers, and parents. It transforms the Class 4 Catechism curriculum into an engaging multimedia learning experience.
 
 This project is used to teach Class 4 Catechism (Chapters 1–15) using a child-centric 5-year-old storytelling pedagogy, solve and cite questions across five historical examination papers (2023–2025), provide interactive 3D WebGL knowledge exploration, and deliver natural bilingual (Malayalam and English) neural voice narration without requiring active cloud API subscriptions.
 
@@ -175,7 +175,7 @@ http://localhost:8080
 The application requires the following input data:
 | Input | Format | Description | Required |
 | :--- | :--- | :--- | :--- |
-| Textbook Chapters 1–15 | PDF | Diocese of Mananthavady Class 4 textbook scans located in `data/input/` | Yes |
+| Textbook Chapters 1–15 | PDF | Class 4 Catechism textbook scans located in `data/input/` | Yes |
 | Past Exam Papers (2023–2025) | PDF | 5 historical semester question papers located in `data/input/` | Yes |
 | Multi-Agent Specification | PDF | Architecture design guidelines (`multi  agent.pdf`) located in `data/input/` | Yes |
 | Gemini API Key | String | Optional key entered in UI for live conversational queries | No |
@@ -381,13 +381,13 @@ Important documents:
 | Three.js | `r128` | 3D WebGL interactive universe and particle node graph |
 | Canvas-Confetti | `1.9.4` | Gamified celebratory particle explosions for quizzes |
 
-## Maintenance
-- **Academic Mentorship / Faculty Guide**:
-  **Asst. Prof. Jane Rose**  
+## Academic Mentorship & Maintenance
+- **Academic Mentor**:
+  ### Asst. Prof. Jane Rose
   *Department of Computer Science & Engineering (CSE)*
-- **Project Owner**: Diocese of Mananthavady Catechetical Commission & EdTech Lab
-- **Maintainer**: Antigravity Multi-Agent Engineering Team
-- **Contact**: `edtech@catechism-academy.org` / Internal EdTech Support Channel
+- **Project Architecture**: Multi-Agent Interactive Learning Team
+- **Maintainer**: Engineering Team
+- **Contact**: `edtech@catechism-academy.org` / Educational Technology Support
 
 ## Change History
 | Version | Date | Author | Description |
@@ -397,13 +397,14 @@ Important documents:
 | **1.2.0** | 2026-10-10 | Multi-Agent Team | Pre-generated natural neural voiceover, 3D Pixar motion graphics, and folder organization |
 
 ## License / Usage
-This repository is proprietary and intended for internal educational and catechism instruction use only. Redistribution or external commercial use is not permitted without explicit authorization from the Diocese of Mananthavady Catechetical Commission.
+This repository is proprietary and intended for educational instruction and learning use only. Redistribution or external commercial use is not permitted without explicit authorization.
 
 ---
 
 <div align="center">
 
-### Asst. Prof. Jane Rose
+### Academic Mentor
+## Asst. Prof. Jane Rose
 **Department of Computer Science & Engineering (CSE)**
 
 </div>

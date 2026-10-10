@@ -47,4 +47,43 @@ test('Footer attribution: README.md includes faculty mentorship', () => {
     readmeContent.includes('Department of Computer Science & Engineering (CSE)'),
     'README.md must include "Department of Computer Science & Engineering (CSE)"'
   );
+  assert.ok(readmeContent.includes('Academic Mentor'), 'README.md must highlight "Academic Mentor"');
 });
+
+test('Zero mentions: Diocese of Mananthavady must not appear in HTML or README', () => {
+  const htmlPath = path.resolve(process.cwd(), 'index.html');
+  const readmePath = path.resolve(process.cwd(), 'README.md');
+  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+  const readmeContent = fs.readFileSync(readmePath, 'utf-8');
+
+  assert.strictEqual(
+    htmlContent.toLowerCase().includes('mananthavady'),
+    false,
+    'index.html must not contain any mention of "Mananthavady"'
+  );
+  assert.strictEqual(
+    readmeContent.toLowerCase().includes('mananthavady'),
+    false,
+    'README.md must not contain any mention of "Mananthavady"'
+  );
+});
+
+test('Mobile attribution: MobilePresentation and settings popup highlight academic mentor', async () => {
+  const htmlPath = path.resolve(process.cwd(), 'index.html');
+  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+  const mobileJsPath = path.resolve(process.cwd(), 'src/presentation/MobilePresentation.js');
+  const mobileJsContent = fs.readFileSync(mobileJsPath, 'utf-8');
+
+  // Mobile settings popup in index.html
+  assert.ok(htmlContent.includes('Academic Mentor'), 'index.html settings sheet must include "Academic Mentor"');
+  
+  // MobilePresentation chapter deck banner
+  assert.ok(mobileJsContent.includes('mob-mentor-banner'), 'MobilePresentation must include "mob-mentor-banner"');
+  assert.ok(mobileJsContent.includes('Academic Mentor'), 'MobilePresentation must include "Academic Mentor"');
+  assert.ok(mobileJsContent.includes('Asst. Prof. Jane Rose'), 'MobilePresentation must include "Asst. Prof. Jane Rose"');
+  assert.ok(
+    mobileJsContent.includes('Department of Computer Science & Engineering (CSE)'),
+    'MobilePresentation must include CSE department'
+  );
+});
+

@@ -1,6 +1,6 @@
 /**
  * Class 4 Catechism Chapters (1 to 15)
- * Diocese of Mananthavady - "Jesus the Source of Life" (ഈശോ ജീവന്റെ ഉറവിടം)
+ * "Jesus the Source of Life" (ഈശോ ജീവന്റെ ഉറവിടം)
  * Enhanced with 5-Year-Old Storytelling Pedagogy and Multi-Agent Knowledge Mapping.
  */
 

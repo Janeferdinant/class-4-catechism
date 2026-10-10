@@ -86,7 +86,7 @@ export class ExamSolverAgent extends BaseAgent {
       solutions: matchedQuestions.map(q => ({
         ...q,
         verified: true,
-        verificationNote: `Verified against Mananthavady Catechism Standard IV syllabus; citation confirmed.`
+        verificationNote: `Verified against Catechism Standard IV syllabus; citation confirmed.`
       })),
       reasoningSteps: [
         `Parsed question intent and extracted key catechism terms`,
