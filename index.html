@@ -66,12 +66,6 @@
         🛑 Stop Audio
       </button>
 
-      <!-- Google AI Studio Gemini Key Button -->
-      <button id="btn-gemini-key" class="btn-gemini-key" onclick="window.app.openGeminiModal()" title="Google AI Studio Gemini API Settings (Natural Voice & 4K AI Art)">
-        <span class="gemini-sparkle">✨</span>
-        <span id="gemini-key-status">🔑 Gemini AI</span>
-      </button>
-
       <!-- Mobile / Desktop View Mode Toggle -->
       <button id="btn-mobile-toggle" class="btn-mobile-toggle" title="Toggle Mobile / Desktop Optimized View">
         <span id="mobile-toggle-icon">📱</span>
@@ -82,6 +76,11 @@
       <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
         <span id="theme-icon">☀️</span>
         <span id="theme-label">Light Mode</span>
+      </button>
+
+      <!-- Mobile Settings Menu Trigger -->
+      <button id="btn-mobile-menu" class="btn-mobile-menu" title="Menu & Settings" aria-label="Settings">
+        <span>⚙️</span>
       </button>
     </div>
   </header>
@@ -278,6 +277,62 @@
           <button class="btn-ctrl btn-clear-gemini-key" onclick="window.app.clearGeminiKey()">
             🗑️ Clear
           </button>
+        </div>
+      </div>
+    </div>
+  <!-- ================= Dedicated Mobile Bottom Navigation Bar ================= -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Bottom Navigation">
+    <button class="mobile-nav-item active" data-view="universe" id="mob-tab-universe" title="Adventure Map">
+      <span class="nav-icon">🗺️</span>
+      <span class="nav-label">Map</span>
+    </button>
+    <button class="mobile-nav-item" data-view="slides" id="mob-tab-slides" title="Picture Slides">
+      <span class="nav-icon">🎞️</span>
+      <span class="nav-label">Slides</span>
+    </button>
+    <button class="mobile-nav-item" data-view="classroom" id="mob-tab-classroom" title="Story Lessons">
+      <span class="nav-icon">📖</span>
+      <span class="nav-label">Stories</span>
+    </button>
+    <button class="mobile-nav-item" data-view="solver" id="mob-tab-solver" title="Exam Papers">
+      <span class="nav-icon">📝</span>
+      <span class="nav-label">Exams</span>
+    </button>
+    <button class="mobile-nav-item" data-view="quiz" id="mob-tab-quiz" title="Star Quizzes">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Quiz</span>
+    </button>
+  </nav>
+
+  <!-- ================= Mobile Settings Bottom Sheet ================= -->
+  <div id="mobile-settings-sheet" class="mobile-settings-sheet" aria-hidden="true">
+    <div class="sheet-backdrop" id="sheet-backdrop"></div>
+    <div class="sheet-card glass-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3>⚙️ Settings & Display</h3>
+        <button id="btn-close-sheet" class="btn-close-sheet" aria-label="Close Settings">✕</button>
+      </div>
+      <div class="sheet-content">
+        <div class="sheet-row">
+          <div class="sheet-label">
+            <span class="row-icon">☀️</span>
+            <span>Day / Night Theme</span>
+          </div>
+          <button id="sheet-theme-btn" class="sheet-action-btn">Switch Theme</button>
+        </div>
+        <div class="sheet-row">
+          <div class="sheet-label">
+            <span class="row-icon">💻</span>
+            <span>Desktop / Mobile Mode</span>
+          </div>
+          <button id="sheet-view-btn" class="sheet-action-btn">Toggle View</button>
+        </div>
+        <div class="sheet-divider"></div>
+        <div class="sheet-credits">
+          <p class="credit-title">Academic Mentorship</p>
+          <p class="credit-name">Asst. Prof. Jane Rose</p>
+          <p class="credit-dept">Department of Computer Science & Engineering (CSE)</p>
         </div>
       </div>
     </div>

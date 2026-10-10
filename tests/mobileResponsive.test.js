@@ -55,3 +55,10 @@ test('Mobile View Toggle: avoids duplicate click binding and supports full mobil
   assert.ok(css.includes('.desktop-view-forced'), 'main.css must support forced desktop view for mobile devices');
 });
 
+test('Header Optimization: Gemini API key button is removed from DOM', () => {
+  const htmlPath = path.resolve(process.cwd(), 'index.html');
+  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+  assert.ok(!htmlContent.includes('id="btn-gemini-key"'), 'Gemini API key button must be removed to declutter header');
+});
+
+

@@ -205,26 +205,85 @@ class AppController {
     }, 2400);
   }
 
-  /* ---------------- Navigation Tabs ---------------- */
+  /* ---------------- Navigation Tabs & Mobile Bottom Nav ---------------- */
   setupNavigation() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.sfx.playPop();
-        const targetView = btn.getAttribute('data-view');
-        this.switchView(targetView);
-      });
+    const handleNavClick = (btn) => {
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+      const targetView = btn.getAttribute('data-view');
+      this.switchView(targetView);
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleNavClick(btn));
     });
+
+    document.querySelectorAll('.mobile-nav-item').forEach(btn => {
+      btn.addEventListener('click', () => handleNavClick(btn));
+    });
+
+    this.setupMobileSettingsSheet();
+  }
+
+  setupMobileSettingsSheet() {
+    const menuBtn = document.getElementById('btn-mobile-menu');
+    const sheet = document.getElementById('mobile-settings-sheet');
+    const closeBtn = document.getElementById('btn-close-sheet');
+    const backdrop = document.getElementById('sheet-backdrop');
+    const sheetThemeBtn = document.getElementById('sheet-theme-btn');
+    const sheetViewBtn = document.getElementById('sheet-view-btn');
+
+    if (!sheet) return;
+
+    const openSheet = () => {
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+      sheet.classList.add('active');
+      sheet.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeSheet = () => {
+      sheet.classList.remove('active');
+      sheet.setAttribute('aria-hidden', 'true');
+    };
+
+    if (menuBtn) menuBtn.addEventListener('click', openSheet);
+    if (closeBtn) closeBtn.addEventListener('click', closeSheet);
+    if (backdrop) backdrop.addEventListener('click', closeSheet);
+
+    if (sheetThemeBtn) {
+      sheetThemeBtn.addEventListener('click', () => {
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        const nextTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.setTheme(nextTheme);
+      });
+    }
+
+    if (sheetViewBtn) {
+      sheetViewBtn.addEventListener('click', () => {
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.toggleViewMode();
+        closeSheet();
+      });
+    }
   }
 
   switchView(viewName) {
+    this.currentView = viewName;
+
     document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-view') === viewName);
+    });
+
+    document.querySelectorAll('.mobile-nav-item').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-view') === viewName);
     });
 
     document.querySelectorAll('.view-section').forEach(section => {
       section.classList.toggle('active', section.id === `view-${viewName}`);
     });
+
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     if (viewName === 'universe' && this.threeUniverse) {
       const container = document.getElementById('three-canvas-container');
