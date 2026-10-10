@@ -38,11 +38,11 @@
 - Modify: `src/components/VoiceoverManager.js`
 - Test: `tests/bilingualAudio.test.js`
 
-- [ ] **Step 1: Write failing test in `tests/bilingualAudio.test.js` verifying `playVoice('mal', chNum)`, `playVoice('eng', chNum)`, and `stopVoice()`**
-- [ ] **Step 2: Run test to verify it fails (RED)**
-- [ ] **Step 3: Implement `playVoice(lang, chNumber)` and `stopVoice()` in `src/app.js` and ensure `VoiceoverManager` supports both audio tracks and error reporting**
-- [ ] **Step 4: Run test to verify it passes (GREEN)**
-- [ ] **Step 5: Commit changes**
+- [x] **Step 1: Write failing test in `tests/bilingualAudio.test.js` verifying `playVoice('mal', chNum)`, `playVoice('eng', chNum)`, and `stopVoice()`**
+- [x] **Step 2: Run test to verify it fails (RED)**
+- [x] **Step 3: Implement `playVoice(lang, chNumber)` and `stopVoice()` in `src/app.js` and ensure `VoiceoverManager` supports both audio tracks and error reporting**
+- [x] **Step 4: Run test to verify it passes (GREEN)**
+- [x] **Step 5: Commit changes**
 
 ---
 
@@ -53,17 +53,17 @@
 - Modify: `src/styles/mobile.css`
 - Test: `tests/mobileFeatureRestoration.test.js`
 
-- [ ] **Step 1: Write failing test verifying mobile image paths, textbook scan toggle, dual audio buttons, and click handlers**
-- [ ] **Step 2: Run test to verify it fails (RED)**
-- [ ] **Step 3: Update `src/presentation/MobilePresentation.js`:**
+- [x] **Step 1: Write failing test verifying mobile image paths, textbook scan toggle, dual audio buttons, and click handlers**
+- [x] **Step 2: Run test to verify it fails (RED)**
+- [x] **Step 3: Update `src/presentation/MobilePresentation.js`:**
   - Fix image sources to `ch.imageUrl`
   - Add illustration vs textbook scan toggle (`toggleSlideArtMode(chNum)`)
   - Fix `prevSlide()` logic (`activeChapter > 1`)
   - Fix chapter click handlers with quotes or number IDs
   - Fix scripture quote properties (`ch.scripture`, `ch.scriptureEng`)
   - Add bilingual audio buttons (`🔊 Malayalam` and `🔊 English`) to Chapter Deck, Slides, and Story Lessons
-- [ ] **Step 4: Run test to verify it passes (GREEN)**
-- [ ] **Step 5: Commit changes**
+- [x] **Step 4: Run test to verify it passes (GREEN)**
+- [x] **Step 5: Commit changes**
 
 ---
 
@@ -76,12 +76,12 @@
 - Modify: `src/styles/mobile.css`
 - Test: `tests/threeUniverseMobile.test.js`
 
-- [ ] **Step 1: Write failing test for ThreeUniverse pointer event support, resize method, and mobile drawer rendering**
-- [ ] **Step 2: Run test to verify it fails (RED)**
-- [ ] **Step 3: Update `ThreeUniverse.js` with pointer events (`pointerdown`, `pointermove`, `pointerup`), `resize(w, h)`, and `attachToContainer(container)`**
-- [ ] **Step 4: Add `#mob-three-node-drawer` to `index.html` and update `openNodeDrawer` in `src/app.js` to populate the mobile drawer when mobile is active**
-- [ ] **Step 5: Run test to verify it passes (GREEN)**
-- [ ] **Step 6: Commit changes**
+- [x] **Step 1: Write failing test for ThreeUniverse pointer event support, resize method, and mobile drawer rendering**
+- [x] **Step 2: Run test to verify it fails (RED)**
+- [x] **Step 3: Update `ThreeUniverse.js` with pointer events (`pointerdown`, `pointermove`, `pointerup`), `resize(w, h)`, and `attachToContainer(container)`**
+- [x] **Step 4: Add `#mob-three-node-drawer` to `index.html` and update `openNodeDrawer` in `src/app.js` to populate the mobile drawer when mobile is active**
+- [x] **Step 5: Run test to verify it passes (GREEN)**
+- [x] **Step 6: Commit changes**
 
 ---
 
@@ -94,11 +94,11 @@
 - Modify: `src/app.js`
 - Test: `tests/autoLayoutSelection.test.js`
 
-- [ ] **Step 1: Write failing test verifying zero-flash CSS media queries and header theme toggle on mobile**
-- [ ] **Step 2: Run test to verify it fails (RED)**
-- [ ] **Step 3: Add CSS media queries in `mobile.css` for instant viewport adaptation and add `mob-btn-theme` to mobile header**
-- [ ] **Step 4: Run test to verify it passes (GREEN)**
-- [ ] **Step 5: Commit changes**
+- [x] **Step 1: Write failing test verifying zero-flash CSS media queries and header theme toggle on mobile**
+- [x] **Step 2: Run test to verify it fails (RED)**
+- [x] **Step 3: Add CSS media queries in `mobile.css` for instant viewport adaptation and add `mob-btn-theme` to mobile header**
+- [x] **Step 4: Run test to verify it passes (GREEN)**
+- [x] **Step 5: Commit changes**
 
 ---
 
@@ -109,7 +109,7 @@
 - Verify viewports: 320x640, 360x800, 375x812, 390x844, 430x932, 768x1024, 1024x768, 1440x900
 - Deploy to Vercel production and verify live HTTP response
 
-- [ ] **Step 1: Run all tests and verify 100% pass rate**
+- [x] **Step 1: Run all tests and verify 100% pass rate**
 - [ ] **Step 2: Commit and push changes to GitHub `origin/main`**
 - [ ] **Step 3: Deploy to Vercel production**
 - [ ] **Step 4: Verify production URL live**
