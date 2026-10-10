@@ -8,6 +8,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch1",
     number: 1,
+    imageUrl: "assets/textbook/ch1_p2.png",
+    coverUrl: "assets/textbook/ch1_p1.png",
     semester: 1,
     titleMal: "ഈശോ ജീവന്റെ ഉറവിടം",
     titleEng: "Jesus, the Source of Life",
@@ -28,6 +30,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch2",
     number: 2,
+    imageUrl: "assets/textbook/ch2_p2.png",
+    coverUrl: "assets/textbook/ch2_p1.png",
     semester: 1,
     titleMal: "സഭയിലൂടെ ജീവൻ നൽകുന്ന ഈശോ",
     titleEng: "Jesus Gives Life Through the Church",
@@ -48,6 +52,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch3",
     number: 3,
+    imageUrl: "assets/textbook/ch3_p2.png",
+    coverUrl: "assets/textbook/ch3_p1.png",
     semester: 1,
     titleMal: "കൂദാശകൾ ജീവൻ നൽകുന്ന ചാലുകൾ",
     titleEng: "Sacraments: Channels Giving Life",
@@ -68,6 +74,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch4",
     number: 4,
+    imageUrl: "assets/textbook/ch4_p2.png",
+    coverUrl: "assets/textbook/ch4_p1.png",
     semester: 1,
     titleMal: "മാമ്മോദീസ ഈശോയിലുള്ള ജനനം",
     titleEng: "Baptism: Rebirth in Jesus",
@@ -88,6 +96,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch5",
     number: 5,
+    imageUrl: "assets/textbook/ch5_p2.png",
+    coverUrl: "assets/textbook/ch5_p1.png",
     semester: 1,
     titleMal: "തൈലാഭിഷേകം ആത്മാവിലുള്ള അഭിഷേകം",
     titleEng: "Confirmation: Anointing in the Spirit",
@@ -108,6 +118,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch6",
     number: 6,
+    imageUrl: "assets/textbook/ch6_p2.png",
+    coverUrl: "assets/textbook/ch6_p1.png",
     semester: 1,
     titleMal: "വി. കുർബാന ജീവൻ നൽകുന്ന ബലി",
     titleEng: "Holy Qurbana: The Life-Giving Sacrifice",
@@ -128,6 +140,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch7",
     number: 7,
+    imageUrl: "assets/textbook/ch7_p2.png",
+    coverUrl: "assets/textbook/ch7_p1.png",
     semester: 1,
     titleMal: "വി. കുർബാന ജീവന്റെ അപ്പം",
     titleEng: "Holy Qurbana: The Bread of Life",
@@ -148,6 +162,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch8",
     number: 8,
+    imageUrl: "assets/textbook/ch8_p2.png",
+    coverUrl: "assets/textbook/ch8_p1.png",
     semester: 1,
     titleMal: "ഈശോയെ സ്വീകരിക്കാൻ",
     titleEng: "To Receive Jesus",
@@ -168,6 +184,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch9",
     number: 9,
+    imageUrl: "assets/textbook/ch9_p2.png",
+    coverUrl: "assets/textbook/ch9_p1.png",
     semester: 2,
     titleMal: "അനുരഞ്ജിതരായിത്തീർന്നിടാം",
     titleEng: "Let Us Be Reconciled",
@@ -188,6 +206,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch10",
     number: 10,
+    imageUrl: "assets/textbook/ch10_p2.png",
+    coverUrl: "assets/textbook/ch10_p1.png",
     semester: 2,
     titleMal: "അനുരഞ്ജനകൂദാശ",
     titleEng: "Sacrament of Reconciliation",
@@ -209,6 +229,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch11",
     number: 11,
+    imageUrl: "assets/textbook/ch11_p2.png",
+    coverUrl: "assets/textbook/ch11_p1.png",
     semester: 2,
     titleMal: "രോഗീലേപനം",
     titleEng: "Anointing of the Sick",
@@ -229,6 +251,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch12",
     number: 12,
+    imageUrl: "assets/textbook/ch12_p2.png",
+    coverUrl: "assets/textbook/ch12_p1.png",
     semester: 2,
     titleMal: "തിരുപ്പട്ടം",
     titleEng: "Holy Orders / Priesthood",
@@ -250,6 +274,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch13",
     number: 13,
+    imageUrl: "assets/textbook/ch13_p2.png",
+    coverUrl: "assets/textbook/ch13_p1.png",
     semester: 2,
     titleMal: "വിവാഹം",
     titleEng: "Holy Matrimony",
@@ -270,6 +296,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch14",
     number: 14,
+    imageUrl: "assets/textbook/ch14_p2.png",
+    coverUrl: "assets/textbook/ch14_p1.png",
     semester: 2,
     titleMal: "കൂദാശാനുകരണങ്ങൾ",
     titleEng: "Sacramentals",
@@ -291,6 +319,8 @@ export const CHAPTERS_DATA = [
   {
     id: "ch15",
     number: 15,
+    imageUrl: "assets/textbook/ch15_p2.png",
+    coverUrl: "assets/textbook/ch15_p1.png",
     semester: 2,
     titleMal: "'സ്വർഗ്ഗസ്ഥനായ പിതാവേ' എന്നാരംഭിക്കുന്ന പ്രാർത്ഥന",
     titleEng: "The Lord's Prayer & Christian Prayer Life",

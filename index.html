@@ -66,6 +66,12 @@
         🛑 Stop Audio
       </button>
 
+      <!-- Google AI Studio Gemini Key Button -->
+      <button id="btn-gemini-key" class="btn-gemini-key" onclick="window.app.openGeminiModal()" title="Google AI Studio Gemini API Settings (Natural Voice & 4K AI Art)">
+        <span class="gemini-sparkle">✨</span>
+        <span id="gemini-key-status">🔑 Gemini AI</span>
+      </button>
+
       <!-- Theme Switcher -->
       <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
         <span id="theme-icon">☀️</span>
@@ -206,7 +212,52 @@
 
   </main>
 
+  <!-- ================= Google AI Studio Gemini Modal ================= -->
+  <div id="gemini-api-modal" class="gemini-modal-backdrop" style="display: none;" onclick="if(event.target === this) window.app.closeGeminiModal()">
+    <div class="gemini-modal-card glass-panel">
+      <div class="gemini-modal-header">
+        <div class="modal-title-row">
+          <span class="modal-gemini-icon">✨</span>
+          <h3>Google AI Studio Gemini Settings</h3>
+        </div>
+        <button class="btn-modal-close" onclick="window.app.closeGeminiModal()">&times;</button>
+      </div>
+
+      <div class="gemini-modal-body">
+        <p class="modal-intro-text">
+          Connect your <strong>Google AI Studio API Key</strong> to activate studio-grade natural neural Malayalam voice narration and on-demand 4K 3D Pixar art generation for all 15 chapters.
+        </p>
+
+        <div class="api-key-input-group">
+          <label for="gemini-key-input">Gemini API Key (AIzaSy...):</label>
+          <div class="input-with-clear">
+            <input type="password" id="gemini-key-input" placeholder="Paste your Google AI Studio Gemini API key here..." autocomplete="off" />
+            <button class="btn-toggle-key-visibility" onclick="window.app.toggleKeyVisibility()" type="button" title="Show/Hide Key">👁️</button>
+          </div>
+          <small class="key-help-note">
+            🔒 Your key is securely stored in your browser's local storage and used directly for Google AI Studio API calls.
+          </small>
+        </div>
+
+        <div id="gemini-test-feedback" class="modal-feedback-banner" style="display: none;"></div>
+
+        <div class="modal-actions-row">
+          <button class="btn-ctrl btn-save-gemini-key" onclick="window.app.saveGeminiKey()">
+            💾 Save Key
+          </button>
+          <button class="btn-ctrl btn-test-gemini-key" onclick="window.app.testGeminiVoice()">
+            🔊 Test Natural Voice
+          </button>
+          <button class="btn-ctrl btn-clear-gemini-key" onclick="window.app.clearGeminiKey()">
+            🗑️ Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Bootstrap -->
   <script type="module" src="src/app.js"></script>
 </body>
 </html>
+

@@ -18,12 +18,17 @@ import { ExamSolverView } from './components/ExamSolverView.js';
 import { QuizEngine } from './components/QuizEngine.js';
 import { VoiceoverManager } from './components/VoiceoverManager.js';
 import { SoundEffects } from './components/SoundEffects.js';
+import { GeminiAIService } from './services/GeminiAIService.js';
+import { MotionGraphicsEngine } from './components/MotionGraphicsEngine.js';
 
 class AppController {
   constructor() {
     this.orchestrator = new MultiAgentOrchestrator();
     this.voiceover = new VoiceoverManager();
     this.sfx = new SoundEffects();
+    this.geminiService = new GeminiAIService();
+    this.voiceover.setGeminiService(this.geminiService);
+    this.motionGraphics = new MotionGraphicsEngine();
     this.slideDeck = new SlideDeckManager(CHAPTERS_DATA);
     this.classroom = new StoryClassroomManager();
     this.solver = new ExamSolverView(EXAM_PAPERS_DATA);
@@ -42,6 +47,7 @@ class AppController {
     this.loadSavedStars();
     this.setupTheme();
     this.setupNavigation();
+    this.setupGeminiKeyUI();
     this.initMotionCanvas();
     this.initThreeUniverse();
     this.initSlidesView();
@@ -51,6 +57,7 @@ class AppController {
     this.setupOrchestratorFeed();
     this.setupKeyboardShortcuts();
     this.updateHeaderStars();
+
 
     // Welcome message trace
     this.orchestrator.processPrompt({
@@ -339,6 +346,13 @@ class AppController {
 
     if (container && slide) {
       container.innerHTML = this.slideDeck.renderSlideHTML(slide);
+
+      // Attach 3D physics tilt and floating golden starlight particle canvas
+      const imgContainer = container.querySelector('.slide-img-container');
+      if (imgContainer && this.motionGraphics) {
+        this.motionGraphics.attach3DTilt(imgContainer);
+        this.motionGraphics.attachParticleCanvas(imgContainer);
+      }
     }
 
     const indicator = document.getElementById('slide-indicator');
@@ -378,6 +392,13 @@ class AppController {
     if (!container) return;
     const lesson = this.classroom.getLesson(chNum);
     container.innerHTML = this.classroom.renderLessonCard(lesson);
+
+    // Attach 3D physics tilt and floating particle canvas to lesson banner
+    const bannerArt = container.querySelector('.lesson-banner-art');
+    if (bannerArt && this.motionGraphics) {
+      this.motionGraphics.attach3DTilt(bannerArt);
+      this.motionGraphics.attachParticleCanvas(bannerArt);
+    }
   }
 
   speakStory(chNum) {
@@ -572,6 +593,172 @@ class AppController {
         while (feed.children.length > 25) feed.removeChild(feed.lastChild);
       }
     });
+  }
+
+  /* ---------------- Google AI Studio Gemini API Modal ---------------- */
+  setupGeminiKeyUI() {
+    this.updateGeminiKeyButtonUI();
+  }
+
+  updateGeminiKeyButtonUI() {
+    const btn = document.getElementById('btn-gemini-key');
+    const statusText = document.getElementById('gemini-key-status');
+    if (!btn || !statusText) return;
+
+    if (this.geminiService && this.geminiService.hasKey()) {
+      btn.classList.add('key-active');
+      statusText.textContent = '🟢 Gemini Ready';
+      btn.title = 'Google AI Studio Gemini Active: Natural Neural Malayalam Voice & 4K AI Art Enabled';
+    } else {
+      btn.classList.remove('key-active');
+      statusText.textContent = '🔑 Gemini AI';
+      btn.title = 'Click to connect Google AI Studio API Key for Natural Voice & 4K AI Art';
+    }
+  }
+
+  openGeminiModal() {
+    this.sfx.playPop();
+    const modal = document.getElementById('gemini-api-modal');
+    const input = document.getElementById('gemini-key-input');
+    const feedback = document.getElementById('gemini-test-feedback');
+    if (feedback) feedback.style.display = 'none';
+
+    if (input && this.geminiService) {
+      input.value = this.geminiService.getApiKey() || '';
+    }
+    if (modal) modal.style.display = 'flex';
+  }
+
+  closeGeminiModal() {
+    this.sfx.playPop();
+    const modal = document.getElementById('gemini-api-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  toggleKeyVisibility() {
+    const input = document.getElementById('gemini-key-input');
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  saveGeminiKey() {
+    this.sfx.playSparkle();
+    const input = document.getElementById('gemini-key-input');
+    const feedback = document.getElementById('gemini-test-feedback');
+    const key = input ? input.value.trim() : '';
+
+    if (!key) {
+      if (feedback) {
+        feedback.className = 'modal-feedback-banner modal-feedback-error';
+        feedback.textContent = '⚠️ Please enter a valid Gemini API Key.';
+        feedback.style.display = 'block';
+      }
+      return;
+    }
+
+    this.geminiService.setApiKey(key);
+    this.updateGeminiKeyButtonUI();
+
+    if (feedback) {
+      feedback.className = 'modal-feedback-banner modal-feedback-success';
+      feedback.textContent = '✅ API Key saved! Natural Malayalam voice and 4K AI art generation are now active.';
+      feedback.style.display = 'block';
+    }
+
+    setTimeout(() => {
+      this.closeGeminiModal();
+    }, 1200);
+  }
+
+  clearGeminiKey() {
+    this.sfx.playPop();
+    this.geminiService.clearApiKey();
+    this.updateGeminiKeyButtonUI();
+    const input = document.getElementById('gemini-key-input');
+    if (input) input.value = '';
+    const feedback = document.getElementById('gemini-test-feedback');
+    if (feedback) {
+      feedback.className = 'modal-feedback-banner modal-feedback-error';
+      feedback.textContent = '🗑️ Gemini API Key cleared.';
+      feedback.style.display = 'block';
+    }
+  }
+
+  async testGeminiVoice() {
+    const feedback = document.getElementById('gemini-test-feedback');
+    const input = document.getElementById('gemini-key-input');
+    const key = input ? input.value.trim() : '';
+
+    if (key) {
+      this.geminiService.setApiKey(key);
+      this.updateGeminiKeyButtonUI();
+    }
+
+    if (!this.geminiService.hasKey()) {
+      if (feedback) {
+        feedback.className = 'modal-feedback-banner modal-feedback-error';
+        feedback.textContent = '⚠️ Please enter an API key first to test.';
+        feedback.style.display = 'block';
+      }
+      return;
+    }
+
+    if (feedback) {
+      feedback.className = 'modal-feedback-banner modal-feedback-success';
+      feedback.textContent = '⏳ Testing Google AI Studio natural voice...';
+      feedback.style.display = 'block';
+    }
+
+    try {
+      await this.voiceover.speakMalayalam('നമസ്കാരം! ഗൂഗിൾ ജെമിനി വോയ്‌സ് ഇപ്പോൾ സജീവമാണ്. നിങ്ങൾക്കെല്ലാവർക്കും സ്വാഗതം!');
+      if (feedback) {
+        feedback.className = 'modal-feedback-banner modal-feedback-success';
+        feedback.textContent = '🎉 Natural Malayalam voice tested successfully!';
+      }
+    } catch (e) {
+      if (feedback) {
+        feedback.className = 'modal-feedback-banner modal-feedback-error';
+        feedback.textContent = `❌ Voice test error: ${e.message}`;
+      }
+    }
+  }
+
+  async generate4KArt(chapterNum) {
+    if (!this.geminiService.hasKey()) {
+      this.openGeminiModal();
+      const feedback = document.getElementById('gemini-test-feedback');
+      if (feedback) {
+        feedback.className = 'modal-feedback-banner modal-feedback-error';
+        feedback.textContent = '🔑 Please paste your Google AI Studio Gemini API Key to generate 4K 3D Pixar art!';
+        feedback.style.display = 'block';
+      }
+      return;
+    }
+
+    const chapter = CHAPTERS_DATA.find(c => c.number === Number(chapterNum)) || this.slideDeck.getCurrentSlide();
+    const imgEl = document.getElementById(`slide-hero-img-${chapter.number}`);
+    const btnEl = document.querySelector('.btn-slide-ai-art');
+
+    if (btnEl) btnEl.textContent = '⏳ Generating 4K...';
+    this.sfx.playSparkle();
+
+    try {
+      const newImageUrl = await this.geminiService.generate3DPixarArt(chapter);
+      if (imgEl) {
+        imgEl.style.transition = 'opacity 0.4s ease';
+        imgEl.style.opacity = '0';
+        setTimeout(() => {
+          imgEl.src = newImageUrl;
+          imgEl.style.opacity = '1';
+        }, 400);
+      }
+      chapter.imageUrl = newImageUrl;
+      if (btnEl) btnEl.textContent = '✨ 4K Pixar Generated!';
+      this.addStar(2);
+    } catch (e) {
+      alert(`Could not generate image: ${e.message}`);
+      if (btnEl) btnEl.textContent = '✨ 4K Pixar AI';
+    }
   }
 
   setupKeyboardShortcuts() {

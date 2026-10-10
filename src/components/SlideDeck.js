@@ -59,6 +59,37 @@ export class SlideDeckManager {
         <h2 class="slide-title-eng">${chapter.titleEng}</h2>
 
         <div class="slide-body-grid">
+          <!-- Column 1: Authentic Textbook Illustration Card -->
+          <div class="slide-picture-card">
+            <div class="card-header">
+              <span class="character-avatar">🎨</span>
+              <span class="character-name">പാഠപുസ്തക ചിത്രം (Lesson Art)</span>
+              <span class="art-badge-hd">3D Pixar HD</span>
+            </div>
+            <div class="slide-img-container" id="slide-img-container-${chapter.number}">
+              <img src="${chapter.imageUrl}" alt="${chapter.titleMal} - ${chapter.titleEng}" class="slide-hero-image ken-burns-active" id="slide-hero-img-${chapter.number}" loading="lazy" />
+              <div class="slide-img-overlay-bar">
+                <span>📖 Ch ${chapter.number} • 3D Motion Graphics</span>
+                <span class="motion-pill-badge">🎬 Live 3D</span>
+              </div>
+            </div>
+            <div class="slide-audio-quickbar">
+              <button class="btn-ctrl btn-slide-speak-mal" onclick="window.app && window.app.speakStoryMal ? window.app.speakStoryMal(${chapter.number}) : null" title="മലയാളം വിവരണം">
+                🔊 മലയാളം
+              </button>
+              <button class="btn-ctrl btn-slide-speak-eng" onclick="window.app && window.app.speakStory ? window.app.speakStory(${chapter.number}) : null" title="English Narration">
+                🔊 English
+              </button>
+              <button class="btn-ctrl btn-slide-stop" onclick="window.app && window.app.stopVoice ? window.app.stopVoice() : null" title="Stop Voice">
+                🛑 Stop
+              </button>
+              <button class="btn-ctrl btn-slide-ai-art" onclick="window.app && window.app.generate4KArt ? window.app.generate4KArt(${chapter.number}) : null" title="Generate 4K 3D Pixar Art with Gemini AI Studio">
+                ✨ 4K Pixar AI
+              </button>
+            </div>
+          </div>
+
+          <!-- Column 2: Leo's 5yo Story -->
           <div class="slide-story-card">
             <div class="card-header">
               <span class="character-avatar">🦁</span>
@@ -73,6 +104,7 @@ export class SlideDeckManager {
             </div>
           </div>
 
+          <!-- Column 3: Scripture & Galileo Agent Insights -->
           <div class="slide-scripture-card">
             <div class="card-header">
               <span class="icon-bible">📖</span>

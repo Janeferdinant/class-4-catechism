@@ -48,6 +48,14 @@ export class StoryClassroomManager {
         <h3 class="lesson-heading-mal">${lesson.titleMal}</h3>
         <h4 class="lesson-heading-eng">${lesson.titleEng}</h4>
 
+        <!-- Authentic Lesson Illustration Banner -->
+        <div class="lesson-banner-art">
+          <img src="${lesson.imageUrl || 'assets/textbook/ch' + lesson.number + '_p2.png'}" alt="${lesson.titleMal} - ${lesson.titleEng}" class="lesson-banner-img" loading="lazy" />
+          <div class="banner-caption-pill">
+            <span>🎨 ക്ലാസ് 4 പാഠപുസ്തക ചിത്രം • അദ്ധ്യായം ${lesson.number} (Official Textbook Illustration)</span>
+          </div>
+        </div>
+
         <div class="fairy-tale-story-box">
           <!-- Malayalam Story for 5-Year-Olds -->
           <div class="story-speech-bubble bubble-mal">

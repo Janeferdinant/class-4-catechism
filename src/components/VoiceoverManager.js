@@ -15,6 +15,8 @@ export class VoiceoverManager {
     this.onStartSpeaking = null;
     this.onEndSpeaking = null;
     this.currentUtterance = null;
+    this.geminiService = null;
+    this.currentAudioElement = null;
 
     if (this.synth) {
       this.loadVoices();
@@ -22,6 +24,10 @@ export class VoiceoverManager {
         this.synth.onvoiceschanged = () => this.loadVoices();
       }
     }
+  }
+
+  setGeminiService(geminiService) {
+    this.geminiService = geminiService;
   }
 
   loadVoices() {
@@ -108,19 +114,50 @@ export class VoiceoverManager {
 
     const isMal = targetLang === 'ml' || targetLang === 'ml-IN' || this.isMalayalamText(text);
 
+    // Clean up text of markdown and excessive symbols for smooth kid speech
+    const cleanText = text
+      .replace(/[*#_~`>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // 1. If Gemini AI Service is active with a key, stream natural neural Malayalam audio!
+    if (this.geminiService && this.geminiService.hasKey() && isMal) {
+      this.speaking = true;
+      if (this.onStartSpeaking) this.onStartSpeaking();
+
+      this.geminiService.synthesizeMalayalamVoice(cleanText)
+        .then(audio => {
+          this.currentAudioElement = audio;
+          audio.onended = () => {
+            this.speaking = false;
+            this.currentAudioElement = null;
+            if (this.onEndSpeaking) this.onEndSpeaking();
+            if (callback) callback();
+          };
+          audio.onerror = () => {
+            this.currentAudioElement = null;
+            this.speakFallback(cleanText, isMal, callback);
+          };
+          return audio.play();
+        })
+        .catch(err => {
+          console.warn('Gemini natural voice synthesis fallback:', err);
+          this.speakFallback(cleanText, isMal, callback);
+        });
+      return;
+    }
+
+    this.speakFallback(cleanText, isMal, callback);
+  }
+
+  speakFallback(cleanText, isMal, callback) {
     if (!this.synth) {
-      console.warn('SpeechSynthesis unavailable in this environment.');
+      this.speaking = false;
       if (callback) callback();
       return;
     }
 
     try {
-      // Clean up text of markdown and excessive symbols for smooth kid speech
-      const cleanText = text
-        .replace(/[*#_~`>]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-
       const utterance = new window.SpeechSynthesisUtterance(cleanText);
       utterance.rate = isMal ? Math.min(this.rate, 0.88) : this.rate; // Clear, relaxed pacing for Malayalam
       utterance.pitch = isMal ? 1.05 : this.pitch;
@@ -151,20 +188,28 @@ export class VoiceoverManager {
 
       this.currentUtterance = utterance;
 
-      // Unstick browser synthesis if paused
       if (this.synth.paused) {
         this.synth.resume();
       }
 
       this.synth.speak(utterance);
     } catch (e) {
-      console.error('Speech synthesis error:', e);
+      console.error('Speech synthesis fallback error:', e);
       this.speaking = false;
       if (callback) callback();
     }
   }
 
   stop() {
+    if (this.currentAudioElement) {
+      try {
+        this.currentAudioElement.pause();
+        this.currentAudioElement.currentTime = 0;
+      } catch (e) {
+        // ignore
+      }
+      this.currentAudioElement = null;
+    }
     if (this.synth) {
       try {
         this.synth.cancel();
@@ -177,3 +222,4 @@ export class VoiceoverManager {
     if (this.onEndSpeaking) this.onEndSpeaking();
   }
 }
+
