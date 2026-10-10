@@ -1,0 +1,59 @@
+{
+  "application": {
+    "name": "Multi-Agent Catechism Academy",
+    "version": "1.2.0",
+    "environment": "development",
+    "port": 8080,
+    "host": "localhost"
+  },
+  "ui": {
+    "defaultTheme": "dark",
+    "supportedThemes": ["dark", "light"],
+    "soundEffectsEnabled": true,
+    "defaultLanguage": "malayalam",
+    "supportedLanguages": ["malayalam", "english"]
+  },
+  "agents": {
+    "orchestratorModel": "gemini-1.5-flash",
+    "specialists": [
+      {
+        "id": "storyteller",
+        "name": "Storyteller & Pedagogy Specialist",
+        "role": "5-year-old child cognitive storytelling and moral lesson framing"
+      },
+      {
+        "id": "exam_solver",
+        "name": "Theological Exam Solver",
+        "role": "Textbook citation mapping and question paper answering"
+      },
+      {
+        "id": "visualizer_3d",
+        "name": "3D Universe & Motion Graphics Specialist",
+        "role": "Three.js WebGL node graphs and Ken Burns animations"
+      },
+      {
+        "id": "voiceover",
+        "name": "Bilingual Voiceover Specialist",
+        "role": "Neural Malayalam and English voice narration"
+      },
+      {
+        "id": "quiz_master",
+        "name": "Gamified Quiz Master",
+        "role": "Interactive feedback, star badging, and progress tracking"
+      }
+    ]
+  },
+  "audio": {
+    "ttsProvider": "msedge-neural",
+    "malayalamVoice": "ml-IN-SobhanaNeural",
+    "englishVoice": "en-US-JennyNeural",
+    "preGeneratedPath": "assets/audio/",
+    "enableFallbackWebSpeech": true
+  },
+  "visuals": {
+    "pixarAssetsPath": "assets/pixar/",
+    "textbookAssetsPath": "assets/textbook/",
+    "defaultView": "pixar",
+    "motionGraphics3D": true
+  }
+}

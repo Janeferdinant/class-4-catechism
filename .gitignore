@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+package-lock.json.bak
+
+# Environment and Credentials
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Scratch & Temporary Media
+.tempmediaStorage/
+.superpowers/
+scratch/
+scratch_audio/
+temp_audio_scratch/
+*.log
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+Desktop.ini

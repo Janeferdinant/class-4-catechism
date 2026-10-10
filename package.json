@@ -1,0 +1,26 @@
+{
+  "name": "multiagent-catechism-academy",
+  "version": "1.2.0",
+  "description": "Multi-Agent Interactive Catechism Academy (Class 4) with 3D WebGL Universe, Neural Malayalam Audio, Exam Solutions, and Gamified Quizzes",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx -y http-server -p 8080 -c-1",
+    "test": "node --test tests/*.test.js",
+    "audio:generate": "node scripts/generateNeuralMalayalamAudio.js"
+  },
+  "keywords": [
+    "multi-agent",
+    "catechism",
+    "threejs",
+    "webgl",
+    "malayalam-tts",
+    "gamification",
+    "interactive-learning"
+  ],
+  "author": "Antigravity Multi-Agent Team",
+  "license": "Proprietary",
+  "dependencies": {
+    "msedge-tts": "^2.0.9"
+  }
+}
