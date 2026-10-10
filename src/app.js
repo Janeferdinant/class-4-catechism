@@ -105,6 +105,10 @@ class AppController {
     if (this.mobilePres) this.mobilePres.updateStars(this.starsCount);
   }
 
+  updateStarsBadge() {
+    this.updateHeaderStars();
+  }
+
   handleLayoutChange(layout) {
     if (layout === 'mobile' || layout === 'preview') {
       if (this.mobilePres) {
@@ -382,15 +386,19 @@ class AppController {
     }
 
     if (resetStarsBtn) {
-      resetStarsBtn.addEventListener('click', () => {
-        if (typeof window !== 'undefined' && window.confirm && window.confirm('Do you want to reset your collected adventure stars to 0?')) {
-          this.starsCount = 0;
-          try { localStorage.setItem('class4-collected-stars', '0'); } catch (_) {}
-          this.updateStarsBadge();
-          this.updateSettingsPopupUI();
-          if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-          this.showToast('⭐ Stars reset to 0', '⭐');
-        }
+      resetStarsBtn.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        this.starsCount = 0;
+        try {
+          localStorage.setItem('adventure-stars', '0');
+          localStorage.setItem('class4-collected-stars', '0');
+        } catch (_) {}
+        this.updateHeaderStars();
+        if (this.desktopPres) this.desktopPres.updateStars(0);
+        if (this.mobilePres) this.mobilePres.updateStars(0);
+        this.updateSettingsPopupUI();
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.showToast('⭐ Stars reset to 0', '⭐');
       });
     }
 
