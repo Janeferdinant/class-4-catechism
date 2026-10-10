@@ -43,3 +43,24 @@ test('Settings Dropdown/Popup: app.js handles toggle, gear active state, and pre
   assert.ok(appJs.includes('setupMobileSettingsSheet'), 'Must contain setupMobileSettingsSheet()');
   assert.ok(appJs.includes('gear-active'), 'Must toggle gear-active class on gear icon on open/close');
 });
+
+test('Fixed Navigation: top header and bottom navigation stay visible at all times on scroll', () => {
+  const mobCss = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/mobile.css'), 'utf-8');
+
+  assert.ok(
+    mobCss.includes('.mobile-app-header') && mobCss.includes('position: fixed'),
+    'mobile-app-header must be position: fixed to stay visible at the top when scrolling'
+  );
+  assert.ok(
+    mobCss.includes('.mob-bottom-nav') && mobCss.includes('position: fixed'),
+    'mob-bottom-nav must be position: fixed to stay visible at the bottom when scrolling'
+  );
+  assert.ok(
+    mobCss.includes('.mobile-main-workspace') && mobCss.includes('padding-top:'),
+    'mobile-main-workspace must have top padding so content is not obscured by fixed header'
+  );
+  assert.ok(
+    mobCss.includes('.mobile-main-workspace') && mobCss.includes('padding-bottom:'),
+    'mobile-main-workspace must have bottom padding so content is not obscured by fixed bottom nav'
+  );
+});

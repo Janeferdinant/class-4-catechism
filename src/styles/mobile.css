@@ -42,22 +42,22 @@ body.mobile-preview-active .mob-bottom-nav {
   display: flex !important;
 }
 
-/* Mobile App Header (Fixed 54px) */
+/* Mobile App Header (Fixed 54px - Always Visible on Scroll) */
 .mobile-app-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 54px;
-  background: rgba(13, 17, 27, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(13, 17, 27, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-accent);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 14px;
-  z-index: 1000;
+  z-index: 10000;
   box-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
 }
 
@@ -115,10 +115,14 @@ body.mobile-preview-active .mob-bottom-nav {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Mobile Main Workspace */
+/* Mobile Main Workspace (Safe clearance for fixed top header and fixed bottom nav) */
 .mobile-main-workspace {
-  padding: 12px 12px 90px;
+  padding-top: 66px !important;
+  padding-bottom: 86px !important;
+  padding-left: 12px;
+  padding-right: 12px;
   max-width: 100%;
+  min-height: 100vh;
 }
 
 .mob-view-section {
@@ -1331,15 +1335,271 @@ body.mobile-preview-active .mob-bottom-nav {
   box-shadow: 0 0 14px rgba(245, 158, 11, 0.5) !important;
 }
 
-@media (max-width: 768px) {
-  .sheet-card.settings-popup-card {
-    top: 56px;
-    right: 8px;
-    left: auto;
-    width: min(380px, calc(100vw - 16px));
-    max-height: calc(100vh - 128px);
-    z-index: 100006;
-  }
+/* ==========================================================================
+   SETTINGS DROPDOWN POP-UP MODAL (Anchored Top-Right Under Gear Icon)
+   ========================================================================== */
+.mobile-settings-sheet {
+  display: none;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+}
+
+.mobile-settings-sheet.active {
+  display: block !important;
+}
+
+.sheet-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  z-index: 999999 !important;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.sheet-card.settings-popup-card {
+  position: fixed !important;
+  top: 60px !important;
+  right: 10px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: min(390px, calc(100vw - 20px)) !important;
+  max-height: calc(100vh - 130px) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(13, 17, 27, 0.98) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border: 1px solid var(--border-accent) !important;
+  border-radius: 22px !important;
+  padding: 16px 16px 20px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  z-index: 1000000 !important;
+  animation: popDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.popup-caret {
+  position: absolute !important;
+  top: -8px !important;
+  right: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: rgba(13, 17, 27, 0.98) !important;
+  border-left: 1px solid var(--border-accent) !important;
+  border-top: 1px solid var(--border-accent) !important;
+  transform: rotate(45deg) !important;
+}
+
+.sheet-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 14px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.sheet-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.sheet-icon {
+  font-size: 1.25rem !important;
+}
+
+.sheet-header h3 {
+  font-size: 1.1rem !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-family-display) !important;
+  margin: 0 !important;
+}
+
+.btn-close-sheet {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 50% !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1rem !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-close-sheet:active {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+}
+
+.sheet-section {
+  margin-bottom: 14px !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sheet-section:last-of-type {
+  border-bottom: none !important;
+}
+
+.sheet-section-title {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: var(--color-amber) !important;
+  margin-bottom: 8px !important;
+}
+
+.sheet-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.sheet-sublabel {
+  font-size: 0.84rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.sheet-pill-group {
+  display: flex !important;
+  gap: 6px !important;
+}
+
+.sheet-pill-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-muted) !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.sheet-pill-btn.active {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: var(--color-amber) !important;
+  color: var(--color-amber) !important;
+  font-weight: 700 !important;
+}
+
+.sheet-toggle-switch {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-muted) !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.sheet-toggle-switch.active {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+  color: #34d399 !important;
+}
+
+.sheet-action-btn {
+  flex: 1 !important;
+  min-height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-accent) !important;
+  background: var(--glass-bg) !important;
+  color: var(--text-primary) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.sheet-action-btn:active {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: var(--color-amber) !important;
+}
+
+.sheet-stars-card {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 10px 14px !important;
+}
+
+.sheet-stars-info {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.sheet-btn-secondary {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  color: #f87171 !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.sheet-divider {
+  height: 6px;
+}
+
+.sheet-credits {
+  text-align: center !important;
+  padding-top: 8px !important;
+}
+
+.sheet-credits .credit-title {
+  font-size: 0.72rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  color: var(--color-amber) !important;
+  margin-bottom: 2px !important;
+}
+
+.sheet-credits .credit-name {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 2px !important;
+}
+
+.sheet-credits .credit-dept {
+  font-size: 0.76rem !important;
+  color: var(--text-muted) !important;
+}
+
+.sheet-credits .credit-sub {
+  font-size: 0.7rem !important;
+  color: var(--text-muted) !important;
+  opacity: 0.8 !important;
+  margin-top: 2px !important;
 }
 
 

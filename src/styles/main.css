@@ -2972,6 +2972,8 @@ body.desktop-view-forced {
 
 .btn-mobile-menu {
   display: none;
+}
+
 .btn-mobile-menu,
 .mob-action-btn#mob-btn-menu {
   transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
