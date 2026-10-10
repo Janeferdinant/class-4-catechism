@@ -133,7 +133,7 @@ body {
   gap: var(--space-sm);
 }
 
-.theme-toggle-btn, .btn-audio-status {
+.theme-toggle-btn, .btn-mobile-toggle, .btn-audio-status {
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-medium);
@@ -145,10 +145,11 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;
   transition: all var(--transition-fast);
 }
 
-.theme-toggle-btn:hover, .btn-audio-status:hover {
+.theme-toggle-btn:hover, .btn-mobile-toggle:hover, .btn-audio-status:hover {
   background: var(--bg-surface-hover);
   border-color: var(--accent-primary);
 }
@@ -1962,24 +1963,6 @@ body {
   100% { transform: scale(1.05); opacity: 1; }
 }
 
-/* Responsive Breakpoints */
-@media (max-width: 1024px) {
-  .universe-layout {
-    grid-template-columns: 1fr;
-    height: auto;
-  }
-  .slide-body-grid {
-    grid-template-columns: 1fr;
-  }
-  .quiz-options-grid {
-    grid-template-columns: 1fr;
-  }
-  .app-header {
-    flex-wrap: wrap;
-    gap: var(--space-md);
-  }
-}
-
 /* ==========================================================================
    ACADEMIC MENTORSHIP & APPLICATION FOOTER STYLES
    ========================================================================== */
@@ -2083,12 +2066,711 @@ body {
   font-size: 18px;
 }
 
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE DESIGN SYSTEM (320px - 1024px)
+   ========================================================================== */
+
+/* TABLETS & SMALL LAPTOPS (<= 1024px) */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: var(--space-lg);
+  }
+  .universe-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .viewport-3d-card {
+    height: 500px;
+  }
+  .slide-body-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  .quiz-options-grid {
+    grid-template-columns: 1fr;
+  }
+  .app-header {
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+}
+
+/* SMARTPHONES & PORTRAIT TABLETS (<= 768px) */
 @media (max-width: 768px) {
+  :root {
+    --space-xl: 16px;
+    --space-2xl: 24px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Header & Navigation Optimization */
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 14px;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+  }
+
+  .brand-wrapper {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .brand-icon-orbit {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .brand-text h1 {
+    font-size: 1.1rem;
+  }
+
+  .brand-text p {
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+
+  /* Horizontally Scrollable Touch Navigation Bar */
+  .nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+  }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    justify-content: center;
+  }
+
+  /* Compact Header Utilities */
+  .header-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  #motion-audio-canvas {
+    display: none; /* Hide visual waveform canvas on mobile to prevent overflow */
+  }
+
+  .header-star-badge,
+  .btn-audio-status,
+  .btn-stop-audio,
+  .btn-gemini-key,
+  .btn-mobile-toggle,
+  .theme-toggle-btn {
+    min-height: 44px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    flex: 1 1 auto;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  /* Main Workspace Spacing */
+  .main-content {
+    padding: 12px 10px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* View 1: 3D Universe Mobile */
+  .universe-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    height: auto;
+  }
+
+  .viewport-3d-card {
+    height: 380px;
+    min-height: 340px;
+    border-radius: var(--radius-md);
+  }
+
+  .viewport-controls-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .filter-btn-group {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .filter-btn-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .view-ctrl-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .btn-view-ctrl {
+    flex: 1;
+    min-height: 44px;
+    font-size: 0.78rem;
+    justify-content: center;
+  }
+
+  .three-node-drawer {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 14px;
+    z-index: 200;
+  }
+
+  /* View 2: Picture Slides Mobile */
+  .slides-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .slide-nav-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .slide-nav-controls .btn-ctrl {
+    flex: 1;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .chapter-jump-select {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .slide-deck-frame {
+    padding: 16px 12px;
+    min-height: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  .slide-title-mal {
+    font-size: 1.45rem;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .slide-title-eng {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .slide-body-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .slide-picture-card,
+  .slide-story-card,
+  .slide-scripture-card {
+    padding: 14px 12px;
+  }
+
+  .slide-img-container {
+    min-height: 200px;
+  }
+
+  .slide-hero-image {
+    max-height: 240px;
+  }
+
+  .slide-audio-quickbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .slide-audio-quickbar .btn-ctrl {
+    min-height: 44px;
+    justify-content: center;
+    font-size: 0.82rem;
+  }
+
+  .slide-audio-quickbar .btn-slide-stop {
+    grid-column: span 2;
+  }
+
+  /* View 3: 5yo Story Classroom Mobile */
+  .classroom-intro-card {
+    padding: 16px 12px;
+    margin-bottom: 14px;
+  }
+
+  .classroom-intro-card h2 {
+    font-size: 1.35rem;
+  }
+
+  .chapter-selector-strip {
+    padding: 6px 0;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .chapter-selector-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ch-btn-pill {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  .lesson-card-5yo {
+    padding: 16px 12px;
+    border-radius: var(--radius-lg);
+  }
+
+  .lesson-heading-mal {
+    font-size: 1.4rem;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .lesson-heading-eng {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .lesson-banner-art {
+    min-height: 200px;
+    margin-bottom: var(--space-md);
+  }
+
+  .lesson-banner-img {
+    max-height: 240px;
+  }
+
+  .banner-caption-pill {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    left: 8px;
+    bottom: 8px;
+  }
+
+  .story-speech-bubble {
+    padding: 14px 12px;
+  }
+
+  .story-text-mal {
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .story-text-eng {
+    font-size: 0.92rem;
+  }
+
+  .golden-rule-banner {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .golden-rule-banner .star-icon {
+    font-size: 1.6rem;
+  }
+
+  .golden-rule-mal {
+    font-size: 1.05rem;
+  }
+
+  .action-buttons-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .action-buttons-row button {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    font-size: 0.92rem;
+  }
+
+  /* View 4: Exam Solver Mobile */
+  .solver-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 10px;
+  }
+
+  .paper-tabs-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    gap: 6px;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  .paper-tabs-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .paper-tab-btn {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .solver-search-input {
+    width: 100%;
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .question-card {
+    padding: 14px 12px;
+  }
+
+  .q-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .citation-badge {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 4px;
+    font-size: 0.75rem;
+  }
+
+  .q-text-mal {
+    font-size: 1.15rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .q-text-eng {
+    font-size: 0.95rem;
+  }
+
+  .q-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .q-actions button {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  /* View 5: Gamified Quizzes Mobile */
+  .quiz-wrapper {
+    padding: 0;
+  }
+
+  .quiz-adventure-card {
+    padding: 16px 12px;
+    border-radius: var(--radius-lg);
+  }
+
+  .quiz-ribbon {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .quiz-star-counter,
+  .quiz-progress-pill,
+  .btn-voice-mini {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .question-emoji-bubble {
+    font-size: 2.6rem;
+  }
+
+  .q-mal-title {
+    font-size: 1.3rem;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .q-eng-subtitle {
+    font-size: 0.98rem;
+  }
+
+  .btn-choice-bubbly {
+    min-height: 54px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    gap: 10px;
+  }
+
+  .btn-bubble-next {
+    width: 100%;
+    margin-left: 0;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  /* Modals on Mobile */
+  .gemini-modal-card {
+    padding: 18px 14px;
+    width: 95%;
+    max-width: 95%;
+  }
+
+  .modal-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-actions-row .btn-ctrl {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  /* Academic Footer Mobile */
+  .app-footer {
+    padding: var(--space-md) var(--space-sm) var(--space-lg);
+  }
+
   .footer-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    padding: 16px 20px;
+    padding: 16px 14px;
   }
+
+  .footer-mentor-card {
+    gap: 12px;
+  }
+
+  .mentor-badge-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .mentor-info .mentor-name {
+    font-size: 0.98rem;
+  }
+
+  .mentor-info .mentor-dept {
+    font-size: 0.82rem;
+  }
+}
+
+/* SMARTPHONES & COMPACT PHONES (<= 480px) */
+@media (max-width: 480px) {
+  .brand-text h1 {
+    font-size: 1rem;
+  }
+
+  .brand-text p {
+    font-size: 0.68rem;
+  }
+
+  .header-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .header-star-badge {
+    grid-column: span 2;
+  }
+
+  .tab-btn {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+  }
+
+  .slide-title-mal {
+    font-size: 1.3rem;
+  }
+
+  .lesson-heading-mal {
+    font-size: 1.25rem;
+  }
+
+  .q-mal-title {
+    font-size: 1.2rem;
+  }
+
+  .slide-audio-quickbar {
+    grid-template-columns: 1fr;
+  }
+
+  .slide-audio-quickbar .btn-slide-stop {
+    grid-column: span 1;
+  }
+}
+
+/* ULTRA-COMPACT SMARTPHONES (<= 360px - e.g. 320px iPhone SE) */
+@media (max-width: 360px) {
+  .app-header {
+    padding: 8px 10px;
+  }
+
+  .brand-icon-orbit {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .brand-text h1 {
+    font-size: 0.92rem;
+  }
+
+  .main-content {
+    padding: 8px 6px;
+  }
+
+  .slide-deck-frame,
+  .lesson-card-5yo,
+  .question-card,
+  .quiz-adventure-card {
+    padding: 12px 8px;
+    border-radius: var(--radius-md);
+  }
+
+  .tab-btn {
+    padding: 5px 8px;
+    font-size: 0.74rem;
+  }
+
+  .slide-title-mal,
+  .lesson-heading-mal {
+    font-size: 1.18rem;
+  }
+
+  .btn-choice-bubbly {
+    padding: 10px 8px;
+    font-size: 0.92rem;
+  }
+}
+
+/* FORCED MOBILE VIEW TOGGLE OVERRIDE (.mobile-view-active) */
+.mobile-view-active .main-content {
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-xl);
+  padding: 14px 10px;
+}
+
+.mobile-view-active .universe-layout {
+  grid-template-columns: 1fr;
+  height: auto;
+}
+
+.mobile-view-active .viewport-3d-card {
+  height: 380px;
+}
+
+.mobile-view-active .slide-body-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-view-active .slide-deck-frame {
+  padding: 16px 12px;
+  min-height: auto;
+}
+
+.mobile-view-active .slide-title-mal {
+  font-size: 1.45rem;
+}
+
+.mobile-view-active .lesson-card-5yo {
+  padding: 16px 12px;
+}
+
+.mobile-view-active .quiz-adventure-card {
+  padding: 16px 12px;
+}
+
+.mobile-view-active .question-card {
+  padding: 14px 12px;
+}
+
+.mobile-view-active .slide-audio-quickbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.mobile-view-active .slide-audio-quickbar .btn-slide-stop {
+  grid-column: span 2;
+}
+
+.mobile-view-active .action-buttons-row {
+  flex-direction: column;
+}
+
+.mobile-view-active .action-buttons-row button {
+  width: 100%;
 }
 

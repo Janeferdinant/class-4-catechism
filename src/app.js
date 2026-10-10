@@ -46,6 +46,7 @@ class AppController {
   init() {
     this.loadSavedStars();
     this.setupTheme();
+    this.setupViewMode();
     this.setupNavigation();
     this.setupGeminiKeyUI();
     this.initMotionCanvas();
@@ -110,6 +111,44 @@ class AppController {
     const themeLabel = document.getElementById('theme-label');
     if (themeLabel) {
       themeLabel.textContent = theme === 'dark' ? 'Daylight Mode' : 'Night Mode';
+    }
+  }
+
+  /* ---------------- Mobile / Desktop View Mode Toggle ---------------- */
+  setupViewMode() {
+    const savedMode = localStorage.getItem('app-view-mode') || 'auto';
+    this.setViewMode(savedMode);
+
+    const toggleBtn = document.getElementById('btn-mobile-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.toggleViewMode();
+      });
+    }
+  }
+
+  toggleViewMode() {
+    const nextMode = this.viewMode === 'mobile' ? 'desktop' : 'mobile';
+    this.setViewMode(nextMode);
+  }
+
+  setViewMode(mode) {
+    this.viewMode = mode;
+    localStorage.setItem('app-view-mode', mode);
+    const iconEl = document.getElementById('mobile-toggle-icon');
+    const labelEl = document.getElementById('mobile-toggle-label');
+
+    if (mode === 'mobile') {
+      document.documentElement.classList.add('mobile-view-active');
+      document.body.classList.add('mobile-view-active');
+      if (iconEl) iconEl.textContent = '💻';
+      if (labelEl) labelEl.textContent = 'Desktop View';
+    } else {
+      document.documentElement.classList.remove('mobile-view-active');
+      document.body.classList.remove('mobile-view-active');
+      if (iconEl) iconEl.textContent = '📱';
+      if (labelEl) labelEl.textContent = 'Mobile View';
     }
   }
 
