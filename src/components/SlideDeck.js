@@ -86,6 +86,9 @@ export class SlideDeckManager {
               <button class="btn-ctrl btn-slide-ai-art" onclick="window.app && window.app.generate4KArt ? window.app.generate4KArt(${chapter.number}) : null" title="Generate 4K 3D Pixar Art with Gemini AI Studio">
                 ✨ 4K Pixar AI
               </button>
+              <button class="btn-ctrl btn-slide-toggle-art" onclick="window.app && window.app.toggleSlideArtMode ? window.app.toggleSlideArtMode(${chapter.number}) : null" title="Toggle between 3D Pixar Art and Textbook Illustration">
+                🔄 3D / Scan
+              </button>
             </div>
           </div>
 

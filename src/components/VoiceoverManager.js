@@ -30,7 +30,54 @@ export class VoiceoverManager {
     this.geminiService = geminiService;
   }
 
+  playStaticAudio(audioUrl, onComplete) {
+    this.stop();
+    if (!audioUrl) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    if (typeof window !== 'undefined' && window.Audio) {
+      try {
+        const audio = new Audio(audioUrl);
+        this.currentAudioElement = audio;
+        this.speaking = true;
+        if (this.onStartSpeaking) this.onStartSpeaking();
+
+        audio.onended = () => {
+          this.speaking = false;
+          this.currentAudioElement = null;
+          if (this.onEndSpeaking) this.onEndSpeaking();
+          if (onComplete) onComplete();
+        };
+
+        audio.onerror = (err) => {
+          console.warn('Static audio playback error:', err);
+          this.speaking = false;
+          this.currentAudioElement = null;
+          if (this.onEndSpeaking) this.onEndSpeaking();
+          if (onComplete) onComplete();
+        };
+
+        audio.play().catch(e => {
+          console.warn('Static audio play prevented:', e);
+          this.speaking = false;
+          this.currentAudioElement = null;
+          if (this.onEndSpeaking) this.onEndSpeaking();
+          if (onComplete) onComplete();
+        });
+        return audio;
+      } catch (e) {
+        console.error('Audio initialization error:', e);
+        if (onComplete) onComplete();
+      }
+    } else {
+      if (onComplete) onComplete();
+    }
+  }
+
   loadVoices() {
+
     if (!this.synth) return;
     try {
       this.voices = this.synth.getVoices() || [];

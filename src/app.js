@@ -403,16 +403,51 @@ class AppController {
 
   speakStory(chNum) {
     this.sfx.playPop();
+    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
+    if (ch && ch.audioUrlEng) {
+      this.voiceover.playStaticAudio(ch.audioUrlEng, () => {
+        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
+      });
+      return;
+    }
     const lesson = this.classroom.getLesson(chNum);
     this.speakText(`Chapter ${lesson.number}: ${lesson.titleEng}. ${lesson.story5yo} Today's golden rule: ${lesson.moralLesson}`);
   }
 
   speakStoryMal(chNum) {
     this.sfx.playPop();
+    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
+    if (ch && ch.audioUrlMal) {
+      this.voiceover.playStaticAudio(ch.audioUrlMal, () => {
+        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
+      });
+      return;
+    }
     const lesson = this.classroom.getLesson(chNum);
     const text = `അദ്ധ്യായം ${lesson.number}: ${lesson.titleMal}. ${lesson.story5yoMal || lesson.story5yo}. ഇന്നത്തെ സുവർണ്ണ പാഠം: ${lesson.moralLessonMal || ''}. ${lesson.scripture || ''}`;
     this.speakMalayalam(text);
   }
+
+  toggleSlideArtMode(chNum) {
+    this.sfx.playPop();
+    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
+    if (!ch) return;
+    const imgEl = document.getElementById(`slide-hero-img-${ch.number}`);
+    if (!imgEl) return;
+
+    const is3D = imgEl.src.includes('pixar');
+    const newSrc = is3D ? ch.textbookUrl : ch.imageUrl;
+    imgEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    imgEl.style.opacity = '0';
+    imgEl.style.transform = 'scale(0.95)';
+
+    setTimeout(() => {
+      imgEl.src = newSrc;
+      imgEl.style.opacity = '1';
+      imgEl.style.transform = 'scale(1)';
+    }, 300);
+  }
+
 
   awardStar(chNum) {
     this.addStar(1);
