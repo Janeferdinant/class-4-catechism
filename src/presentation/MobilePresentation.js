@@ -15,6 +15,7 @@ export class MobilePresentation {
     this.activePaperId = '2025_s1';
     this.currentQuizIndex = 0;
     this.is3dOpen = false;
+    this.slideArtMode = 'pixar';
   }
 
   init() {
@@ -106,20 +107,23 @@ export class MobilePresentation {
     if (!container) return;
 
     container.innerHTML = CHAPTERS_DATA.map(ch => `
-      <div class="mob-ch-card glass-panel" data-ch="${ch.id}">
+      <div class="mob-ch-card glass-panel" data-ch="${ch.number}">
         <div class="mob-ch-thumb-wrap">
-          <img src="${ch.imagePrompt}" alt="${ch.titleEng}" class="mob-ch-thumb" loading="lazy" />
-          <span class="mob-ch-badge">Ch ${ch.id}</span>
+          <img src="${ch.imageUrl}" alt="${ch.titleEng}" class="mob-ch-thumb" loading="lazy" />
+          <span class="mob-ch-badge">Ch ${ch.number}</span>
         </div>
         <div class="mob-ch-info">
           <h4 class="mob-ch-title-mal">${ch.titleMal}</h4>
           <p class="mob-ch-title-eng">${ch.titleEng}</p>
           <div class="mob-ch-actions">
-            <button class="mob-btn-listen" onclick="window.app.playVoice('chapter', ${ch.id})">
-              🔊 കേൾക്കുക (Listen)
+            <button class="mob-btn-audio-pill mal" onclick="window.app.playVoice('mal', ${ch.number})" title="Listen in Malayalam">
+              🔊 മലയാളം
             </button>
-            <button class="mob-btn-open-lesson" onclick="window.mobileApp.jumpToChapterLesson(${ch.id})">
-              📖 പാഠം (Story)
+            <button class="mob-btn-audio-pill eng" onclick="window.app.playVoice('eng', ${ch.number})" title="Listen in English">
+              🔊 English
+            </button>
+            <button class="mob-btn-open-lesson" onclick="window.mobileApp.jumpToChapterLesson(${ch.number})">
+              📖 പാഠം
             </button>
           </div>
         </div>
@@ -132,30 +136,43 @@ export class MobilePresentation {
     const container = document.getElementById('mob-slide-card-container');
     if (!container) return;
 
-    const ch = CHAPTERS_DATA.find(c => c.id === this.activeChapter) || CHAPTERS_DATA[0];
+    const ch = CHAPTERS_DATA.find(c => c.number === this.activeChapter) || CHAPTERS_DATA[0];
+    const isTextbook = this.slideArtMode === 'textbook';
+    const currentImg = isTextbook ? ch.textbookUrl : ch.imageUrl;
 
     container.innerHTML = `
       <div class="mob-slide-hero">
-        <img src="${ch.imagePrompt}" alt="${ch.titleEng}" class="mob-slide-img" />
-        <div class="mob-slide-indicator">Chapter ${ch.id} of 15</div>
+        <img id="mob-slide-hero-img" src="${currentImg}" alt="${ch.titleEng}" class="mob-slide-img" />
+        <div class="mob-slide-badge-row">
+          <span class="mob-slide-indicator">Chapter ${ch.number} of 15</span>
+          <button class="mob-btn-art-toggle" onclick="window.mobileApp.toggleSlideArtMode()">
+            🔄 ${isTextbook ? 'Show 3D Art 🖼️' : 'Show Textbook Scan 📖'}
+          </button>
+        </div>
       </div>
       <div class="mob-slide-content">
         <h3 class="mob-slide-title-mal">${ch.titleMal}</h3>
         <p class="mob-slide-title-eng">${ch.titleEng}</p>
         <div class="mob-slide-story-box">
-          <p class="mob-slide-story-text">${ch.story5yoMal || ch.storyEng}</p>
+          <p class="mob-slide-story-text">${ch.story5yoMal || ch.story5yo}</p>
         </div>
         <div class="mob-slide-audio-cta">
-          <button class="mob-btn-big-audio" onclick="window.app.playVoice('chapter', ${ch.id})">
-            🔊 മലയാളം കഥ കേൾക്കൂ (Play Natural Voice)
+          <button class="mob-btn-big-audio mal" onclick="window.app.playVoice('mal', ${ch.number})">
+            🔊 മലയാളം കഥ കേൾക്കൂ (Play Malayalam Audio)
+          </button>
+          <button class="mob-btn-big-audio eng" onclick="window.app.playVoice('eng', ${ch.number})">
+            🔊 English Story Narration (Play English Audio)
+          </button>
+          <button class="mob-btn-stop-audio-pill" onclick="window.app.stopVoice()">
+            🛑 Stop Audio (ഓഡിയോ നിർത്തുക)
           </button>
         </div>
         <div class="mob-slide-nav-row">
-          <button class="mob-slide-nav-btn" onclick="window.mobileApp.prevSlide()" ${ch.id === 1 ? 'disabled' : ''}>
+          <button class="mob-slide-nav-btn" onclick="window.mobileApp.prevSlide()" ${ch.number === 1 ? 'disabled' : ''}>
             ◀ മുമ്പത്തേത് (Prev)
           </button>
-          <span class="mob-slide-counter">${ch.id} / 15</span>
-          <button class="mob-slide-nav-btn" onclick="window.mobileApp.nextSlide()" ${ch.id === 15 ? 'disabled' : ''}>
+          <span class="mob-slide-counter">${ch.number} / 15</span>
+          <button class="mob-slide-nav-btn" onclick="window.mobileApp.nextSlide()" ${ch.number === 15 ? 'disabled' : ''}>
             അടുത്തത് (Next) ▶
           </button>
         </div>
@@ -163,17 +180,37 @@ export class MobilePresentation {
     `;
   }
 
+  toggleSlideArtMode() {
+    this.slideArtMode = this.slideArtMode === 'textbook' ? 'pixar' : 'textbook';
+    if (this.app?.sfx?.playPop) this.app.sfx.playPop();
+    const ch = CHAPTERS_DATA.find(c => c.number === this.activeChapter) || CHAPTERS_DATA[0];
+    const imgEl = document.getElementById('mob-slide-hero-img');
+    if (imgEl && ch) {
+      imgEl.style.transition = 'opacity 0.25s ease';
+      imgEl.style.opacity = '0';
+      setTimeout(() => {
+        imgEl.src = this.slideArtMode === 'textbook' ? ch.textbookUrl : ch.imageUrl;
+        imgEl.style.opacity = '1';
+        this.renderSlidesView();
+      }, 250);
+    } else {
+      this.renderSlidesView();
+    }
+  }
+
   nextSlide() {
     if (this.activeChapter < 15) {
       this.activeChapter++;
+      if (this.app) this.app.activeChapter = this.activeChapter;
       this.renderSlidesView();
       if (this.app?.sfx?.playPop) this.app.sfx.playPop();
     }
   }
 
   prevSlide() {
-    if (this.activeChapter > 15) {
+    if (this.activeChapter > 1) {
       this.activeChapter--;
+      if (this.app) this.app.activeChapter = this.activeChapter;
       this.renderSlidesView();
       if (this.app?.sfx?.playPop) this.app.sfx.playPop();
     }
@@ -188,48 +225,56 @@ export class MobilePresentation {
     strip.innerHTML = `
       <div class="mob-pill-scroll">
         ${CHAPTERS_DATA.map(ch => `
-          <button class="mob-chapter-pill ${ch.id === this.activeChapter ? 'active' : ''}" onclick="window.mobileApp.jumpToChapterLesson(${ch.id})">
-            Ch ${ch.id}
+          <button class="mob-chapter-pill ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.mobileApp.jumpToChapterLesson(${ch.number})">
+            Ch ${ch.number}
           </button>
         `).join('')}
       </div>
     `;
 
-    const ch = CHAPTERS_DATA.find(c => c.id === this.activeChapter) || CHAPTERS_DATA[0];
+    const ch = CHAPTERS_DATA.find(c => c.number === this.activeChapter) || CHAPTERS_DATA[0];
 
     card.innerHTML = `
       <div class="mob-lesson-header">
-        <span class="mob-lesson-badge">പാഠം ${ch.id}</span>
+        <span class="mob-lesson-badge">പാഠം ${ch.number}</span>
         <h2 class="mob-lesson-heading-mal">${ch.titleMal}</h2>
         <p class="mob-lesson-heading-eng">${ch.titleEng}</p>
       </div>
       <div class="mob-lesson-image-wrap">
-        <img src="${ch.imagePrompt}" alt="${ch.titleEng}" class="mob-lesson-banner-img" />
+        <img src="${ch.imageUrl}" alt="${ch.titleEng}" class="mob-lesson-banner-img" />
       </div>
       <div class="mob-lesson-section">
         <h4 class="mob-sec-label">🌟 കുഞ്ഞു കഥ (5-Year-Old Story)</h4>
         <p class="mob-sec-body">${ch.story5yoMal}</p>
-        <button class="mob-btn-section-audio" onclick="window.app.playVoice('story', ${ch.id})">
-          🔊 കഥ കേൾക്കാം (Listen to Story)
-        </button>
+        <p class="mob-sec-body text-secondary" style="font-size:0.88rem; margin-top:8px;">${ch.story5yo}</p>
+        <div class="mob-lesson-audio-row">
+          <button class="mob-btn-section-audio mal" onclick="window.app.playVoice('mal', ${ch.number})">
+            🔊 മലയാളം കഥ (Malayalam Audio)
+          </button>
+          <button class="mob-btn-section-audio eng" onclick="window.app.playVoice('eng', ${ch.number})">
+            🔊 English Narration
+          </button>
+        </div>
       </div>
       <div class="mob-lesson-section highlight">
         <h4 class="mob-sec-label">❤️ നമ്മൾ പഠിക്കേണ്ട കാര്യം (Golden Rule)</h4>
         <p class="mob-sec-body">${ch.moralLessonMal}</p>
-        <button class="mob-btn-section-audio" onclick="window.app.playVoice('lesson', ${ch.id})">
-          🌟 പാഠം കേൾക്കാം (Listen)
+        <p class="mob-sec-body text-secondary" style="font-size:0.88rem; margin-top:8px;">${ch.moralLesson}</p>
+        <button class="mob-btn-section-audio moral" onclick="window.app.playVoice('lesson', ${ch.number})">
+          🌟 സുവർണ്ണ പാഠം കേൾക്കാം (Listen to Lesson)
         </button>
       </div>
       <div class="mob-lesson-section">
         <h4 class="mob-sec-label">📖 ദൈവവചനം (Scripture)</h4>
-        <blockquote class="mob-scripture-quote">"${ch.verseMal}"</blockquote>
-        <p class="mob-scripture-ref">— ${ch.verseRef}</p>
+        <blockquote class="mob-scripture-quote">"${ch.scripture}"</blockquote>
+        ${ch.scriptureEng ? `<p class="mob-scripture-ref">"${ch.scriptureEng}"</p>` : ''}
       </div>
     `;
   }
 
-  jumpToChapterLesson(chId) {
-    this.activeChapter = chId;
+  jumpToChapterLesson(chNum) {
+    this.activeChapter = Number(chNum) || 1;
+    if (this.app) this.app.activeChapter = this.activeChapter;
     this.renderStoryClassroomView();
     this.renderSlidesView();
     this.switchMobileView('classroom');

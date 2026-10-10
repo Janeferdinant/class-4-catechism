@@ -813,6 +813,59 @@ class AppController {
     if (indicator) indicator.textContent = '🔇 Audio Stopped';
   }
 
+  playVoice(lang = 'mal', chNumber = 1) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+
+    // Stop any existing playback first to prevent overlapping tracks
+    this.stopVoice();
+
+    // Normalize chapter number: could be 1, "1", "ch1"
+    let num = 1;
+    if (typeof chNumber === 'number') {
+      num = chNumber;
+    } else if (typeof chNumber === 'string') {
+      num = parseInt(chNumber.replace(/\D/g, ''), 10) || 1;
+    }
+
+    const ch = CHAPTERS_DATA.find(c => c.number === num) || CHAPTERS_DATA[0];
+    if (!ch) return;
+
+    const isEng = (lang === 'eng' || lang === 'english');
+    const isLesson = (lang === 'lesson');
+    const audioUrl = isEng ? ch.audioUrlEng : ch.audioUrlMal;
+    const langLabel = isEng ? 'English' : 'മലയാളം';
+
+    const indicator = document.getElementById('audio-indicator');
+    if (indicator) indicator.textContent = `🔊 Playing Ch ${ch.number} (${langLabel})`;
+    if (this.motionCanvas) this.motionCanvas.setAudioActive(true);
+
+    if (isLesson) {
+      const lessonText = `അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. സുവർണ്ണ പാഠം: ${ch.moralLessonMal || ch.moralLesson}.`;
+      this.speakMalayalam(lessonText);
+      return;
+    }
+
+    if (audioUrl) {
+      this.voiceover.playStaticAudio(audioUrl, () => {
+        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
+        if (indicator) indicator.textContent = '🔇 Audio Ready';
+      }, (err) => {
+        console.warn('Audio playback issue, trying speech fallback:', err);
+        if (isEng) {
+          this.speakText(`${ch.titleEng}. ${ch.story5yo} Golden rule: ${ch.moralLesson}`);
+        } else {
+          this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ch.story5yo}`);
+        }
+      });
+    } else {
+      if (isEng) {
+        this.speakText(`${ch.titleEng}. ${ch.story5yo} Golden rule: ${ch.moralLesson}`);
+      } else {
+        this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ch.story5yo}`);
+      }
+    }
+  }
+
   switchMascotVoice(characterName) {
     this.sfx.playSparkle();
     this.currentMascot = characterName;

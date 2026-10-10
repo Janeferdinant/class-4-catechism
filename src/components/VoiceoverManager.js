@@ -30,7 +30,7 @@ export class VoiceoverManager {
     this.geminiService = geminiService;
   }
 
-  playStaticAudio(audioUrl, onComplete) {
+  playStaticAudio(audioUrl, onComplete, onError) {
     this.stop();
     if (!audioUrl) {
       if (onComplete) onComplete();
@@ -56,7 +56,8 @@ export class VoiceoverManager {
           this.speaking = false;
           this.currentAudioElement = null;
           if (this.onEndSpeaking) this.onEndSpeaking();
-          if (onComplete) onComplete();
+          if (onError) onError(err);
+          else if (onComplete) onComplete();
         };
 
         audio.play().catch(e => {
@@ -64,12 +65,14 @@ export class VoiceoverManager {
           this.speaking = false;
           this.currentAudioElement = null;
           if (this.onEndSpeaking) this.onEndSpeaking();
-          if (onComplete) onComplete();
+          if (onError) onError(e);
+          else if (onComplete) onComplete();
         });
         return audio;
       } catch (e) {
         console.error('Audio initialization error:', e);
-        if (onComplete) onComplete();
+        if (onError) onError(e);
+        else if (onComplete) onComplete();
       }
     } else {
       if (onComplete) onComplete();
