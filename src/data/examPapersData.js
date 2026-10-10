@@ -260,7 +260,7 @@ export const EXAM_PAPERS_DATA = [
     year: "2024-25",
     semester: 1,
     title: "First Semester Examination 2024-25 (ക്ലാസ്സ് 4)",
-    syllabus: "Chapters 1 to 8 (മാനന്തവാടി രൂപത മതബോധനകേന്ദ്രം)",
+    syllabus: "Chapters 1 to 8",
     totalMarks: 80,
     questions: [
       {
@@ -402,7 +402,7 @@ export const EXAM_PAPERS_DATA = [
     year: "2025-26",
     semester: 1,
     title: "First Semester Examination 2025-26 (ക്ലാസ്സ് 4)",
-    syllabus: "Chapters 1 to 8 (മാനന്തവാടി രൂപത മതബോധനകേന്ദ്രം)",
+    syllabus: "Chapters 1 to 8",
     totalMarks: 80,
     questions: [
       {
@@ -544,7 +544,7 @@ export const EXAM_PAPERS_DATA = [
     year: "2025-26",
     semester: 2,
     title: "Second Semester Examination 2025-26 (ക്ലാസ്സ് 4)",
-    syllabus: "Chapters 9 to 15 (മാനന്തവാടി രൂപത മതബോധനകേന്ദ്രം)",
+    syllabus: "Chapters 9 to 15",
     totalMarks: 80,
     questions: [
       {

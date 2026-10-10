@@ -378,25 +378,25 @@
 
   <!-- ================= DEDICATED MOBILE PRESENTATION LAYER ================= -->
   <div id="mobile-layout-root" class="mobile-layout-root" style="display: none;">
-    <!-- Dedicated Mobile Header -->
+    <!-- Dedicated Mobile Header (56px, dark navy in both themes, per Mockup 07) -->
     <header class="mobile-app-header">
       <div class="mob-brand">
-        <span class="mob-logo">✨</span>
-        <span class="mob-title">Class 4 Catechism</span>
+        <span class="mob-logo-cross">✝</span>
+        <h1 class="mob-title-serif">Class 4 Catechism</h1>
       </div>
       <div class="mob-header-actions">
         <div class="mob-star-badge" title="Collected Stars">
-          <span class="mob-star-icon">⭐</span>
+          <span class="mob-star-icon">★</span>
           <span id="mob-header-star-count">0</span>
         </div>
+        <button id="mob-btn-stop-audio" class="mob-action-btn mob-header-audio-chip" title="Stop Audio" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
+          🛑 Stop
+        </button>
         <button id="mob-btn-theme" class="mob-action-btn" title="Toggle Day/Night Theme" aria-label="Toggle Theme">
           🌓
         </button>
-        <button id="mob-btn-stop-audio" class="mob-action-btn" title="Stop Audio" onclick="window.app.stopVoice()">
-          🛑
-        </button>
-        <button id="mob-btn-menu" class="mob-action-btn" title="Settings & Menu" aria-label="Settings">
-          ⚙️
+        <button id="mob-btn-menu" class="mob-action-btn" title="Navigation & Settings" aria-label="Settings">
+          ☰
         </button>
       </div>
     </header>
@@ -407,16 +407,27 @@
       <section id="mob-view-universe" class="mob-view-section active">
         <div class="mob-hero-banner celestial-mob-hero glass-panel">
           <div class="mob-hero-content">
-            <span class="mob-hero-badge">✨ 3D Knowledge Adventure</span>
-            <h3 class="mob-hero-headline">Welcome to Class 4 Catechism</h3>
+            <span class="mob-hero-kicker">Welcome to</span>
+            <h2 class="mob-hero-headline">Class 4 Catechism</h2>
             <p class="mob-hero-subheadline">Jesus, the Source of Life • ഈശോ ജീവന്റെ ഉറവിടം</p>
-            <div class="mob-hero-cta-row" style="margin-top: 10px;">
+            <div class="mob-hero-cta-row" style="margin-top: 10px; display: flex; gap: 8px;">
               <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle">
                 ✨ Explore the Map ➔
+              </button>
+              <button id="mob-btn-agent-console" class="mob-btn-console-toggle" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()">
+                🤖 Learning Console
               </button>
             </div>
           </div>
         </div>
+
+        <!-- Compact Mentor Card directly under the hero (Section 5.2 requirement) -->
+        <div class="mob-compact-mentor-under-hero glass-panel">
+          <span class="mob-mentor-kicker">ACADEMIC MENTOR</span>
+          <h4 class="mob-mentor-name">Asst. Prof. Jane Rose</h4>
+          <p class="mob-mentor-dept">Department of Computer Science & Engineering (CSE)</p>
+        </div>
+
         <div id="mob-3d-view-box" class="mob-3d-view-box glass-panel" style="display: none;">
           <div class="mob-3d-hint">👆 Touch & drag to orbit • Pinch to zoom</div>
           <div id="mob-three-container" class="mob-three-container"></div>
@@ -488,6 +499,85 @@
         <span class="mob-nav-label">Quiz</span>
       </button>
     </nav>
+
+    <!-- Dedicated Mobile Multi-Agent Panel (Mockup 14) -->
+    <div id="mob-agent-panel" class="mob-agent-panel" style="display: none;" aria-hidden="true">
+      <div class="mob-agent-backdrop" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()"></div>
+      <div class="mob-agent-sheet glass-panel">
+        <div class="mob-agent-header">
+          <div class="mob-agent-title-row">
+            <span class="mob-agent-title-star">⭐</span>
+            <h3 class="mob-agent-headline">Multi-Agent Learning Console</h3>
+          </div>
+          <button class="mob-btn-close-agent" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()" aria-label="Close Agent Console">✕</button>
+        </div>
+        <div class="mob-agent-list">
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-galileo.webp" alt="Galileo" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Galileo Multi-Agent Nexus</h4>
+              <span class="mob-agent-role">System Coordinator & Knowledge Core</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-orchestrator.webp" alt="Orchestrator" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Orchestrator</h4>
+              <span class="mob-agent-role">Workflow & Task Director</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-leo.webp" alt="Leo" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Leo (Story)</h4>
+              <span class="mob-agent-role">Bilingual Narrator & Faith Mentor</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-sophia.webp" alt="Sophia" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Sophia (Solver)</h4>
+              <span class="mob-agent-role">Catechism & Exam Specialist</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-barnaby.webp" alt="Barnaby" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Barnaby (Quiz)</h4>
+              <span class="mob-agent-role">Interactive Challenges & Badges</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+        </div>
+        <div class="mob-agent-stream-panel">
+          <h5 class="mob-agent-stream-title">Live Stream</h5>
+          <div class="mob-agent-stream-content" id="mob-agent-stream-lines">
+            <p class="stream-line"><span class="stream-agent leo">&gt; Leo:</span> Chapter 1 story ready...</p>
+            <p class="stream-line"><span class="stream-agent sophia">&gt; Sophia:</span> Searching exam papers...</p>
+            <p class="stream-line"><span class="stream-agent barnaby">&gt; Barnaby:</span> Quiz questions loaded...</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div> <!-- end #mobile-layout-root -->
 
 
@@ -522,13 +612,39 @@
       <div class="popup-caret"></div>
       <div class="sheet-header">
         <div class="sheet-title-group">
-          <span class="sheet-icon">⚙️</span>
-          <h3>Settings & Audio</h3>
+          <span class="sheet-icon-cross">✝</span>
+          <h3 class="sheet-title-serif">Class 4 Catechism</h3>
         </div>
         <button id="btn-close-sheet" class="btn-close-sheet" aria-label="Close Settings">✕</button>
       </div>
       <div class="sheet-content">
-        <!-- Appearance Theme -->
+        <!-- 5 Destinations (Mockup 08: Mobile Navigation Menu) -->
+        <div class="sheet-nav-destinations" id="sheet-nav-destinations">
+          <button class="sheet-dest-btn active" onclick="window.app && window.app.switchView('universe'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">🗺️</span>
+            <span class="sheet-dest-title">Adventure Map</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('slides'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">🎞️</span>
+            <span class="sheet-dest-title">Picture Slides</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('classroom'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">📖</span>
+            <span class="sheet-dest-title">Story Lessons</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('solver'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">📝</span>
+            <span class="sheet-dest-title">Exam Papers</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('quiz'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">⭐</span>
+            <span class="sheet-dest-title">Star Quizzes</span>
+          </button>
+        </div>
+
+        <div class="sheet-divider"></div>
+
+        <!-- Appearance Theme (Mockup 08) -->
         <div class="sheet-section">
           <div class="sheet-section-title">🌓 Appearance</div>
           <div class="sheet-segmented-pill">
