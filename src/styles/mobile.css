@@ -304,59 +304,77 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-mentor-banner {
   grid-column: 1 / -1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: var(--radius-lg);
-  margin-top: 10px;
-  margin-bottom: 16px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12));
-  border: 1px solid rgba(168, 85, 247, 0.35);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 22px 18px;
+  border-radius: 22px;
+  margin-top: 14px;
+  margin-bottom: 20px;
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.2) 0%, rgba(13, 17, 27, 0.95) 80%);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.2);
 }
 
 .mob-mentor-icon {
-  font-size: 1.8rem;
-  background: rgba(255, 255, 255, 0.08);
+  font-size: 2rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.35));
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.35);
 }
 
 .mob-mentor-details {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 .mob-mentor-role {
   display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.74rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-amber);
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 1px 8px;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.15));
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  padding: 3px 14px;
   border-radius: 999px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
 .mob-mentor-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 2px;
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 12px rgba(196, 181, 253, 0.3);
 }
 
 .mob-mentor-dept {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #a5b4fc;
   line-height: 1.35;
+  background: rgba(99, 102, 241, 0.12);
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: inline-block;
 }
 
 /* View 2: Picture Slides */

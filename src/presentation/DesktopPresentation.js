@@ -36,6 +36,16 @@ export class DesktopPresentation {
         this.app.layoutSelector.previewMobile(390);
       });
     }
+
+    const gearBtn = document.getElementById('btn-mobile-menu');
+    if (gearBtn) {
+      gearBtn.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        if (this.app?.toggleSettingsPopup) {
+          this.app.toggleSettingsPopup();
+        }
+      });
+    }
   }
 
   setActiveTab(viewName) {

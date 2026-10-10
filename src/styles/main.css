@@ -1978,71 +1978,104 @@ body {
 
 .footer-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   width: 100%;
-  max-width: 1300px;
-  padding: 18px 28px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 36px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.16) 0%, rgba(15, 23, 42, 0.88) 75%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(99, 102, 241, 0.15);
 }
 
 .footer-mentor-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .mentor-badge-avatar {
-  font-size: 26px;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.25));
-  border: 1px solid rgba(168, 85, 247, 0.35);
+  font-size: 30px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.35));
+  border: 1.5px solid rgba(168, 85, 247, 0.5);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  margin-bottom: 2px;
+}
+
+.mentor-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 .mentor-role-badge {
   display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-amber);
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 2px 8px;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.15));
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  padding: 4px 16px;
   border-radius: 999px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
 }
 
 .mentor-info .mentor-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 2px;
+  font-size: 1.45rem;
+  font-weight: 800;
   letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 4px 0 6px;
+  text-shadow: 0 2px 14px rgba(196, 181, 253, 0.35);
 }
 
 .mentor-info .mentor-dept {
-  font-size: 0.88rem;
-  color: var(--accent-secondary);
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #a5b4fc;
+  letter-spacing: 0.02em;
+  background: rgba(99, 102, 241, 0.12);
+  padding: 4px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  display: inline-block;
 }
 
 .footer-affiliation {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font-size: 0.88rem;
-  color: var(--text-secondary);
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  max-width: 440px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 .affil-tag {
@@ -2059,14 +2092,16 @@ body {
 .lesson-academic-footer,
 .solver-academic-footer {
   margin-top: 20px;
-  padding: 12px 18px;
-  background: rgba(255, 255, 255, 0.03);
-  border-top: 1px dashed var(--border-subtle);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08));
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 10px;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
 }
 
@@ -2984,8 +3019,30 @@ body.desktop-view-forced {
   display: none;
 }
 
+/* Settings Gear Button (Visible & Stylized across Desktop & Mobile) */
 .btn-mobile-menu {
-  display: none;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.18rem;
+  font-weight: 600;
+  min-height: 44px;
+  min-width: 44px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.2s ease;
+}
+
+.btn-mobile-menu:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--accent-primary);
+  transform: rotate(30deg);
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
 }
 
 .btn-mobile-menu,
@@ -3026,20 +3083,20 @@ body.desktop-view-forced {
 /* Floating Dropdown / Pop-Up Card */
 .sheet-card.settings-popup-card {
   position: absolute;
-  top: 58px;
-  right: 12px;
-  width: calc(100% - 24px);
+  top: 64px;
+  right: 20px;
+  width: calc(100% - 40px);
   max-width: 380px;
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--border-accent);
   border-radius: 20px;
-  padding: 14px 16px 18px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  padding: 16px 18px 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
   animation: popDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   z-index: 100006;
 }

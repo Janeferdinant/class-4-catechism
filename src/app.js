@@ -339,6 +339,18 @@ class AppController {
       });
     }
 
+    // Dismiss when clicking anywhere outside popup card or gear buttons
+    document.addEventListener('click', (e) => {
+      if (sheet && sheet.classList.contains('active')) {
+        const popupCard = sheet.querySelector('.sheet-card');
+        const clickedInsidePopup = popupCard && popupCard.contains(e.target);
+        const clickedGearBtn = (menuBtn && menuBtn.contains(e.target)) || (mobMenuBtn && mobMenuBtn.contains(e.target));
+        if (!clickedInsidePopup && !clickedGearBtn) {
+          this.toggleSettingsPopup(false);
+        }
+      }
+    });
+
     if (sheetThemeBtn) {
       sheetThemeBtn.addEventListener('click', () => {
         if (this.sfx && this.sfx.playPop) this.sfx.playPop();
