@@ -1,5 +1,6 @@
 import { CHAPTERS_DATA } from '../data/chaptersData.js';
 import { EXAM_PAPERS_DATA } from '../data/examPapersData.js';
+import { KID_QUIZ_QUESTIONS } from '../data/quizQuestionsData.js';
 
 /**
  * MobilePresentation
@@ -30,7 +31,9 @@ export class MobilePresentation {
   }
 
   setupBottomNav() {
-    const navButtons = document.querySelectorAll('.mob-nav-btn');
+    const navButtons = typeof document !== 'undefined' && document.querySelectorAll 
+      ? Array.from(document.querySelectorAll('.mob-nav-btn')) 
+      : [];
     navButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         if (this.app?.sfx?.playPop) this.app.sfx.playPop();
@@ -302,37 +305,72 @@ export class MobilePresentation {
       <div class="mob-pill-scroll">
         ${EXAM_PAPERS_DATA.map(p => `
           <button class="mob-paper-pill ${p.id === this.activePaperId ? 'active' : ''}" onclick="window.mobileApp.selectExamPaper('${p.id}')">
-            ${p.year} (${p.semester})
+            ${p.year} (${p.semester === 1 ? 'Sem 1' : 'Sem 2'})
           </button>
         `).join('')}
       </div>
     `;
 
     const paper = EXAM_PAPERS_DATA.find(p => p.id === this.activePaperId) || EXAM_PAPERS_DATA[0];
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const query = searchInput && searchInput.value ? searchInput.value.toLowerCase().trim() : '';
 
     const questions = query 
-      ? paper.questions.filter(q => (q.qMal && q.qMal.toLowerCase().includes(query)) || (q.ansMal && q.ansMal.toLowerCase().includes(query)))
+      ? paper.questions.filter(q => 
+          (q.qMal && q.qMal.toLowerCase().includes(query)) ||
+          (q.qEng && q.qEng.toLowerCase().includes(query)) ||
+          (q.answerMal && q.answerMal.toLowerCase().includes(query)) ||
+          (q.answerEng && q.answerEng.toLowerCase().includes(query)) ||
+          (q.citation && q.citation.toLowerCase().includes(query))
+        )
       : paper.questions;
 
     list.innerHTML = `
       <div class="mob-paper-meta-card glass-panel">
         <h4>${paper.title}</h4>
-        <p>Total Marks: ${paper.totalMarks} • Verified Diocesan Solution</p>
+        <p class="mob-paper-scope">📚 Syllabus: ${paper.syllabus || 'Chapters 1-15'}</p>
+        <div class="mob-paper-badges-row">
+          <span class="mob-meta-badge">📝 ${paper.questions.length} Questions</span>
+          <span class="mob-meta-badge">⭐ ${paper.totalMarks} Marks</span>
+          <span class="mob-meta-badge verified">✓ 100% Solved & Cited</span>
+        </div>
       </div>
       <div class="mob-questions-accordion">
         ${questions.map((q, idx) => `
           <details class="mob-q-details glass-panel" ${idx === 0 ? 'open' : ''}>
             <summary class="mob-q-summary">
-              <span class="mob-q-number">Q${q.num}</span>
+              <span class="mob-q-number">Q${q.qNumber || idx + 1}</span>
               <span class="mob-q-text-mal">${q.qMal}</span>
-              <span class="mob-q-marks">${q.marks} marks</span>
+              <span class="mob-q-type-pill">${q.type || 'Q'}</span>
             </summary>
             <div class="mob-q-answer-body">
-              <div class="mob-ans-label">✅ Verified Answer (ഉത്തരം):</div>
-              <p class="mob-ans-mal">${q.ansMal}</p>
-              <div class="mob-citation-row">
-                <span class="mob-citation-tag">📖 Ch ${q.citation?.chapter}: ${q.citation?.topic}</span>
+              ${q.qEng ? `<p class="mob-q-eng-sub"><em>${q.qEng}</em></p>` : ''}
+              
+              <div class="mob-ans-card">
+                <div class="mob-ans-label">✅ Verified Solution (ഉത്തരം):</div>
+                <p class="mob-ans-mal">${q.answerMal || ''}</p>
+                ${q.answerEng ? `<p class="mob-ans-eng">${q.answerEng}</p>` : ''}
+              </div>
+
+              ${q.eli5 ? `
+                <div class="mob-eli5-card">
+                  <div class="mob-eli5-label">🧸 5-Year-Old Explanation:</div>
+                  <p class="mob-eli5-text">${q.eli5}</p>
+                </div>
+              ` : ''}
+
+              ${q.citation ? `
+                <div class="mob-citation-row">
+                  <span class="mob-citation-tag">📖 ${q.citation}</span>
+                </div>
+              ` : ''}
+
+              <div class="mob-q-audio-row">
+                <button class="mob-btn-audio-pill" onclick="window.app.speakMalayalam('${(q.qMal + '. ഉത്തരം: ' + (q.answerMal || '')).replace(/'/g, "\\'")}')">
+                  🔊 കേൾക്കുക (Listen)
+                </button>
+                <button class="mob-btn-stop-audio-pill" onclick="window.app.stopVoice()">
+                  🛑 Stop
+                </button>
               </div>
             </div>
           </details>
@@ -347,6 +385,7 @@ export class MobilePresentation {
   }
 
   selectExamPaper(paperId) {
+    if (this.app?.sfx?.playPop) this.app.sfx.playPop();
     this.activePaperId = paperId;
     this.renderExamSolverView();
   }
@@ -356,67 +395,172 @@ export class MobilePresentation {
     const container = document.getElementById('mob-quiz-card-container');
     if (!container) return;
 
-    const questions = this.app?.quiz?.questions || [
-      {
-        q: "ആരാണ് സഭയുടെ തലവൻ? (Who is the Head of the Church?)",
-        options: ["യേശുക്രിസ്തു (Jesus Christ)", "മാർപാപ്പ (The Pope)", "പത്രോസ് (Peter)", "യോഹന്നാൻ (John)"],
-        correct: 0,
-        explanation: "യേശുക്രിസ്തുവാണ് സഭയുടെ അദൃശ്യ തലവൻ. (Jesus Christ is the Head of the Church - Col 1:18)"
-      },
-      {
-        q: "ആദ്യത്തെ കൂദാശ ഏതാണ്? (Which is the First Sacrament?)",
-        options: ["മാമ്മോദീസാ (Baptism)", "കുർബാന (Holy Eucharist)", "സ്ഥൈര്യലേപനം (Confirmation)", "വിവാഹം (Matrimony)"],
-        correct: 0,
-        explanation: "മാമ്മോദീസാ ക്രൈസ്തവ ജീവിതത്തിന്റെ വാതിലാണ്. (Baptism is the gateway to Christian life)"
-      }
-    ];
+    const questions = this.app?.quiz?.questions?.length ? this.app.quiz.questions : KID_QUIZ_QUESTIONS;
 
-    const q = questions[this.currentQuizIndex % questions.length];
+    // Check if finished
+    if (this.currentQuizIndex >= questions.length) {
+      const starsEarned = this.app?.starsCount || 0;
+      container.innerHTML = `
+        <div class="mob-quiz-card glass-panel text-center mob-quiz-completed">
+          <div class="mob-quiz-celebration-hero">🎉 🏆 ✨</div>
+          <h2 class="mob-quiz-title">You Are a Star Champion!</h2>
+          <p class="mob-quiz-complete-sub">
+            മിടുക്കൻ / മിടുക്കി! You explored all ${questions.length} quiz adventures!
+          </p>
+          <div class="mob-quiz-score-badge">
+            ⭐ <strong>${starsEarned} Stars Collected</strong>
+          </div>
+          <p class="mob-quiz-blessing">Jesus loves your joyful and eager heart! Keep shining bright!</p>
+          <button class="mob-btn-restart-quiz" onclick="window.mobileApp.restartQuiz()">
+            🔄 Play Again (വീണ്ടും കളിക്കാം)
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    const q = questions[this.currentQuizIndex];
+    const totalQ = questions.length;
+    const progressPercent = Math.round(((this.currentQuizIndex) / totalQ) * 100);
 
     container.innerHTML = `
-      <div class="mob-quiz-header">
-        <span class="mob-quiz-badge">Question ${(this.currentQuizIndex % questions.length) + 1} of ${questions.length}</span>
-        <span class="mob-quiz-star-indicator">⭐ Collected: ${this.app?.starsCount || 0}</span>
+      <div class="mob-quiz-card glass-panel">
+        <div class="mob-quiz-header">
+          <span class="mob-quiz-badge">Question ${this.currentQuizIndex + 1} of ${totalQ}</span>
+          <span class="mob-quiz-star-indicator">⭐ Collected: ${this.app?.starsCount || 0}</span>
+        </div>
+        <div class="mob-quiz-progress-bar-bg">
+          <div class="mob-quiz-progress-bar-fill" style="width: ${progressPercent}%;"></div>
+        </div>
+
+        <div class="mob-quiz-question-box">
+          <div class="mob-quiz-emoji">${q.emoji || '✨'}</div>
+          <h3 class="mob-quiz-question-mal">${q.questionMal || q.q || ''}</h3>
+          ${q.questionEng ? `<p class="mob-quiz-question-eng">${q.questionEng}</p>` : ''}
+        </div>
+
+        <div class="mob-quiz-options-list" id="mob-quiz-options-list">
+          ${q.options.map((opt, i) => `
+            <button class="mob-quiz-option-btn" id="mob-opt-btn-${i}" onclick="window.mobileApp.handleQuizAnswer(${i}, ${q.correctIndex !== undefined ? q.correctIndex : (q.correct !== undefined ? q.correct : 0)})">
+              <span class="mob-opt-num">${i + 1}</span>
+              <span class="mob-opt-text">${opt}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <div id="mob-quiz-feedback" class="mob-quiz-feedback" style="display: none;"></div>
+
+        <div class="mob-quiz-clue-row">
+          ${q.eli5Hint ? `
+            <button class="mob-btn-clue-toggle" onclick="window.mobileApp.toggleQuizHint()">
+              💡 Need a Clue? (സൂചന)
+            </button>
+          ` : ''}
+          ${q.citation ? `<span class="mob-quiz-citation">📖 ${q.citation}</span>` : ''}
+        </div>
+        <div id="mob-quiz-hint-box" class="mob-quiz-hint-box" style="display: none;">
+          🧸 <strong>Clue:</strong> ${q.eli5Hint || ''}
+        </div>
       </div>
-      <h3 class="mob-quiz-question">${q.q}</h3>
-      <div class="mob-quiz-options-list">
-        ${q.options.map((opt, i) => `
-          <button class="mob-quiz-option-btn" onclick="window.mobileApp.handleQuizAnswer(${i}, ${q.correct})">
-            ${opt}
-          </button>
-        `).join('')}
-      </div>
-      <div id="mob-quiz-feedback" class="mob-quiz-feedback" style="display: none;"></div>
     `;
   }
 
   handleQuizAnswer(selectedIndex, correctIndex) {
     const feedback = document.getElementById('mob-quiz-feedback');
-    if (!feedback) return;
+    const questions = this.app?.quiz?.questions?.length ? this.app.quiz.questions : KID_QUIZ_QUESTIONS;
+    const q = questions[this.currentQuizIndex % questions.length];
+    const isCorrect = selectedIndex === correctIndex;
 
-    if (selectedIndex === correctIndex) {
-      if (this.app?.sfx?.playFanfare) this.app.sfx.playFanfare();
-      if (this.app?.addStar) this.app.addStar();
-      this.updateStars(this.app?.starsCount || 0);
+    // Highlight options visually
+    if (q && q.options) {
+      q.options.forEach((_, i) => {
+        const btn = document.getElementById(`mob-opt-btn-${i}`);
+        if (btn) {
+          btn.disabled = true;
+          if (btn.classList) {
+            if (i === correctIndex) {
+              btn.classList.add('correct-choice');
+            } else if (i === selectedIndex && !isCorrect) {
+              btn.classList.add('wrong-choice');
+            }
+          } else {
+            if (i === correctIndex) {
+              btn.className = (btn.className || '') + ' correct-choice';
+            } else if (i === selectedIndex && !isCorrect) {
+              btn.className = (btn.className || '') + ' wrong-choice';
+            }
+          }
+        }
+      });
+    }
 
+    if (feedback) {
       feedback.style.display = 'block';
-      feedback.className = 'mob-quiz-feedback success';
-      feedback.innerHTML = `
-        🎉 മിടുക്കൻ / മിടുക്കി! Correct Answer! +1 Star ⭐
-        <button class="mob-btn-next-quiz" onclick="window.mobileApp.nextQuizQuestion()">Next Question ▶</button>
-      `;
-    } else {
-      if (this.app?.sfx?.playPop) this.app.sfx.playPop();
-      feedback.style.display = 'block';
-      feedback.className = 'mob-quiz-feedback error';
-      feedback.innerHTML = `
-        ❌ ശ്രമിക്കൂ! ഒന്നുകൂടി നോക്കൂ (Try Again!)
-      `;
+      if (isCorrect) {
+        if (this.app?.sfx?.playChime) this.app.sfx.playChime();
+        if (this.app?.sfx?.playFanfare) this.app.sfx.playFanfare();
+        if (this.app?.addStar) this.app.addStar(1);
+        this.updateStars(this.app?.starsCount || 0);
+
+        feedback.className = 'mob-quiz-feedback success';
+        feedback.innerHTML = `
+          <div class="mob-feedback-header">
+            <span class="mob-feedback-icon">🌟</span>
+            <div>
+              <strong>വളരെ ശരി! (Super Job!) +1 Star ⭐</strong>
+              <p>${q?.encouragement || 'Wonderful answer! Jesus is smiling at your heart!'}</p>
+            </div>
+          </div>
+          <button class="mob-btn-next-quiz" onclick="window.mobileApp.nextQuizQuestion()">
+            അടുത്ത ചോദ്യം (Next Question ➡)
+          </button>
+        `;
+      } else {
+        if (this.app?.sfx?.playPop) this.app.sfx.playPop();
+
+        feedback.className = 'mob-quiz-feedback error';
+        const correctText = q?.options && q.options[correctIndex] ? q.options[correctIndex] : 'First Option';
+        feedback.innerHTML = `
+          <div class="mob-feedback-header">
+            <span class="mob-feedback-icon">🎈</span>
+            <div>
+              <strong>നല്ല ശ്രമം! (Good Try!)</strong>
+              <p>ശരിയായ ഉത്തരം: <strong>${correctText}</strong></p>
+            </div>
+          </div>
+          <div class="mob-quiz-feedback-actions">
+            <button class="mob-btn-retry-quiz" onclick="window.mobileApp.retryCurrentQuiz()">
+              🔄 Try Again (വീണ്ടും ശ്രമിക്കാം)
+            </button>
+            <button class="mob-btn-next-quiz" onclick="window.mobileApp.nextQuizQuestion()">
+              തുടരുക (Next Question ➡)
+            </button>
+          </div>
+        `;
+      }
     }
   }
 
+  retryCurrentQuiz() {
+    this.renderQuizView();
+  }
+
   nextQuizQuestion() {
+    if (this.app?.sfx?.playPop) this.app.sfx.playPop();
     this.currentQuizIndex++;
     this.renderQuizView();
+  }
+
+  restartQuiz() {
+    if (this.app?.sfx?.playSparkle) this.app.sfx.playSparkle();
+    this.currentQuizIndex = 0;
+    this.renderQuizView();
+  }
+
+  toggleQuizHint() {
+    const hintBox = document.getElementById('mob-quiz-hint-box');
+    if (hintBox) {
+      hintBox.style.display = hintBox.style.display === 'none' ? 'block' : 'none';
+    }
   }
 }
