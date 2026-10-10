@@ -2714,63 +2714,245 @@ body {
   }
 }
 
-/* FORCED MOBILE VIEW TOGGLE OVERRIDE (.mobile-view-active) */
+/* ==========================================================================
+   VIEW MODE TOGGLE: SIMULATED PHONE FRAME & FORCED DESKTOP LAYOUT
+   ========================================================================== */
+
+/* Toast Notifications */
+.app-toast-container {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.app-toast-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(18, 24, 38, 0.94);
+  border: 1px solid var(--border-accent);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 15px rgba(245, 158, 11, 0.2);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+}
+
+.app-toast-pill .toast-icon {
+  font-size: 1.15rem;
+}
+
+.app-toast-pill.toast-exit {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: all 0.3s ease;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* FULL SMARTPHONE SILHOUETTE SIMULATION (.mobile-view-active) */
+html.mobile-view-active {
+  background: #060913 !important;
+  min-height: 100vh;
+}
+
+body.mobile-view-active {
+  max-width: 430px !important;
+  margin: 0 auto !important;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.75), 0 0 0 1px var(--border-accent) !important;
+  border-left: 2px solid var(--border-accent);
+  border-right: 2px solid var(--border-accent);
+  position: relative;
+  background-color: var(--bg-primary);
+}
+
+.mobile-view-active .app-header {
+  padding: 8px 12px !important;
+  gap: 8px !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.mobile-view-active .brand-wrapper {
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.mobile-view-active .brand-text h1 {
+  font-size: 1.18rem !important;
+  text-align: center !important;
+}
+
+.mobile-view-active .brand-text p {
+  display: none !important;
+}
+
+.mobile-view-active .nav-tabs {
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  padding-bottom: 4px !important;
+  justify-content: flex-start !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+
+.mobile-view-active .nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-view-active .tab-btn {
+  flex-shrink: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.82rem !important;
+  min-height: 44px !important;
+}
+
+.mobile-view-active .header-actions {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+.mobile-view-active .btn-stop-audio,
+.mobile-view-active .btn-gemini-key,
+.mobile-view-active .btn-mobile-toggle,
+.mobile-view-active .theme-toggle-btn {
+  width: 100% !important;
+  padding: 6px 8px !important;
+  font-size: 0.76rem !important;
+  min-height: 44px !important;
+}
+
 .mobile-view-active .main-content {
-  max-width: 480px;
-  margin: 0 auto;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-xl);
-  padding: 14px 10px;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 12px 10px !important;
+  box-shadow: none !important;
 }
 
 .mobile-view-active .universe-layout {
-  grid-template-columns: 1fr;
-  height: auto;
+  grid-template-columns: 1fr !important;
+  height: auto !important;
 }
 
 .mobile-view-active .viewport-3d-card {
-  height: 380px;
+  height: 380px !important;
 }
 
 .mobile-view-active .slide-body-grid {
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr !important;
 }
 
 .mobile-view-active .slide-deck-frame {
-  padding: 16px 12px;
-  min-height: auto;
+  padding: 16px 12px !important;
+  min-height: auto !important;
 }
 
 .mobile-view-active .slide-title-mal {
-  font-size: 1.45rem;
+  font-size: 1.35rem !important;
+  word-break: break-word !important;
 }
 
 .mobile-view-active .lesson-card-5yo {
-  padding: 16px 12px;
+  padding: 16px 12px !important;
 }
 
 .mobile-view-active .quiz-adventure-card {
-  padding: 16px 12px;
+  padding: 16px 12px !important;
 }
 
 .mobile-view-active .question-card {
-  padding: 14px 12px;
+  padding: 14px 12px !important;
 }
 
 .mobile-view-active .slide-audio-quickbar {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
 }
 
 .mobile-view-active .slide-audio-quickbar .btn-slide-stop {
-  grid-column: span 2;
+  grid-column: span 2 !important;
 }
 
 .mobile-view-active .action-buttons-row {
-  flex-direction: column;
+  flex-direction: column !important;
+  gap: 8px !important;
 }
 
 .mobile-view-active .action-buttons-row button {
-  width: 100%;
+  width: 100% !important;
+  min-height: 44px !important;
 }
+
+.mobile-view-active .academic-footer {
+  padding: 20px 12px !important;
+  flex-direction: column !important;
+  text-align: center !important;
+  gap: 14px !important;
+}
+
+.mobile-view-active .faculty-card {
+  width: 100% !important;
+}
+
+/* FORCED DESKTOP VIEW OVERRIDE FOR MOBILE DEVICES (.desktop-view-forced) */
+html.desktop-view-forced,
+body.desktop-view-forced {
+  min-width: 1100px !important;
+  overflow-x: auto !important;
+}
+
+.desktop-view-forced .app-header {
+  flex-direction: row !important;
+  padding: 12px 24px !important;
+  gap: 16px !important;
+}
+
+.desktop-view-forced .brand-text p {
+  display: block !important;
+}
+
+.desktop-view-forced .nav-tabs {
+  overflow-x: visible !important;
+  justify-content: center !important;
+}
+
+.desktop-view-forced .header-actions {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.desktop-view-forced .universe-layout {
+  grid-template-columns: 1fr 340px !important;
+  height: calc(100vh - 120px) !important;
+}
+
+.desktop-view-forced .slide-body-grid {
+  grid-template-columns: 1.1fr 0.9fr !important;
+}
+
+.desktop-view-forced .action-buttons-row {
+  flex-direction: row !important;
+}
+
 

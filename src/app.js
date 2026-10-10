@@ -116,12 +116,14 @@ class AppController {
 
   /* ---------------- Mobile / Desktop View Mode Toggle ---------------- */
   setupViewMode() {
-    const savedMode = localStorage.getItem('app-view-mode') || 'auto';
-    this.setViewMode(savedMode);
+    const isNarrow = typeof window !== 'undefined' && window.innerWidth <= 768;
+    const savedMode = localStorage.getItem('app-view-mode') || (isNarrow ? 'mobile' : 'desktop');
+    this.setViewMode(savedMode, true);
 
     const toggleBtn = document.getElementById('btn-mobile-toggle');
     if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         if (this.sfx && this.sfx.playPop) this.sfx.playPop();
         this.toggleViewMode();
       });
@@ -129,27 +131,78 @@ class AppController {
   }
 
   toggleViewMode() {
+    if (this._isTogglingMode) return;
+    this._isTogglingMode = true;
+    setTimeout(() => { this._isTogglingMode = false; }, 250);
+
     const nextMode = this.viewMode === 'mobile' ? 'desktop' : 'mobile';
-    this.setViewMode(nextMode);
+    this.setViewMode(nextMode, false);
   }
 
-  setViewMode(mode) {
+  setViewMode(mode, silent = false) {
     this.viewMode = mode;
     localStorage.setItem('app-view-mode', mode);
     const iconEl = document.getElementById('mobile-toggle-icon');
     const labelEl = document.getElementById('mobile-toggle-label');
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 768;
 
     if (mode === 'mobile') {
       document.documentElement.classList.add('mobile-view-active');
       document.body.classList.add('mobile-view-active');
+      document.documentElement.classList.remove('desktop-view-forced');
+      document.body.classList.remove('desktop-view-forced');
       if (iconEl) iconEl.textContent = '💻';
       if (labelEl) labelEl.textContent = 'Desktop View';
+      if (!silent) this.showToast('📱 Switched to Mobile Mode (430px Preview)', '📱');
     } else {
       document.documentElement.classList.remove('mobile-view-active');
       document.body.classList.remove('mobile-view-active');
+      if (isSmallScreen) {
+        document.documentElement.classList.add('desktop-view-forced');
+        document.body.classList.add('desktop-view-forced');
+      } else {
+        document.documentElement.classList.remove('desktop-view-forced');
+        document.body.classList.remove('desktop-view-forced');
+      }
       if (iconEl) iconEl.textContent = '📱';
       if (labelEl) labelEl.textContent = 'Mobile View';
+      if (!silent) this.showToast('💻 Switched to Desktop Mode', '💻');
     }
+
+    // Trigger 3D canvas resize if in universe view
+    if (this.threeUniverse && this.currentView === 'universe') {
+      setTimeout(() => {
+        const container = document.getElementById('three-canvas-container');
+        if (container && this.threeUniverse.renderer && this.threeUniverse.camera) {
+          const width = container.clientWidth || 800;
+          const height = container.clientHeight || 500;
+          this.threeUniverse.camera.aspect = width / height;
+          this.threeUniverse.camera.updateProjectionMatrix();
+          this.threeUniverse.renderer.setSize(width, height);
+        }
+      }, 100);
+    }
+  }
+
+  showToast(message, icon = '✨') {
+    if (typeof document === 'undefined') return;
+    let container = document.getElementById('app-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'app-toast-container';
+      container.className = 'app-toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'app-toast-pill glass-panel';
+    toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-text">${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('toast-exit');
+      setTimeout(() => toast.remove(), 350);
+    }, 2400);
   }
 
   /* ---------------- Navigation Tabs ---------------- */

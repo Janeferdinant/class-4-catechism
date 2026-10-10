@@ -33,3 +33,25 @@ test('Mobile Responsiveness: main.css contains mobile breakpoints and .mobile-vi
   // Verify touch target min-height rules exist (>= 44px)
   assert.ok(cssContent.includes('min-height: 44px') || cssContent.includes('min-height: 46px') || cssContent.includes('min-height: 48px'), 'main.css must ensure minimum touch targets');
 });
+
+test('Mobile View Toggle: avoids duplicate click binding and supports full mobile simulation', () => {
+  const htmlPath = path.resolve(process.cwd(), 'index.html');
+  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+
+  // Verify no duplicate inline onclick on btn-mobile-toggle since app.js attaches addEventListener
+  const btnMatch = htmlContent.match(/<button[^>]*id="btn-mobile-toggle"[^>]*>/);
+  assert.ok(btnMatch, 'btn-mobile-toggle must exist in HTML');
+  assert.ok(!btnMatch[0].includes('onclick='), 'btn-mobile-toggle must not have inline onclick to avoid duplicate event execution');
+
+  // Verify app.js provides visual toast notification on view toggle
+  const appJsPath = path.resolve(process.cwd(), 'src/app.js');
+  const appJs = fs.readFileSync(appJsPath, 'utf-8');
+  assert.ok(appJs.includes('showToast') || appJs.includes('showViewModeToast'), 'app.js must provide instant visual feedback on toggle');
+
+  // Verify main.css covers app-header and desktop-view-forced
+  const cssPath = path.resolve(process.cwd(), 'src/styles/main.css');
+  const css = fs.readFileSync(cssPath, 'utf-8');
+  assert.ok(css.includes('.mobile-view-active .app-header') || css.includes('body.mobile-view-active'), 'main.css must adapt header in mobile view simulation');
+  assert.ok(css.includes('.desktop-view-forced'), 'main.css must support forced desktop view for mobile devices');
+});
+
