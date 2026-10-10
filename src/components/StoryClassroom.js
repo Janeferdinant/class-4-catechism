@@ -1,7 +1,8 @@
 /**
  * StoryClassroom Component
- * Interactive classroom designed specifically for 5-year-old learners and primary students.
- * Features friendly animal guides, sensory descriptions, interactive buttons, and notes for all 15 chapters.
+ * Engaging classroom experience designed for 5-to-10-year-old learners.
+ * Features 4-tab content switching (Story, Moral Lesson, Key Concepts, Scripture),
+ * bilingual text presentation, authentic chapter artwork, and shared audio controls.
  */
 
 import { CHAPTERS_DATA } from '../data/chaptersData.js';
@@ -9,6 +10,7 @@ import { CHAPTERS_DATA } from '../data/chaptersData.js';
 export class StoryClassroomManager {
   constructor() {
     this.chapters = CHAPTERS_DATA;
+    this.activeTab = 'story';
     this.characters = [
       { id: 'leo', name: 'Leo the Lion Cub', emoji: '🦁', title: 'The Story Guide' },
       { id: 'bella', name: 'Bella the Holy Dove', emoji: '🕊️', title: 'The Spirit Guide' },
@@ -31,103 +33,149 @@ export class StoryClassroomManager {
     };
   }
 
-  renderLessonCard(lesson) {
+  setActiveTab(tabName) {
+    this.activeTab = tabName;
+  }
+
+  getActiveTab() {
+    return this.activeTab || 'story';
+  }
+
+  renderLessonCard(lesson, currentTab = null) {
+    const tab = currentTab || this.activeTab || 'story';
+
     return `
-      <div class="lesson-card-5yo glass-panel" data-chapter="${lesson.number}">
-        <div class="lesson-hero">
-          <div class="guide-badge">
-            <span class="guide-emoji">${lesson.characterGuide.emoji}</span>
-            <div class="guide-info">
-              <span class="guide-name">${lesson.characterGuide.name}</span>
-              <span class="guide-title">${lesson.characterGuide.title}</span>
+      <div class="story-lesson-card glass-panel animate-slide-fade" data-chapter="${lesson.number}">
+        <!-- Top Title & Tabs Header -->
+        <div class="story-card-top-header">
+          <div class="story-title-meta">
+            <span class="story-chapter-kicker">Chapter ${lesson.number}</span>
+            <h2 class="story-headline-eng">${lesson.titleEng}</h2>
+            <h3 class="story-headline-mal">${lesson.titleMal}</h3>
+          </div>
+
+          <!-- 4 Tab Navigation Pills (Matching Mockup 04) -->
+          <div class="story-tabs-pills-row" role="tablist">
+            <button class="story-tab-pill ${tab === 'story' ? 'active' : ''}" onclick="window.app && window.app.setStoryTab && window.app.setStoryTab('story')">
+              📖 Story
+            </button>
+            <button class="story-tab-pill ${tab === 'moral' ? 'active' : ''}" onclick="window.app && window.app.setStoryTab && window.app.setStoryTab('moral')">
+              ⭐ Moral Lesson
+            </button>
+            <button class="story-tab-pill ${tab === 'concepts' ? 'active' : ''}" onclick="window.app && window.app.setStoryTab && window.app.setStoryTab('concepts')">
+              💡 Key Concepts
+            </button>
+            <button class="story-tab-pill ${tab === 'scripture' ? 'active' : ''}" onclick="window.app && window.app.setStoryTab && window.app.setStoryTab('scripture')">
+              ✝ Scripture
+            </button>
+          </div>
+        </div>
+
+        <!-- Split Content Area: Left Text + Right Illustration -->
+        <div class="story-split-stage">
+          <!-- Left Column: Bilingual Text Content -->
+          <div class="story-text-pane">
+            ${this.renderTabContentHTML(lesson, tab)}
+          </div>
+
+          <!-- Right Column: Chapter Illustration with soft fade toward text -->
+          <div class="story-illustration-pane">
+            <div class="story-illustration-wrapper lesson-banner-art">
+              <img src="${lesson.imageUrl || 'assets/textbook/ch' + lesson.number + '_p2.png'}" alt="${lesson.titleEng} - ${lesson.titleMal}" class="story-illustration-img lesson-banner-img" loading="lazy" />
+              <div class="story-art-scrim-gradient"></div>
             </div>
           </div>
-          <div class="lesson-num-pill">അദ്ധ്യായം ${lesson.number} / Chapter ${lesson.number}</div>
         </div>
 
-        <h3 class="lesson-heading-mal">${lesson.titleMal}</h3>
-        <h4 class="lesson-heading-eng">${lesson.titleEng}</h4>
-
-        <!-- Authentic Lesson Illustration Banner -->
-        <div class="lesson-banner-art">
-          <img src="${lesson.imageUrl || 'assets/textbook/ch' + lesson.number + '_p2.png'}" alt="${lesson.titleMal} - ${lesson.titleEng}" class="lesson-banner-img" loading="lazy" />
-          <div class="banner-caption-pill">
-            <span>🎨 ക്ലാസ് 4 പാഠപുസ്തക ചിത്രം • അദ്ധ്യായം ${lesson.number} (Official Textbook Illustration)</span>
-          </div>
-        </div>
-
-        <div class="fairy-tale-story-box">
-          <!-- Malayalam Story for 5-Year-Olds -->
-          <div class="story-speech-bubble bubble-mal">
-            <span class="lang-tag-pill">🦁 കൊച്ചുമക്കൾക്കുള്ള കഥ (Malayalam Story)</span>
-            <p class="story-text-mal">${lesson.story5yoMal || lesson.story5yo}</p>
+        <!-- Bottom Pinned Shared Audio Bar (Matching Mockup 04) -->
+        <div class="story-bottom-audio-bar shared-audio-bar" data-chapter="${lesson.number}">
+          <div class="audio-lang-pills">
+            <button class="btn-audio-pill btn-audio-mal" onclick="window.app && (window.app.speakStoryMal ? window.app.speakStoryMal(${lesson.number}) : window.app.playChapterAudio(${lesson.number}, 'mal'))" title="Listen to story in Malayalam">
+              🔊 Malayalam
+            </button>
+            <button class="btn-audio-pill btn-audio-eng" onclick="window.app && window.app.playChapterAudio && window.app.playChapterAudio(${lesson.number}, 'eng')" title="Listen to story in English">
+              🔊 English
+            </button>
+            <button class="btn-audio-pill btn-audio-stop" onclick="window.app && window.app.stopVoice && window.app.stopVoice()" title="Stop narration">
+              🛑 Stop Audio
+            </button>
           </div>
 
-          <!-- English Story -->
-          <div class="story-speech-bubble bubble-eng">
-            <span class="lang-tag-pill">Story for Little Angels (English)</span>
-            <p class="story-text-eng">${lesson.story5yo}</p>
-          </div>
-        </div>
-
-        <!-- Scripture Passage -->
-        ${lesson.scripture ? `
-          <div class="lesson-scripture-box">
-            <div class="scripture-badge-row">
-              <span class="icon-bible">📖</span>
-              <strong>വിശുദ്ധ വേദപുസ്തകം (Holy Scripture):</strong>
+          <div class="audio-player-controls">
+            <button class="btn-audio-play-pause" onclick="window.app && window.app.togglePlayPause && window.app.togglePlayPause(${lesson.number})" aria-label="Play or pause story narration">
+              ▶
+            </button>
+            <div class="audio-progress-wrap" onclick="window.app && window.app.seekAudio && window.app.seekAudio(event)">
+              <div class="audio-progress-fill" style="width: 0%;"></div>
             </div>
-            <blockquote class="bible-quote-mal">"${lesson.scripture}"</blockquote>
-            ${lesson.scriptureEng ? `<p class="bible-quote-eng">"${lesson.scriptureEng}"</p>` : ''}
-            
-            ${lesson.keyConcepts && lesson.keyConcepts.length > 0 ? `
-              <div class="lesson-key-terms-row">
-                ${lesson.keyConcepts.map(c => `
-                  <span class="term-pill" title="${c.desc}">
-                    <strong>${c.termMal}</strong> <small>(${c.termEng})</small>
-                  </span>
-                `).join('')}
-              </div>
-            ` : ''}
+            <span class="audio-time-display">0:00 / 0:38</span>
           </div>
-        ` : ''}
 
-        <!-- Golden Moral Lesson Banner -->
-        <div class="golden-rule-banner">
-          <span class="star-icon">⭐</span>
-          <div>
-            <strong>ഇന്നത്തെ സുവർണ്ണ പാഠം (Today's Golden Rule):</strong>
-            <p class="golden-rule-mal">${lesson.moralLessonMal || ''}</p>
-            <p class="golden-rule-eng">${lesson.moralLesson}</p>
-          </div>
-        </div>
-
-        <div class="interactive-activity-box">
-          <h5>🎈 Playground Activity with ${lesson.characterGuide.name}:</h5>
-          <p>${lesson.interactivePrompts[0]}</p>
-          <div class="action-buttons-row">
-            <button class="btn-sound-story btn-sound-mal" onclick="window.app.speakStoryMal(${lesson.number})" title="Listen to story in Malayalam">
-              🔊 മലയാളത്തിൽ കേൾക്കുക
-            </button>
-            <button class="btn-sound-story btn-sound-eng" onclick="window.app.speakStory(${lesson.number})" title="Listen to story in English">
-              🔊 English Story
-            </button>
-            <button class="btn-stop-voice" onclick="window.app.stopVoice()" title="Stop narration">
-              🛑 നിർത്തുക (Stop)
-            </button>
-            <button class="btn-give-star" onclick="window.app.awardStar(${lesson.number})">
+          <div class="story-star-action">
+            <button class="btn-award-star-pill" onclick="window.app && window.app.awardStar && window.app.awardStar(${lesson.number})">
               ⭐ Collect Chapter Star
             </button>
           </div>
         </div>
 
-        <div class="lesson-academic-footer">
-          <span class="footer-academic-icon">🎓</span>
-          <div class="footer-academic-text">
-            <strong>Academic Mentor: Asst. Prof. Jane Rose</strong> &bull; Department of Computer Science & Engineering (CSE)
-          </div>
+        <!-- Academic Mentor attribution line (preserves tests/footerAttribution.test.js) -->
+        <div class="story-academic-attribution">
+          Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
         </div>
       </div>
     `;
+  }
+
+  renderTabContentHTML(lesson, tab) {
+    switch (tab) {
+      case 'moral':
+        return `
+          <div class="tab-panel-inner animate-fade-in">
+            <div class="story-section-badge">🌟 Moral Lesson (സുവർണ്ണ പാഠം)</div>
+            <p class="story-lead-paragraph">${lesson.moralLesson}</p>
+            <div class="story-malayalam-block">
+              <p class="story-malayalam-paragraph story-text-mal">${lesson.moralLessonMal || ''}</p>
+            </div>
+          </div>
+        `;
+      case 'concepts':
+        return `
+          <div class="tab-panel-inner animate-fade-in">
+            <div class="story-section-badge">💡 Key Concepts (പ്രധാന ആശയങ്ങൾ)</div>
+            <div class="story-concepts-list">
+              ${(lesson.keyConcepts || []).map(c => `
+                <div class="concept-card-row">
+                  <span class="concept-bullet">✦</span>
+                  <div class="concept-details">
+                    <strong class="concept-term-eng">${c.termEng}</strong>
+                    <span class="concept-term-mal">${c.termMal}</span>
+                    <p class="concept-desc">${c.desc}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      case 'scripture':
+        return `
+          <div class="tab-panel-inner animate-fade-in">
+            <div class="story-section-badge">✝ Holy Scripture (വിശുദ്ധ വേദപുസ്തകം)</div>
+            <blockquote class="story-scripture-quote-eng">"${lesson.scriptureEng || ''}"</blockquote>
+            <div class="story-malayalam-block">
+              <blockquote class="story-scripture-quote-mal story-text-mal">"${lesson.scripture || ''}"</blockquote>
+            </div>
+          </div>
+        `;
+      case 'story':
+      default:
+        return `
+          <div class="tab-panel-inner animate-fade-in">
+            <p class="story-lead-paragraph">${lesson.story5yo}</p>
+            <div class="story-malayalam-block">
+              <p class="story-malayalam-paragraph story-text-mal">${lesson.story5yoMal || ''}</p>
+            </div>
+          </div>
+        `;
+    }
   }
 }

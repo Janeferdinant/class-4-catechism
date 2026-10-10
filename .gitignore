@@ -15,6 +15,7 @@ package-lock.json.bak
 scratch/
 scratch_audio/
 temp_audio_scratch/
+ref-data/
 *.log
 
 # Operating System Files

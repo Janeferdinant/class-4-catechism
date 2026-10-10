@@ -790,48 +790,50 @@ class AppController {
     this.renderCurrentSlide();
 
     document.getElementById('btn-slide-prev')?.addEventListener('click', () => {
-      this.sfx.playPop();
-      this.slideDeck.prev();
-      this.renderCurrentSlide();
+      this.prevSlide();
     });
 
     document.getElementById('btn-slide-next')?.addEventListener('click', () => {
-      this.sfx.playPop();
-      this.slideDeck.next();
-      this.renderCurrentSlide();
+      this.nextSlide();
     });
 
     document.getElementById('btn-slide-fullscreen')?.addEventListener('click', () => {
-      this.sfx.playPop();
-      const el = document.getElementById('view-slides');
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else if (el) {
-        el.requestFullscreen();
-      }
+      this.toggleSlideFullscreen();
     });
+  }
 
-    document.getElementById('btn-slide-voice-mal')?.addEventListener('click', () => {
-      this.sfx.playPop();
-      const current = this.slideDeck.getCurrentSlide();
-      this.speakMalayalam(`അദ്ധ്യായം ${current.number}: ${current.titleMal}. ${current.story5yoMal || ''}. സുവർണ്ണ പാഠം: ${current.moralLessonMal || ''}. ${current.scripture || ''}`);
-    });
+  prevSlide() {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.slideDeck.prev();
+    this.renderCurrentSlide();
+  }
 
-    document.getElementById('btn-slide-voice')?.addEventListener('click', () => {
-      this.sfx.playPop();
-      const current = this.slideDeck.getCurrentSlide();
-      this.speakText(`${current.titleEng}. ${current.story5yo} Golden rule: ${current.moralLesson}`);
-    });
-
-    document.getElementById('btn-slide-stop')?.addEventListener('click', () => {
-      this.stopVoice();
-    });
+  nextSlide() {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.slideDeck.next();
+    this.renderCurrentSlide();
   }
 
   jumpToSlide(index) {
     if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     this.slideDeck.jumpTo(index);
     this.renderCurrentSlide();
+  }
+
+  setSlideArtMode(mode) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.slideDeck.setArtMode(mode);
+    this.renderCurrentSlide();
+  }
+
+  toggleSlideFullscreen() {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    const el = document.getElementById('view-slides');
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else if (el) {
+      el.requestFullscreen().catch(() => {});
+    }
   }
 
   renderCurrentSlide() {
@@ -841,7 +843,7 @@ class AppController {
     const total = this.slideDeck.getTotalSlides();
 
     if (container && slide) {
-      container.innerHTML = this.slideDeck.renderSlideHTML(slide);
+      container.innerHTML = this.slideDeck.renderSlideHTML(slide, this.slideDeck.getArtMode());
 
       // Attach 3D physics tilt and floating golden starlight particle canvas
       const imgContainer = container.querySelector('.slide-img-container');
@@ -849,6 +851,14 @@ class AppController {
         this.motionGraphics.attach3DTilt(imgContainer);
         this.motionGraphics.attachParticleCanvas(imgContainer);
       }
+
+      // Smoothly scroll active thumbnail pill into view
+      setTimeout(() => {
+        const activeThumb = container.querySelector('.slide-thumb-pill.active');
+        if (activeThumb) {
+          activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }, 50);
     }
 
     const indicator = document.getElementById('slide-indicator');
@@ -856,17 +866,6 @@ class AppController {
 
     const progress = document.getElementById('slide-progress-bar');
     if (progress) progress.style.width = `${((idx + 1) / total) * 100}%`;
-
-    // Populate thumbnail strip matching mockup
-    const thumbsStrip = document.getElementById('slide-thumbs-strip');
-    if (thumbsStrip) {
-      thumbsStrip.innerHTML = CHAPTERS_DATA.map((ch, i) => `
-        <div class="slide-thumb-item ${i === idx ? 'active' : ''}" onclick="window.app.jumpToSlide(${i})" title="Ch ${ch.number}: ${ch.titleEng}">
-          <img src="${ch.imageUrl}" alt="${ch.titleEng}" class="slide-thumb-img" loading="lazy" />
-          <span class="slide-thumb-badge">Ch ${ch.number}</span>
-        </div>
-      `).join('');
-    }
   }
 
   /* ---------------- Classroom View ---------------- */
@@ -888,16 +887,22 @@ class AppController {
     const chList = document.getElementById('classroom-ch-list');
     if (chList) {
       chList.innerHTML = CHAPTERS_DATA.map(ch => `
-        <button class="classroom-ch-item ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.app.selectClassroomChapter(${ch.number})">
-          <span class="ch-item-num">${ch.number}</span>
-          <span class="ch-item-title">${ch.titleEng}</span>
+        <button class="classroom-ch-sidebar-item ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.app.selectClassroomChapter(${ch.number})">
+          <span class="ch-item-badge">${ch.number}</span>
+          <span class="ch-item-name">${ch.titleEng}</span>
         </button>
       `).join('');
     }
   }
 
+  setStoryTab(tab) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.classroom.setActiveTab(tab);
+    this.renderClassroomLesson(this.activeChapter);
+  }
+
   selectClassroomChapter(chNum) {
-    this.sfx.playPop();
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     this.activeChapter = chNum;
     this.renderChapterSelectorStrip();
     this.renderClassroomLesson(chNum);
@@ -908,7 +913,7 @@ class AppController {
     const container = document.getElementById('classroom-lesson-container');
     if (!container) return;
     const lesson = this.classroom.getLesson(chNum);
-    container.innerHTML = this.classroom.renderLessonCard(lesson);
+    container.innerHTML = this.classroom.renderLessonCard(lesson, this.classroom.getActiveTab());
 
     // Attach 3D physics tilt and floating particle canvas to lesson banner
     const bannerArt = container.querySelector('.lesson-banner-art');
@@ -918,57 +923,108 @@ class AppController {
     }
   }
 
-  speakStory(chNum) {
-    this.sfx.playPop();
-    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
-    if (ch && ch.audioUrlEng) {
-      this.voiceover.playStaticAudio(ch.audioUrlEng, () => {
-        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
-      });
-      return;
-    }
-    const lesson = this.classroom.getLesson(chNum);
-    this.speakText(`Chapter ${lesson.number}: ${lesson.titleEng}. ${lesson.story5yo} Today's golden rule: ${lesson.moralLesson}`);
-  }
-
-  speakStoryMal(chNum) {
-    this.sfx.playPop();
-    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
-    if (ch && ch.audioUrlMal) {
-      this.voiceover.playStaticAudio(ch.audioUrlMal, () => {
-        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
-      });
-      return;
-    }
-    const lesson = this.classroom.getLesson(chNum);
-    const text = `അദ്ധ്യായം ${lesson.number}: ${lesson.titleMal}. ${lesson.story5yoMal || lesson.story5yo}. ഇന്നത്തെ സുവർണ്ണ പാഠം: ${lesson.moralLessonMal || ''}. ${lesson.scripture || ''}`;
-    this.speakMalayalam(text);
-  }
-
-  toggleSlideArtMode(chNum) {
-    this.sfx.playPop();
-    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
-    if (!ch) return;
-    const imgEl = document.getElementById(`slide-hero-img-${ch.number}`);
-    if (!imgEl) return;
-
-    const is3D = imgEl.src.includes('pixar');
-    const newSrc = is3D ? ch.textbookUrl : ch.imageUrl;
-    imgEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    imgEl.style.opacity = '0';
-    imgEl.style.transform = 'scale(0.95)';
-
-    setTimeout(() => {
-      imgEl.src = newSrc;
-      imgEl.style.opacity = '1';
-      imgEl.style.transform = 'scale(1)';
-    }, 300);
-  }
-
-
   awardStar(chNum) {
     this.addStar(1);
-    alert(`⭐ Hooray! You collected a shining golden star for Chapter ${chNum}! Total: ${this.starsCount} Stars! ✨`);
+    this.showToast(`⭐ Golden Star collected for Chapter ${chNum}!`, '⭐');
+  }
+
+  /* ---------------- Shared Audio Player Controller ---------------- */
+  playChapterAudio(chNum, lang = 'mal') {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
+    if (!ch) return;
+
+    const audioUrl = lang === 'mal' ? ch.audioUrlMal : ch.audioUrlEng;
+    this.activeAudioChapter = ch.number;
+    this.activeAudioLang = lang;
+
+    // Update button states in visible audio bars
+    document.querySelectorAll('.shared-audio-bar').forEach(bar => {
+      const malBtn = bar.querySelector('.btn-audio-mal');
+      const engBtn = bar.querySelector('.btn-audio-eng');
+      const playBtn = bar.querySelector('.btn-audio-play-pause');
+      if (malBtn) malBtn.classList.toggle('active', lang === 'mal');
+      if (engBtn) engBtn.classList.toggle('active', lang === 'eng');
+      if (playBtn) playBtn.textContent = '⏸';
+    });
+
+    if (audioUrl) {
+      const audioEl = this.voiceover.playStaticAudio(audioUrl, () => {
+        this.resetAudioPlayerUI();
+      }, () => {
+        this.resetAudioPlayerUI();
+      });
+
+      if (audioEl) {
+        audioEl.ontimeupdate = () => {
+          this.updateAudioProgressUI(audioEl.currentTime, audioEl.duration);
+        };
+      }
+    } else {
+      // Fallback to Web Speech
+      if (lang === 'mal') {
+        this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ''}`);
+      } else {
+        this.speakText(`${ch.titleEng}. ${ch.story5yo}`);
+      }
+    }
+  }
+
+  togglePlayPause(chNum) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    const currentAudio = this.voiceover.currentAudioElement;
+
+    if (currentAudio && !currentAudio.paused) {
+      currentAudio.pause();
+      document.querySelectorAll('.btn-audio-play-pause').forEach(b => b.textContent = '▶');
+    } else if (currentAudio && currentAudio.paused) {
+      currentAudio.play().catch(() => {});
+      document.querySelectorAll('.btn-audio-play-pause').forEach(b => b.textContent = '⏸');
+    } else {
+      this.playChapterAudio(chNum || this.activeChapter || 1, this.activeAudioLang || 'mal');
+    }
+  }
+
+  seekAudio(e) {
+    const currentAudio = this.voiceover.currentAudioElement;
+    if (!currentAudio || !currentAudio.duration) return;
+
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    currentAudio.currentTime = pct * currentAudio.duration;
+  }
+
+  updateAudioProgressUI(currentTime, duration) {
+    const dur = (duration && isFinite(duration) && duration > 0) ? duration : 38;
+    const pct = Math.min(100, (currentTime / dur) * 100);
+    const formatTime = (sec) => {
+      if (isNaN(sec) || !isFinite(sec) || sec < 0) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
+
+    document.querySelectorAll('.audio-progress-fill').forEach(fill => {
+      fill.style.width = `${pct}%`;
+    });
+    document.querySelectorAll('.audio-time-display').forEach(disp => {
+      disp.textContent = `${formatTime(currentTime)} / ${formatTime(dur)}`;
+    });
+  }
+
+  resetAudioPlayerUI() {
+    document.querySelectorAll('.btn-audio-play-pause').forEach(b => b.textContent = '▶');
+    document.querySelectorAll('.audio-progress-fill').forEach(fill => fill.style.width = '0%');
+    document.querySelectorAll('.audio-lang-pills .btn-audio-pill').forEach(b => b.classList.remove('active'));
+  }
+
+  stopVoice() {
+    this.voiceover.stop();
+    this.resetAudioPlayerUI();
+    if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
+    this.showToast('🔇 Audio Stopped', '🛑');
   }
 
   /* ---------------- Exam Solver View ---------------- */
@@ -989,14 +1045,16 @@ class AppController {
     if (!tabsRow) return;
 
     tabsRow.innerHTML = EXAM_PAPERS_DATA.map(paper => `
-      <button class="paper-tab-btn ${paper.id === this.activePaperId ? 'active' : ''}" onclick="window.app.switchPaper('${paper.id}')">
-        📝 ${paper.title.split('(')[0]}
+      <button class="paper-tile-btn ${paper.id === this.activePaperId ? 'active' : ''}" onclick="window.app.switchPaper('${paper.id}')">
+        <span class="paper-tile-year">${paper.year}</span>
+        <span class="paper-tile-sem">Semester ${paper.semester}</span>
+        <span class="paper-tile-marks">${paper.totalMarks} Marks</span>
       </button>
     `).join('');
   }
 
   switchPaper(paperId) {
-    this.sfx.playPop();
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     this.activePaperId = paperId;
     this.renderPaperTabs();
     this.renderActivePaper();
@@ -1021,15 +1079,22 @@ class AppController {
 
     const matches = this.solver.searchQuestions(term);
     if (matches.length === 0) {
-      container.innerHTML = `<div class="glass-panel text-center p-4">No matching exam questions found for "${term}".</div>`;
+      container.innerHTML = `
+        <div class="glass-panel text-center p-4 solver-no-results">
+          <p>No matching exam questions found for "<strong>${term}</strong>".</p>
+          <button class="btn-primary-gold-pill" onclick="document.getElementById('solver-search-input').value=''; window.app.renderActivePaper();">
+            Clear Search
+          </button>
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = `
-      <div class="search-results-banner mb-3">
+      <div class="solver-search-results-banner">
         <h3>Found ${matches.length} matching questions across all 5 papers:</h3>
       </div>
-      <div class="questions-list">
+      <div class="solver-questions-list">
         ${matches.map(q => this.solver.renderQuestionCardHTML(q)).join('')}
       </div>
     `;
@@ -1042,7 +1107,7 @@ class AppController {
   }
 
   restartQuiz() {
-    this.sfx.playSparkle();
+    if (this.sfx && this.sfx.playSparkle) this.sfx.playSparkle();
     this.quiz.reset();
     this.renderQuiz();
   }
@@ -1055,17 +1120,17 @@ class AppController {
   }
 
   chooseQuizOption(index) {
-    this.sfx.playPop();
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     const result = this.quiz.answerByIndex(index);
 
     if (result.correct) {
-      this.sfx.playChime();
+      if (this.sfx && this.sfx.playChime) this.sfx.playChime();
       this.addStar(1);
       if (this.heroAtmosphere) {
         this.heroAtmosphere.spawnBurst(undefined, undefined, 30);
       }
     } else {
-      this.sfx.playPop();
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     }
 
     this.renderQuiz();
@@ -1073,16 +1138,16 @@ class AppController {
   }
 
   nextQuizQuestion() {
-    this.sfx.playPop();
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     const hasNext = this.quiz.nextQuestion();
     if (!hasNext) {
-      this.sfx.playCheer();
+      if (this.sfx && this.sfx.playCheer) this.sfx.playCheer();
     }
     this.renderQuiz();
   }
 
   showQuizHint() {
-    this.sfx.playPop();
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
     const box = document.getElementById('quiz-hint-box');
     const q = this.quiz.getCurrentQuestion();
     if (box && q) {
@@ -1094,7 +1159,7 @@ class AppController {
   speakQuizQuestion() {
     const q = this.quiz.getCurrentQuestion();
     if (q) {
-      this.sfx.playPop();
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
       this.voiceover.speak(`${q.questionEng}. Option 1: ${q.options[0]}. Option 2: ${q.options[1]}. Option 3: ${q.options[2]}`);
     }
   }

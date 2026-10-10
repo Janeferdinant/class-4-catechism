@@ -1,13 +1,14 @@
 /**
  * SlideDeck Component
- * High-definition presentation slide deck supporting 4K layouts,
- * keyboard navigation, chapter story presentation, and speaker notes.
+ * High-definition presentation slide deck supporting 16:9 layouts,
+ * keyboard navigation, artwork/textbook toggle, thumbnail strip, and shared audio bar.
  */
 
 export class SlideDeckManager {
   constructor(chapters = []) {
     this.chapters = chapters;
     this.currentIndex = 0;
+    this.artMode = 'artwork';
     this.onSlideChange = null;
   }
 
@@ -21,6 +22,14 @@ export class SlideDeckManager {
 
   getCurrentSlide() {
     return this.chapters[this.currentIndex] || this.chapters[0];
+  }
+
+  setArtMode(mode) {
+    this.artMode = mode;
+  }
+
+  getArtMode() {
+    return this.artMode;
   }
 
   next() {
@@ -47,93 +56,96 @@ export class SlideDeckManager {
     return this.currentIndex;
   }
 
-  renderSlideHTML(chapter) {
+  renderSlideHTML(chapter, mode = null) {
     if (!chapter) return '';
+    const artMode = mode || this.artMode || 'artwork';
+    const imgUrl = (artMode === 'textbook' && chapter.textbookUrl) ? chapter.textbookUrl : chapter.imageUrl;
+    const total = this.chapters.length || 15;
+
     return `
-      <div class="slide-content animate-slide-fade" data-chapter="${chapter.number}">
-        <div class="slide-badge">
-          <span class="badge-tag">CHAPTER ${chapter.number} OF 15</span>
-          <span class="badge-sem">SEMESTER ${chapter.semester}</span>
-        </div>
-        <h1 class="slide-title-mal">${chapter.titleMal}</h1>
-        <h2 class="slide-title-eng">${chapter.titleEng}</h2>
-
-        <div class="slide-body-grid">
-          <!-- Column 1: Authentic Textbook Illustration Card -->
-          <div class="slide-picture-card">
-            <div class="card-header">
-              <span class="character-avatar">🎨</span>
-              <span class="character-name">പാഠപുസ്തക ചിത്രം (Lesson Art)</span>
-              <span class="art-badge-hd">3D Pixar HD</span>
-            </div>
-            <div class="slide-img-container" id="slide-img-container-${chapter.number}">
-              <img src="${chapter.imageUrl}" alt="${chapter.titleMal} - ${chapter.titleEng}" class="slide-hero-image ken-burns-active" id="slide-hero-img-${chapter.number}" loading="lazy" />
-              <div class="slide-img-overlay-bar">
-                <span>📖 Ch ${chapter.number} • 3D Motion Graphics</span>
-                <span class="motion-pill-badge">🎬 Live 3D</span>
-              </div>
-            </div>
-            <div class="slide-audio-quickbar">
-              <button class="btn-ctrl btn-slide-speak-mal" onclick="window.app && window.app.speakStoryMal ? window.app.speakStoryMal(${chapter.number}) : null" title="മലയാളം വിവരണം">
-                🔊 മലയാളം
-              </button>
-              <button class="btn-ctrl btn-slide-speak-eng" onclick="window.app && window.app.speakStory ? window.app.speakStory(${chapter.number}) : null" title="English Narration">
-                🔊 English
-              </button>
-              <button class="btn-ctrl btn-slide-stop" onclick="window.app && window.app.stopVoice ? window.app.stopVoice() : null" title="Stop Voice">
-                🛑 Stop
-              </button>
-              <button class="btn-ctrl btn-slide-ai-art" onclick="window.app && window.app.generate4KArt ? window.app.generate4KArt(${chapter.number}) : null" title="Generate 4K 3D Pixar Art with Gemini AI Studio">
-                ✨ 4K Pixar AI
-              </button>
-              <button class="btn-ctrl btn-slide-toggle-art" onclick="window.app && window.app.toggleSlideArtMode ? window.app.toggleSlideArtMode(${chapter.number}) : null" title="Toggle between 3D Pixar Art and Textbook Illustration">
-                🔄 3D / Scan
-              </button>
-            </div>
+      <div class="slide-presentation-card glass-panel animate-slide-fade" data-chapter="${chapter.number}">
+        <!-- Slide Top Header -->
+        <div class="slide-card-header">
+          <div class="slide-header-left">
+            <span class="slide-chapter-kicker">CHAPTER ${chapter.number} OF ${total}</span>
+            <h2 class="slide-headline-title">
+              <span class="slide-title-serif">${chapter.titleEng}</span>
+              <span class="slide-title-malayalam">${chapter.titleMal}</span>
+            </h2>
           </div>
-
-          <!-- Column 2: Leo's 5yo Story -->
-          <div class="slide-story-card">
-            <div class="card-header">
-              <span class="character-avatar">🦁</span>
-              <span class="character-name">ലിയോയുടെ കഥ (Leo's 5yo Story)</span>
+          <div class="slide-header-right">
+            <!-- Artwork / Textbook Toggle -->
+            <div class="slide-art-segmented-control" role="group" aria-label="Slide artwork mode">
+              <button class="slide-art-seg-btn ${artMode !== 'textbook' ? 'active' : ''}" id="btn-art-mode-art" onclick="window.app && window.app.setSlideArtMode && window.app.setSlideArtMode('artwork')">
+                🎨 Artwork
+              </button>
+              <button class="slide-art-seg-btn ${artMode === 'textbook' ? 'active' : ''}" id="btn-art-mode-textbook" onclick="window.app && window.app.setSlideArtMode && window.app.setSlideArtMode('textbook')">
+                📖 Textbook
+              </button>
             </div>
-            <p class="story-text-mal" style="font-family: var(--font-family-malayalam); font-size: 1.15rem; line-height: 1.7; margin-bottom: 12px; color: var(--text-primary); font-weight: 500;">${chapter.story5yoMal || chapter.story5yo}</p>
-            <p class="story-text" style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6;">${chapter.story5yo}</p>
-            <div class="moral-box">
-              <strong>🌟 സുവർണ്ണ പാഠം (Golden Rule):</strong>
-              <div style="font-family: var(--font-family-malayalam); font-weight: 700; color: var(--accent-gold); margin-top: 4px; font-size: 1rem;">${chapter.moralLessonMal || ''}</div>
-              <div style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 2px;">${chapter.moralLesson}</div>
-            </div>
-          </div>
-
-          <!-- Column 3: Scripture & Galileo Agent Insights -->
-          <div class="slide-scripture-card">
-            <div class="card-header">
-              <span class="icon-bible">📖</span>
-              <span class="scripture-heading">Holy Scripture</span>
-            </div>
-            <blockquote class="bible-quote">"${chapter.scripture}"</blockquote>
-            <p class="bible-quote-eng">"${chapter.scriptureEng}"</p>
-            <div class="concept-chips">
-              ${chapter.keyConcepts.map(c => `
-                <span class="concept-chip" title="${c.desc}">
-                  <strong>${c.termMal}</strong> (${c.termEng})
-                </span>
-              `).join('')}
-            </div>
-            <div class="agent-insight">
-              <strong>🤖 Galileo Multi-Agent Insight:</strong>
-              <p>${chapter.agentPerspective}</p>
-            </div>
+            <div class="slide-counter-badge">Slide ${chapter.number} of ${total}</div>
           </div>
         </div>
 
-        <div class="slide-academic-footer">
-          <span class="footer-academic-icon">🎓</span>
-          <div class="footer-academic-text">
-            <strong>Academic Mentor: Asst. Prof. Jane Rose</strong> &bull; Department of Computer Science & Engineering (CSE)
+        <!-- Main 16:9 Slide Stage -->
+        <div class="slide-stage-viewport">
+          <div class="slide-img-container" id="slide-img-container-${chapter.number}">
+            <img src="${imgUrl}" alt="${chapter.titleEng} - ${chapter.titleMal}" class="slide-hero-image" id="slide-hero-img-${chapter.number}" loading="lazy" />
           </div>
+
+          <!-- Mid-height Floating Round Prev / Next Navigation Arrows -->
+          <button class="slide-arrow-btn slide-arrow-prev" id="btn-slide-stage-prev" onclick="window.app && window.app.prevSlide && window.app.prevSlide()" aria-label="Previous slide">
+            ‹
+          </button>
+          <button class="slide-arrow-btn slide-arrow-next" id="btn-slide-stage-next" onclick="window.app && window.app.nextSlide && window.app.nextSlide()" aria-label="Next slide">
+            ›
+          </button>
+        </div>
+
+        <!-- Thumbnail Strip Container (Populated & Scrolled in app.js) -->
+        <div class="slide-thumbs-container" id="slide-thumbs-strip">
+          ${this.chapters.map((ch, i) => `
+            <button class="slide-thumb-pill ${ch.number === chapter.number ? 'active' : ''}" onclick="window.app && window.app.jumpToSlide && window.app.jumpToSlide(${i})" title="Ch ${ch.number}: ${ch.titleEng}">
+              <img src="${ch.imageUrl}" alt="Ch ${ch.number}" class="thumb-mini-img" loading="lazy" />
+              <span class="thumb-num-label">Ch ${ch.number}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Shared Audio Bar & Fullscreen Controls Row -->
+        <div class="slide-bottom-audio-bar shared-audio-bar" data-chapter="${chapter.number}">
+          <div class="audio-lang-pills">
+            <button class="btn-audio-pill btn-audio-mal" id="btn-slide-voice-mal" onclick="window.app && window.app.playChapterAudio && window.app.playChapterAudio(${chapter.number}, 'mal')" title="Listen in Malayalam">
+              🔊 Malayalam
+            </button>
+            <button class="btn-audio-pill btn-audio-eng" id="btn-slide-voice-eng" onclick="window.app && window.app.playChapterAudio && window.app.playChapterAudio(${chapter.number}, 'eng')" title="Listen in English">
+              🔊 English
+            </button>
+            <button class="btn-audio-pill btn-audio-stop" id="btn-slide-stop" onclick="window.app && window.app.stopVoice && window.app.stopVoice()" title="Stop Voice">
+              🛑 Stop Audio
+            </button>
+          </div>
+
+          <div class="audio-player-controls">
+            <button class="btn-audio-play-pause" id="btn-slide-play-pause" onclick="window.app && window.app.togglePlayPause && window.app.togglePlayPause(${chapter.number})" aria-label="Play or pause audio">
+              ▶
+            </button>
+            <div class="audio-progress-wrap" id="slide-audio-progress-wrap" onclick="window.app && window.app.seekAudio && window.app.seekAudio(event)">
+              <div class="audio-progress-fill" id="slide-audio-progress-fill" style="width: 0%;"></div>
+            </div>
+            <span class="audio-time-display" id="slide-audio-time-display">0:00 / 0:38</span>
+          </div>
+
+          <div class="slide-actions-right">
+            <button class="btn-ctrl btn-slide-fullscreen-stage" id="btn-slide-fullscreen" onclick="window.app && window.app.toggleSlideFullscreen && window.app.toggleSlideFullscreen()">
+              ⛶ Fullscreen
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic Mentor subtle attribution line (preserves tests/footerAttribution.test.js) -->
+        <div class="slide-academic-attribution">
+          Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
         </div>
       </div>
     `;

@@ -285,30 +285,7 @@
     <!-- VIEW 2: 4K / HD PRESENTATION SLIDES -->
     <section id="view-slides" class="view-section">
       <div class="slides-wrapper">
-        <div class="slides-toolbar glass-panel">
-          <div class="slide-nav-controls">
-            <button id="btn-slide-prev" class="btn-ctrl">⬅ Previous</button>
-            <span id="slide-indicator" class="font-weight-bold" style="padding:0 12px; font-weight:700;">1 / 15</span>
-            <button id="btn-slide-next" class="btn-ctrl">Next ➡</button>
-          </div>
-          <div class="slide-extra-actions">
-            <button id="btn-slide-voice-mal" class="btn-ctrl" title="Listen in Malayalam">🔊 മലയാളം</button>
-            <button id="btn-slide-voice" class="btn-ctrl" title="Listen in English">🔊 English</button>
-            <button id="btn-slide-stop" class="btn-ctrl" title="Stop audio (നിർത്തുക)">🛑 Stop Audio</button>
-            <button id="btn-slide-fullscreen" class="btn-ctrl">⛶ Fullscreen</button>
-          </div>
-        </div>
-
-        <div style="height:5px; background:var(--bg-tertiary); border-radius:3px; margin-bottom:14px; overflow:hidden;">
-          <div id="slide-progress-bar" style="height:100%; width:6.66%; background:linear-gradient(90deg, var(--accent-primary), var(--accent-gold)); transition:width 300ms ease;"></div>
-        </div>
-
-        <div id="slide-deck-container" class="slide-deck-frame glass-panel"></div>
-
-        <!-- Horizontal Chapter Thumbnails Strip (Matching Mockup) -->
-        <div class="slide-thumbs-strip glass-panel" id="slide-thumbs-strip">
-          <!-- Populated by app.js -->
-        </div>
+        <div id="slide-deck-container" class="slide-deck-frame"></div>
       </div>
     </section>
 
@@ -319,7 +296,7 @@
         <div id="classroom-ch-strip" class="chapter-selector-strip" style="display:none;"></div>
 
         <div class="classroom-layout-columns">
-          <!-- Left Sidebar: Chapter List (Matching Mockup) -->
+          <!-- Left Sidebar: Chapter List (Matching Mockup 04) -->
           <aside class="classroom-sidebar glass-panel">
             <div class="sidebar-header">
               <span class="sidebar-icon">📖</span>
@@ -341,9 +318,17 @@
     <!-- VIEW 4: EXAM SOLVER & CITATION ENGINE -->
     <section id="view-solver" class="view-section">
       <div class="solver-wrapper">
+        <div class="solver-hero-header">
+          <h2 class="solver-page-title">Solved Examination Papers</h2>
+          <p class="solver-page-subtitle">Practice with real questions and detailed explanations</p>
+        </div>
+
         <div class="solver-filter-bar glass-panel">
           <div id="paper-tabs-row" class="paper-tabs-row"></div>
-          <input type="text" id="solver-search-input" class="solver-search-input" placeholder="🔍 Search question or chapter citation...">
+          <div class="solver-search-wrap">
+            <span class="search-lens-icon">🔍</span>
+            <input type="text" id="solver-search-input" class="solver-search-input" placeholder="Search by question, answer, or chapter citation...">
+          </div>
         </div>
 
         <div id="solver-content-container"></div>
