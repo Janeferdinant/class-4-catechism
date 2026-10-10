@@ -136,12 +136,69 @@ body.mobile-preview-active .mob-bottom-nav {
 
 /* View 1: Chapter Adventure Deck */
 .mob-hero-banner {
-  padding: 14px 16px;
+  padding: 16px 18px;
   border-radius: var(--radius-lg);
   margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.celestial-mob-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 22px 18px;
+  background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.45) 0%, rgba(5, 11, 24, 0.88) 100%), url('../../assets/generated/adventure_map_dark.jpg');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(232, 199, 120, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(140, 203, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+[data-theme="light"] .celestial-mob-hero {
+  background-image: linear-gradient(180deg, rgba(255, 252, 244, 0.5) 0%, rgba(255, 252, 244, 0.94) 100%), url('../../assets/generated/adventure_map_light.jpg');
+  border: 1px solid rgba(217, 182, 111, 0.4);
+  box-shadow: 0 12px 28px rgba(40, 65, 94, 0.1), 0 0 18px rgba(217, 182, 111, 0.15);
+}
+
+.mob-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mob-hero-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: var(--color-amber);
+}
+
+.mob-hero-headline {
+  font-family: var(--font-family-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.mob-hero-subheadline {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
 }
 
 .mob-hero-title h3 {
@@ -155,15 +212,25 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 .mob-btn-3d-toggle {
-  background: var(--glass-bg);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-amber);
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  border: 1px solid #fbbf24;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #050b18;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  transition: all 0.2s ease;
+}
+
+.mob-btn-3d-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.55);
 }
 
 .mob-3d-view-box {
@@ -375,6 +442,25 @@ body.mobile-preview-active .mob-bottom-nav {
   border-radius: 999px;
   border: 1px solid rgba(99, 102, 241, 0.25);
   display: inline-block;
+}
+
+[data-theme="light"] .mob-mentor-banner {
+  background: radial-gradient(circle at 50% 0%, rgba(217, 182, 111, 0.22) 0%, rgba(255, 255, 255, 0.96) 80%);
+  border: 1px solid rgba(217, 182, 111, 0.5);
+  box-shadow: 0 10px 24px rgba(40, 65, 94, 0.08), 0 0 16px rgba(217, 182, 111, 0.2);
+}
+
+[data-theme="light"] .mob-mentor-name {
+  background: linear-gradient(135deg, #1e293b 40%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+[data-theme="light"] .mob-mentor-dept {
+  color: #334155;
+  background: rgba(217, 182, 111, 0.15);
+  border: 1px solid rgba(217, 182, 111, 0.35);
 }
 
 /* View 2: Picture Slides */

@@ -215,21 +215,323 @@ body {
 }
 
 /* ==========================================================================
-   VIEW 1: 3D UNIVERSE & MULTI-AGENT LAB
+   VIEW 1: 3D UNIVERSE & MULTI-AGENT LAB (CELESTIAL ADVENTURE MAP)
    ========================================================================== */
+.celestial-hero-stage {
+  position: relative;
+  min-height: 640px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  margin-bottom: var(--space-xl);
+}
+
+.celestial-backdrop-art {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+  transition: opacity var(--transition-smooth);
+}
+
+[data-theme="dark"] .celestial-backdrop-art {
+  background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.45) 0%, rgba(5, 11, 24, 0.85) 100%), url('../../assets/generated/adventure_map_dark.jpg');
+}
+
+[data-theme="light"] .celestial-backdrop-art {
+  background-image: linear-gradient(180deg, rgba(255, 252, 244, 0.3) 0%, rgba(255, 252, 244, 0.82) 100%), url('../../assets/generated/adventure_map_light.jpg');
+}
+
+.hero-particle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-left-cluster {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  max-width: 280px;
+}
+
+.hero-scripture-banner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scripture-quote-text {
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.scripture-ref-tag {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.hero-illustration-wrap {
+  width: 230px;
+  height: 230px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--border-accent);
+  animation: celestial-float 5s ease-in-out infinite;
+}
+
+.hero-jesus-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-dove-accent {
+  position: absolute;
+  top: 22px;
+  left: 36%;
+  width: 65px;
+  height: 65px;
+  z-index: 2;
+  pointer-events: none;
+  animation: dove-hover 6s ease-in-out infinite;
+  filter: drop-shadow(0 6px 12px rgba(232, 199, 120, 0.45));
+}
+
+.hero-dove-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes celestial-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes dove-hover {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-10px) translateX(6px); }
+}
+
 .universe-layout {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: var(--space-xl);
-  height: calc(100vh - 160px);
+  gap: var(--space-md);
+  min-height: 580px;
+  padding: var(--space-md);
 }
 
 .viewport-3d-card {
   position: relative;
   overflow: hidden;
   height: 100%;
+  min-height: 520px;
   display: flex;
   flex-direction: column;
+  background: rgba(7, 21, 46, 0.35);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+[data-theme="light"] .viewport-3d-card {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.agent-console-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--glass-shadow);
+  max-height: 540px;
+}
+
+.hero-floating-card {
+  position: absolute;
+  bottom: 24px;
+  left: 28px;
+  z-index: 4;
+  max-width: 300px;
+  padding: 16px 20px;
+  background: var(--glass-bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+}
+
+.hero-floating-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.hero-floating-card p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.btn-start-exploring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--gold-gradient);
+  color: #050b18;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-start-exploring:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(232, 199, 120, 0.6);
+}
+
+/* 5 Destination Navigation Cards Grid */
+.hero-nav-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.hero-nav-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: var(--glass-bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.hero-nav-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-accent);
+  box-shadow: var(--glass-shadow), var(--glow-gold);
+}
+
+.nav-card-icon {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-card-info h4 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.nav-card-info p {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* Academic Mentor Intro Card */
+.academic-mentor-intro-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 22px 32px;
+  background: var(--glass-bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.mentor-intro-badge {
+  font-size: 2.2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--glow-gold);
+}
+
+.mentor-intro-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.mentor-intro-role {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mentor-intro-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.mentor-intro-dept {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mentor-intro-platform {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 #three-canvas-container {

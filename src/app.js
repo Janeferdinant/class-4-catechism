@@ -148,6 +148,20 @@ class AppController {
     if (themeLabel) {
       themeLabel.textContent = theme === 'dark' ? 'Daylight Mode' : 'Night Mode';
     }
+    if (this.heroAtmosphere) {
+      this.heroAtmosphere.setTheme(theme);
+    }
+    const scriptureText = document.querySelector('.scripture-quote-text');
+    const scriptureRef = document.querySelector('.scripture-ref-tag');
+    if (scriptureText && scriptureRef) {
+      if (theme === 'dark') {
+        scriptureText.textContent = '“Your word is a lamp to my feet and a light to my path.”';
+        scriptureRef.textContent = 'Psalm 119:105';
+      } else {
+        scriptureText.textContent = '“Let the little children come to me...”';
+        scriptureRef.textContent = 'Mark 10:14';
+      }
+    }
   }
 
   /* ---------------- Mobile / Desktop View Mode Toggle ---------------- */
@@ -531,6 +545,11 @@ class AppController {
 
   /* ---------------- 3D Universe & Side-Drawer ---------------- */
   initThreeUniverse() {
+    const heroCanvas = document.getElementById('hero-particle-canvas');
+    if (heroCanvas && this.motionGraphics) {
+      this.heroAtmosphere = this.motionGraphics.attachAtmosphericSystem(heroCanvas, this.currentTheme);
+    }
+
     const container = document.getElementById('three-canvas-container');
     if (container && window.THREE) {
       this.threeUniverse = new ThreeUniverse(container, (drawerData, rawNode) => {
@@ -543,6 +562,9 @@ class AppController {
   handleNodeClick(drawerData) {
     if (!drawerData) return;
     this.sfx.playPop();
+    if (this.heroAtmosphere) {
+      this.heroAtmosphere.spawnBurst();
+    }
 
     const drawer = document.getElementById('three-node-drawer');
     const mobDrawer = document.getElementById('mob-three-node-drawer');
@@ -730,6 +752,12 @@ class AppController {
     });
   }
 
+  jumpToSlide(index) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.slideDeck.jumpTo(index);
+    this.renderCurrentSlide();
+  }
+
   renderCurrentSlide() {
     const container = document.getElementById('slide-deck-container');
     const slide = this.slideDeck.getCurrentSlide();
@@ -752,6 +780,17 @@ class AppController {
 
     const progress = document.getElementById('slide-progress-bar');
     if (progress) progress.style.width = `${((idx + 1) / total) * 100}%`;
+
+    // Populate thumbnail strip matching mockup
+    const thumbsStrip = document.getElementById('slide-thumbs-strip');
+    if (thumbsStrip) {
+      thumbsStrip.innerHTML = CHAPTERS_DATA.map((ch, i) => `
+        <div class="slide-thumb-item ${i === idx ? 'active' : ''}" onclick="window.app.jumpToSlide(${i})" title="Ch ${ch.number}: ${ch.titleEng}">
+          <img src="${ch.imageUrl}" alt="${ch.titleEng}" class="slide-thumb-img" loading="lazy" />
+          <span class="slide-thumb-badge">Ch ${ch.number}</span>
+        </div>
+      `).join('');
+    }
   }
 
   /* ---------------- Classroom View ---------------- */
@@ -762,13 +801,23 @@ class AppController {
 
   renderChapterSelectorStrip() {
     const strip = document.getElementById('classroom-ch-strip');
-    if (!strip) return;
+    if (strip) {
+      strip.innerHTML = CHAPTERS_DATA.map(ch => `
+        <button class="ch-btn-pill ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.app.selectClassroomChapter(${ch.number})">
+          ⭐ Ch ${ch.number}
+        </button>
+      `).join('');
+    }
 
-    strip.innerHTML = CHAPTERS_DATA.map(ch => `
-      <button class="ch-btn-pill ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.app.selectClassroomChapter(${ch.number})">
-        ⭐ Ch ${ch.number}
-      </button>
-    `).join('');
+    const chList = document.getElementById('classroom-ch-list');
+    if (chList) {
+      chList.innerHTML = CHAPTERS_DATA.map(ch => `
+        <button class="classroom-ch-item ${ch.number === this.activeChapter ? 'active' : ''}" onclick="window.app.selectClassroomChapter(${ch.number})">
+          <span class="ch-item-num">${ch.number}</span>
+          <span class="ch-item-title">${ch.titleEng}</span>
+        </button>
+      `).join('');
+    }
   }
 
   selectClassroomChapter(chNum) {
@@ -936,6 +985,9 @@ class AppController {
     if (result.correct) {
       this.sfx.playChime();
       this.addStar(1);
+      if (this.heroAtmosphere) {
+        this.heroAtmosphere.spawnBurst(undefined, undefined, 30);
+      }
     } else {
       this.sfx.playPop();
     }

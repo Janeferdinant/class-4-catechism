@@ -155,27 +155,43 @@ export class QuizEngine {
         <!-- Feedback Banner if answered -->
         ${this.lastFeedback ? `
           <div class="feedback-banner ${this.lastFeedback.correct ? 'feedback-success' : 'feedback-tryagain'}">
-            <span class="feedback-icon">${this.lastFeedback.correct ? '🌟' : '🎈'}</span>
-            <div>
-              <strong>${this.lastFeedback.correct ? 'Hooray!' : 'Good Try!'}</strong>
+            ${this.lastFeedback.correct ? `
+              <div class="feedback-angel-badge">
+                <img src="assets/generated/angel_mascot_celebrate.jpg" alt="Celebrating Angel" class="feedback-angel-img" />
+                <span class="feedback-angel-tag">Correct! ✨</span>
+              </div>
+            ` : `
+              <span class="feedback-icon">🎈</span>
+            `}
+            <div class="feedback-text-content">
+              <strong>${this.lastFeedback.correct ? 'Hooray! Correct Answer!' : 'Good Try!'}</strong>
               <p>${this.lastFeedback.encouragement}</p>
             </div>
-            ${this.lastFeedback.correct ? `
-              <button class="btn-bubble-next" onclick="window.app.nextQuizQuestion()">Next ➡</button>
-            ` : `
-              <button class="btn-bubble-next" onclick="window.app.nextQuizQuestion()">Keep Going ➡</button>
-            `}
+            <button class="btn-bubble-next btn-gold-next" onclick="window.app.nextQuizQuestion()">
+              ${this.lastFeedback.correct ? 'Next Question ➔' : 'Keep Going ➔'}
+            </button>
           </div>
         ` : ''}
 
-        <!-- Big Rounded Choice Buttons -->
+        <!-- Big Rounded Choice Buttons with A, B, C, D badges -->
         <div class="quiz-bubbly-grid">
-          ${q.options.map((opt, idx) => `
-            <button class="btn-choice-bubbly" data-choice-index="${idx}" onclick="window.app.chooseQuizOption(${idx})">
-              <span class="choice-num">${idx + 1}</span>
-              <span class="choice-text">${opt}</span>
-            </button>
-          `).join('')}
+          ${q.options.map((opt, idx) => {
+            const letter = ['A', 'B', 'C', 'D'][idx] || (idx + 1);
+            let stateClass = '';
+            if (this.lastFeedback) {
+              if (idx === q.correctIndex) {
+                stateClass = 'choice-correct';
+              } else if (idx === this.lastFeedback.chosenIndex && !this.lastFeedback.correct) {
+                stateClass = 'choice-incorrect';
+              }
+            }
+            return `
+              <button class="btn-choice-bubbly ${stateClass}" data-choice-index="${idx}" onclick="window.app.chooseQuizOption(${idx})">
+                <span class="choice-num">${letter}</span>
+                <span class="choice-text">${opt}</span>
+              </button>
+            `;
+          }).join('')}
         </div>
 
         <!-- Helpful Clue and Citation -->

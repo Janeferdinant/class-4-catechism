@@ -26,10 +26,10 @@
   <!-- ================= App Header ================= -->
   <header class="app-header">
     <div class="brand-wrapper">
-      <div class="brand-icon-orbit">✨</div>
+      <div class="brand-icon-orbit">✝️</div>
       <div class="brand-text">
         <h1>Class 4 Catechism</h1>
-        <p>Interactive Classroom • Chapters 1–15 & 5 Solved Papers</p>
+        <p>Jesus, the Source of Life (ഈശോ ജീവന്റെ ഉറവിടം)</p>
       </div>
     </div>
 
@@ -96,68 +96,160 @@
 
     <!-- VIEW 1: 3D UNIVERSE & MULTI-AGENT LAB -->
     <section id="view-universe" class="view-section active">
-      <div class="universe-layout">
-        <!-- 3D Canvas Viewport -->
-        <div class="viewport-3d-card glass-panel">
-          <div class="hud-overlay">
-            <div class="hud-pill">
-              <span class="pulse-dot"></span>
-              <span>Galileo Multi-Agent Mesh: Real-Time 3D Simulation</span>
-            </div>
+      <!-- Celestial Adventure Hero Environment -->
+      <div class="celestial-hero-stage">
+        <!-- Dynamic Environment Backdrop -->
+        <div class="celestial-backdrop-art" id="celestial-backdrop-art"></div>
+
+        <!-- Atmospheric Particle Canvas -->
+        <canvas id="hero-particle-canvas" class="hero-particle-canvas"></canvas>
+
+        <!-- Left Hero Accent: Jesus & Children with Scripture -->
+        <div class="hero-left-cluster">
+          <div class="hero-scripture-banner" id="hero-scripture-banner">
+            <span class="scripture-quote-text">“Let the little children come to me...”</span>
+            <span class="scripture-ref-tag">Mark 10:14</span>
           </div>
-
-          <div id="three-canvas-container"></div>
-
-          <!-- 3D Node Side-Drawer Overlay -->
-          <div id="three-node-drawer" class="three-node-drawer"></div>
-
-          <!-- Bottom Viewport Controls -->
-          <div class="viewport-controls-bottom">
-            <div class="filter-btn-group">
-              <button class="filter-chip active" data-filter="all" onclick="window.app.filterUniverse('all')">Show All</button>
-              <button class="filter-chip" data-filter="agent" onclick="window.app.filterUniverse('agent')">Agents (6)</button>
-              <button class="filter-chip" data-filter="chapter" onclick="window.app.filterUniverse('chapter')">Chapters (15)</button>
-              <button class="filter-chip" data-filter="sacrament" onclick="window.app.filterUniverse('sacrament')">Sacraments (7)</button>
-              <button class="filter-chip" data-filter="exam" onclick="window.app.filterUniverse('exam')">Exams (5)</button>
-            </div>
-            <div id="node-inspect-box" class="glass-card" style="display:none; padding:8px 14px; font-size:0.8rem;"></div>
+          <div class="hero-illustration-wrap">
+            <img src="assets/generated/jesus_children_hero.jpg" alt="Jesus with Little Children" class="hero-jesus-img" />
           </div>
         </div>
 
-        <!-- Multi-Agent Live Orchestrator Console (Galileo Observability) -->
-        <aside class="agent-console-panel glass-panel">
-          <div class="panel-header">
-            <h3>🤖 Galileo Multi-Agent Nexus</h3>
-            <span class="badge-tag">ACTIVE MESH</span>
+        <!-- Flying Dove Accent -->
+        <div class="hero-dove-accent">
+          <img src="assets/generated/white_dove_flying.jpg" alt="Holy Spirit Dove" class="hero-dove-img" />
+        </div>
+
+        <!-- Main Universe Grid: 3D Viewport & Multi-Agent Console -->
+        <div class="universe-layout">
+          <!-- 3D Canvas Viewport -->
+          <div class="viewport-3d-card glass-panel">
+            <div class="hud-overlay">
+              <div class="hud-pill">
+                <span class="pulse-dot"></span>
+                <span>Galileo Multi-Agent Mesh: Real-Time 3D Simulation</span>
+              </div>
+            </div>
+
+            <!-- Three.js Canvas Container -->
+            <div id="three-canvas-container"></div>
+
+            <!-- 3D Node Side-Drawer Overlay -->
+            <div id="three-node-drawer" class="three-node-drawer"></div>
+
+            <!-- Bottom Viewport Controls -->
+            <div class="viewport-controls-bottom">
+              <div class="filter-btn-group">
+                <button class="filter-chip active" data-filter="all" onclick="window.app.filterUniverse('all')">Show All</button>
+                <button class="filter-chip" data-filter="agent" onclick="window.app.filterUniverse('agent')">Agents (6)</button>
+                <button class="filter-chip" data-filter="chapter" onclick="window.app.filterUniverse('chapter')">Chapters (15)</button>
+                <button class="filter-chip" data-filter="sacrament" onclick="window.app.filterUniverse('sacrament')">Sacraments (7)</button>
+                <button class="filter-chip" data-filter="exam" onclick="window.app.filterUniverse('exam')">Exams (5)</button>
+              </div>
+              <div id="node-inspect-box" class="glass-card" style="display:none; padding:8px 14px; font-size:0.8rem;"></div>
+            </div>
           </div>
 
-          <div class="agents-grid-status">
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#6366f1;"></span>
-              <div><strong>Orchestrator</strong><div class="text-muted">Master Router</div></div>
+          <!-- Multi-Agent Live Orchestrator Console (Galileo Observability) -->
+          <aside class="agent-console-panel glass-panel">
+            <div class="panel-header">
+              <h3>⭐ Multi-Agent Learning Console</h3>
+              <span class="badge-tag">ACTIVE MESH</span>
             </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#ec4899;"></span>
-              <div><strong>Leo (Story)</strong><div class="text-muted">5yo Pedagogy</div></div>
-            </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#10b981;"></span>
-              <div><strong>Sophia (Solver)</strong><div class="text-muted">Citation Engine</div></div>
-            </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#f59e0b;"></span>
-              <div><strong>Barnaby (Quiz)</strong><div class="text-muted">Gamification</div></div>
-            </div>
-          </div>
 
-          <div class="panel-header">
-            <span class="text-muted" style="font-size:0.8rem; font-weight:700;">LIVE ORCHESTRATION STREAM</span>
-            <span class="text-muted" style="font-size:0.75rem;">Memory vs Working Context</span>
-          </div>
+            <div class="agents-grid-status">
+              <div class="agent-mini-card">
+                <span class="agent-dot" style="background:#38bdf8;"></span>
+                <div><strong>Galileo Nexus</strong><div class="text-muted">Online • Ready to help</div></div>
+              </div>
+              <div class="agent-mini-card">
+                <span class="agent-dot" style="background:#6366f1;"></span>
+                <div><strong>Orchestrator</strong><div class="text-muted">Coordinating learning</div></div>
+              </div>
+              <div class="agent-mini-card">
+                <span class="agent-dot" style="background:#ec4899;"></span>
+                <div><strong>Leo (Story)</strong><div class="text-muted">Story time with Leo</div></div>
+              </div>
+              <div class="agent-mini-card">
+                <span class="agent-dot" style="background:#10b981;"></span>
+                <div><strong>Sophia (Solver)</strong><div class="text-muted">Exam solutions & citations</div></div>
+              </div>
+              <div class="agent-mini-card">
+                <span class="agent-dot" style="background:#f59e0b;"></span>
+                <div><strong>Barnaby (Quiz)</strong><div class="text-muted">Quizzes & practice</div></div>
+              </div>
+            </div>
 
-          <!-- Trace Feed -->
-          <div id="agent-trace-feed" class="trace-feed-container"></div>
-        </aside>
+            <div class="panel-header" style="margin-top: 10px;">
+              <span class="text-muted" style="font-size:0.8rem; font-weight:700;">LIVE ORCHESTRATION STREAM</span>
+              <span class="text-muted" style="font-size:0.75rem;">Memory vs Context</span>
+            </div>
+
+            <!-- Trace Feed -->
+            <div id="agent-trace-feed" class="trace-feed-container"></div>
+          </aside>
+        </div>
+
+        <!-- Floating Explorer Card (Bottom-Left of Hero) -->
+        <div class="hero-floating-card glass-panel">
+          <div class="floating-card-body">
+            <h4>Explore Our Learning World</h4>
+            <p>Discover 15 beautiful chapters through stories, images, quizzes and more!</p>
+            <button class="btn-start-exploring" onclick="window.app.switchView('slides')">
+              Start Exploring ➔
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom 5-Destination Interactive Navigation Grid -->
+      <div class="hero-nav-cards-grid">
+        <div class="hero-nav-card glass-panel" onclick="window.app.switchView('universe')">
+          <div class="nav-card-icon">🌐</div>
+          <div class="nav-card-info">
+            <h4>Adventure Map</h4>
+            <p>Interactive 3D knowledge world</p>
+          </div>
+        </div>
+        <div class="hero-nav-card glass-panel" onclick="window.app.switchView('slides')">
+          <div class="nav-card-icon">🎞️</div>
+          <div class="nav-card-info">
+            <h4>Picture Slides</h4>
+            <p>Beautiful chapter illustrations</p>
+          </div>
+        </div>
+        <div class="hero-nav-card glass-panel" onclick="window.app.switchView('classroom')">
+          <div class="nav-card-icon">📖</div>
+          <div class="nav-card-info">
+            <h4>Story Lessons</h4>
+            <p>Engaging faith stories</p>
+          </div>
+        </div>
+        <div class="hero-nav-card glass-panel" onclick="window.app.switchView('solver')">
+          <div class="nav-card-icon">📝</div>
+          <div class="nav-card-info">
+            <h4>Exam Papers</h4>
+            <p>Solved previous papers</p>
+          </div>
+        </div>
+        <div class="hero-nav-card glass-panel" onclick="window.app.switchView('quiz')">
+          <div class="nav-card-icon">⭐</div>
+          <div class="nav-card-info">
+            <h4>Star Quizzes</h4>
+            <p>Test what you learned</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prominent Academic Mentor Intro Banner -->
+      <div class="academic-mentor-intro-card glass-panel">
+        <div class="mentor-intro-badge">🎓</div>
+        <div class="mentor-intro-text">
+          <span class="mentor-intro-role">Academic Mentor</span>
+          <h3 class="mentor-intro-name">Asst. Prof. Jane Rose</h3>
+          <p class="mentor-intro-dept">Department of Computer Science & Engineering (CSE)</p>
+          <span class="mentor-intro-platform">Class 4 Catechism • “Jesus, the Source of Life”</span>
+        </div>
       </div>
     </section>
 
@@ -173,32 +265,47 @@
           <div class="slide-extra-actions">
             <button id="btn-slide-voice-mal" class="btn-ctrl" title="Listen in Malayalam">🔊 മലയാളം</button>
             <button id="btn-slide-voice" class="btn-ctrl" title="Listen in English">🔊 English</button>
-            <button id="btn-slide-stop" class="btn-ctrl" title="Stop audio (നിർത്തുക)">🛑 Stop</button>
-            <button id="btn-slide-fullscreen" class="btn-ctrl">⛶ Fullscreen (4K)</button>
+            <button id="btn-slide-stop" class="btn-ctrl" title="Stop audio (നിർത്തുക)">🛑 Stop Audio</button>
+            <button id="btn-slide-fullscreen" class="btn-ctrl">⛶ Fullscreen</button>
           </div>
         </div>
 
-        <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; margin-bottom:12px; overflow:hidden;">
-          <div id="slide-progress-bar" style="height:100%; width:6.66%; background:linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); transition:width 300ms ease;"></div>
+        <div style="height:5px; background:var(--bg-tertiary); border-radius:3px; margin-bottom:14px; overflow:hidden;">
+          <div id="slide-progress-bar" style="height:100%; width:6.66%; background:linear-gradient(90deg, var(--accent-primary), var(--accent-gold)); transition:width 300ms ease;"></div>
         </div>
 
         <div id="slide-deck-container" class="slide-deck-frame glass-panel"></div>
+
+        <!-- Horizontal Chapter Thumbnails Strip (Matching Mockup) -->
+        <div class="slide-thumbs-strip glass-panel" id="slide-thumbs-strip">
+          <!-- Populated by app.js -->
+        </div>
       </div>
     </section>
 
     <!-- VIEW 3: 5-YEAR-OLD STORY CLASSROOM -->
     <section id="view-classroom" class="view-section">
       <div class="classroom-wrapper">
-        <div class="classroom-intro-card glass-panel">
-          <h2>🦁 Welcome to the Little Angels Adventure Room!</h2>
-          <p class="text-secondary">Explore all 15 Chapters with playful stories, friendly animal guides, and daily golden rules!</p>
+        <!-- Horizontal Chapter Strip (retained for mobile & compact) -->
+        <div id="classroom-ch-strip" class="chapter-selector-strip" style="display:none;"></div>
+
+        <div class="classroom-layout-columns">
+          <!-- Left Sidebar: Chapter List (Matching Mockup) -->
+          <aside class="classroom-sidebar glass-panel">
+            <div class="sidebar-header">
+              <span class="sidebar-icon">📖</span>
+              <h3>Select a Chapter</h3>
+            </div>
+            <div class="classroom-ch-list" id="classroom-ch-list">
+              <!-- Populated by app.js -->
+            </div>
+          </aside>
+
+          <!-- Right Column: Active Lesson Container -->
+          <div class="classroom-main-panel">
+            <div id="classroom-lesson-container"></div>
+          </div>
         </div>
-
-        <!-- Horizontal Chapter Strip -->
-        <div id="classroom-ch-strip" class="chapter-selector-strip"></div>
-
-        <!-- Active Lesson Container -->
-        <div id="classroom-lesson-container"></div>
       </div>
     </section>
 
@@ -284,14 +391,17 @@
     <main class="mobile-main-workspace" id="mobile-main-workspace">
       <!-- Dedicated Mobile View 1: Adventure Chapter Deck -->
       <section id="mob-view-universe" class="mob-view-section active">
-        <div class="mob-hero-banner glass-panel">
-          <div class="mob-hero-title">
-            <h3>🗺️ Chapter Adventure Deck</h3>
-            <p>15 Holy Chapters • 5-Year-Old Stories & Moral Lessons</p>
+        <div class="mob-hero-banner celestial-mob-hero glass-panel">
+          <div class="mob-hero-content">
+            <span class="mob-hero-badge">✨ 3D Knowledge Adventure</span>
+            <h3 class="mob-hero-headline">Welcome to Class 4 Catechism</h3>
+            <p class="mob-hero-subheadline">Jesus, the Source of Life • ഈശോ ജീവന്റെ ഉറവിടം</p>
+            <div class="mob-hero-cta-row" style="margin-top: 10px;">
+              <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle">
+                ✨ Explore the Map ➔
+              </button>
+            </div>
           </div>
-          <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle">
-            🌐 Open 3D Map View
-          </button>
         </div>
         <div id="mob-3d-view-box" class="mob-3d-view-box glass-panel" style="display: none;">
           <div class="mob-3d-hint">👆 Touch & drag to orbit • Pinch to zoom</div>
