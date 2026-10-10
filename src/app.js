@@ -128,7 +128,14 @@ class AppController {
 
     const toggleBtn = document.getElementById('theme-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
+      toggleBtn.addEventListener('click', (e) => {
+        const segBtn = e.target.closest('.theme-segment');
+        if (segBtn) {
+          this.sfx.playPop();
+          const targetTheme = segBtn.id === 'theme-btn-light' ? 'light' : 'dark';
+          this.setTheme(targetTheme);
+          return;
+        }
         this.sfx.playPop();
         const nextTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
         this.setTheme(nextTheme);
@@ -148,6 +155,21 @@ class AppController {
     if (themeLabel) {
       themeLabel.textContent = theme === 'dark' ? 'Daylight Mode' : 'Night Mode';
     }
+
+    // Segmented theme control state
+    const lightBtn = document.getElementById('theme-btn-light');
+    const darkBtn = document.getElementById('theme-btn-dark');
+    if (lightBtn && darkBtn) {
+      lightBtn.classList.toggle('active', theme === 'light');
+      darkBtn.classList.toggle('active', theme === 'dark');
+    }
+
+    // Light mode hero figure cutout
+    const jesusCutout = document.getElementById('hero-jesus-cutout');
+    if (jesusCutout) {
+      jesusCutout.style.display = theme === 'light' ? 'block' : 'none';
+    }
+
     if (this.heroAtmosphere) {
       this.heroAtmosphere.setTheme(theme);
     }
@@ -559,7 +581,7 @@ class AppController {
     }
   }
 
-  handleNodeClick(drawerData) {
+  handleNodeClick(drawerData, rawNode) {
     if (!drawerData) return;
     this.sfx.playPop();
     if (this.heroAtmosphere) {
@@ -568,52 +590,80 @@ class AppController {
 
     const drawer = document.getElementById('three-node-drawer');
     const mobDrawer = document.getElementById('mob-three-node-drawer');
+    const consolePanel = document.getElementById('agent-console-panel');
+
+    // On desktop, swap console with node drawer
+    if (consolePanel && window.innerWidth > 768) {
+      consolePanel.style.display = 'none';
+    }
+
+    // Get chapter image if available
+    let coverImgHtml = '';
+    if (drawerData.chapterNumber) {
+      const ch = CHAPTERS_DATA.find(c => c.number === drawerData.chapterNumber);
+      if (ch && ch.imageUrl) {
+        coverImgHtml = `<div class="drawer-cover-wrap"><img src="${ch.imageUrl}" alt="${drawerData.title}" class="drawer-cover-img" /></div>`;
+      }
+    }
 
     // Render drawer HTML
     const drawerHtml = `
       <div class="drawer-header">
-        <div class="drawer-emoji-badge">${drawerData.emoji}</div>
+        <button class="drawer-back-console-btn" onclick="window.app.closeUniverseDrawer()" title="Back to Learning Console">
+          ← Learning Console
+        </button>
         <button class="drawer-close-btn" onclick="window.app.closeUniverseDrawer()" title="Close">✕</button>
       </div>
 
       <div class="drawer-body">
-        <span class="drawer-category-pill">${drawerData.category.toUpperCase()}</span>
+        ${coverImgHtml}
+        <div class="drawer-chips-row">
+          <span class="drawer-category-pill">${drawerData.category.toUpperCase()}</span>
+          ${drawerData.chapterNumber ? `<span class="drawer-ch-chip">Chapter ${drawerData.chapterNumber}</span>` : ''}
+        </div>
         <h3 class="drawer-title">${drawerData.title}</h3>
         <h4 class="drawer-subtitle">${drawerData.subtitle}</h4>
 
         <div class="drawer-story-box">
           <p>${drawerData.story || drawerData.description}</p>
+          ${drawerData.storyMal ? `<p class="drawer-story-mal">${drawerData.storyMal}</p>` : ''}
         </div>
 
         ${drawerData.scripture ? `
           <div class="drawer-scripture-box">
-            <span>📖</span>
+            <span class="scripture-icon">📖</span>
             <em>${drawerData.scripture}</em>
           </div>
         ` : ''}
 
-        <div class="drawer-actions-col">
+        <!-- Shared Audio Bar Row -->
+        <div class="drawer-audio-row">
           <button class="btn-drawer-audio btn-drawer-audio-mal" onclick="window.app.speakDrawerContentMal()" title="Listen in Malayalam">
-            🔊 മലയാളത്തിൽ കേൾക്കുക
+            🔊 Malayalam
           </button>
           <button class="btn-drawer-audio btn-drawer-audio-eng" onclick="window.app.speakDrawerContent()" title="Listen in English">
-            🔊 English Narration
+            🔊 English
           </button>
           <button class="btn-drawer-audio btn-stop-voice" onclick="window.app.stopVoice()" title="Stop Audio">
-            🛑 Stop Audio (നിർത്തുക)
+            ⏹ Stop
           </button>
-          
+        </div>
+
+        <div class="drawer-actions-col">
           ${drawerData.targetView === 'classroom' ? `
-            <button class="btn-drawer-jump" onclick="window.app.jumpFromDrawerToClassroom(${drawerData.targetChapter || 1})">
-              🚀 Open Story Lesson
+            <button class="btn-drawer-jump btn-primary-gold" onclick="window.app.jumpFromDrawerToClassroom(${drawerData.targetChapter || 1})">
+              Go to Story Lesson →
+            </button>
+            <button class="btn-drawer-secondary" onclick="window.app.jumpFromDrawerToSlides(${drawerData.targetChapter || 1})">
+              Picture Slides ➔
             </button>
           ` : drawerData.targetView === 'solver' ? `
-            <button class="btn-drawer-jump" onclick="window.app.jumpFromDrawerToSolver('${drawerData.targetPaperId}')">
-              📝 Explore Exam Solutions
+            <button class="btn-drawer-jump btn-primary-gold" onclick="window.app.jumpFromDrawerToSolver('${drawerData.targetPaperId}')">
+              Explore Exam Solutions →
             </button>
           ` : `
-            <button class="btn-drawer-jump" onclick="window.app.closeUniverseDrawer()">
-              ✨ Explore More Stars
+            <button class="btn-drawer-jump btn-primary-gold" onclick="window.app.closeUniverseDrawer()">
+              Explore More Stars →
             </button>
           `}
         </div>
@@ -624,6 +674,7 @@ class AppController {
 
     if (drawer) {
       drawer.innerHTML = drawerHtml;
+      drawer.style.display = 'block';
       drawer.classList.add('open');
     }
     if (mobDrawer) {
@@ -637,13 +688,39 @@ class AppController {
   closeUniverseDrawer() {
     this.sfx.playPop();
     const drawer = document.getElementById('three-node-drawer');
-    if (drawer) drawer.classList.remove('open');
     const mobDrawer = document.getElementById('mob-three-node-drawer');
+    const consolePanel = document.getElementById('agent-console-panel');
+
+    if (drawer) {
+      drawer.classList.remove('open');
+      drawer.style.display = 'none';
+    }
+    if (consolePanel) {
+      consolePanel.style.display = 'flex';
+    }
     if (mobDrawer) {
       mobDrawer.classList.remove('open');
       mobDrawer.style.display = 'none';
     }
     if (this.threeUniverse) this.threeUniverse.isRotating = true;
+  }
+
+  exploreChapterOne() {
+    this.sfx.playSparkle();
+    this.filterUniverse('chapter');
+    if (this.threeUniverse) {
+      this.threeUniverse.focusChapter(1);
+    }
+  }
+
+  jumpFromDrawerToSlides(chNum) {
+    this.sfx.playSparkle();
+    this.closeUniverseDrawer();
+    this.switchView('slides');
+    if (this.slideDeck) {
+      this.slideDeck.currentIdx = (chNum - 1);
+      this.renderCurrentSlide();
+    }
   }
 
   speakDrawerContent() {
@@ -699,14 +776,13 @@ class AppController {
 
   filterUniverse(category) {
     this.sfx.playPop();
-    if (!this.threeUniverse) return;
     document.querySelectorAll('.filter-chip').forEach(c => {
       c.classList.toggle('active', c.getAttribute('data-filter') === category);
     });
 
-    this.threeUniverse.nodeMeshes.forEach(mesh => {
-      mesh.visible = category === 'all' || mesh.userData.category === category || mesh.userData.id === 'concept_jesus_life';
-    });
+    if (this.threeUniverse) {
+      this.threeUniverse.filterCategory(category);
+    }
   }
 
   /* ---------------- Slides View ---------------- */

@@ -1,13 +1,15 @@
 /* ==========================================================================
-   THEMES & DESIGN TOKENS
-   Class 4 Catechism & Multi-Agent Interactive System
-   Supports HD / 4K Ultra-Wide, Dark & Light Glassmorphism
+   THEMES & DESIGN TOKENS (Class 4 Catechism Redesign)
+   Harmonized navy, gold, ivory, cream, and sky blue palette matching mockup.
+   Zero neon purple/pink/cyan accents.
    ========================================================================== */
 
 :root {
-  /* Color Primitives */
+  /* Typography */
   --font-family-base: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-family-heading: 'Outfit', sans-serif;
+  --font-family-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-family-display: var(--font-family-serif);
   --font-family-malayalam: 'Manjari', 'Gayathri', 'Noto Sans Malayalam', sans-serif;
 
   /* Spacing Scale (4/8dp rhythm) */
@@ -31,88 +33,117 @@
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Shared Agent Console (Navy in both themes) */
+  --console-panel-bg: linear-gradient(180deg, #13254a 0%, #0b1a36 100%);
+  --console-border: rgba(232, 199, 120, 0.35);
+  --console-header-gold: #f2c66d;
 }
 
 /* ==========================================================================
-   DARK THEME (Celestial Night Sky)
+   DARK THEME ("Celestial Night")
+   Palette: #050B18 -> #07152E -> #0D2144, moonlight text, radiant gold accents
    ========================================================================== */
 [data-theme="dark"] {
   --bg-primary: #050b18;
   --bg-secondary: #07152e;
   --bg-tertiary: #0d2144;
-  --bg-surface: rgba(13, 33, 68, 0.75);
-  --bg-surface-hover: rgba(22, 49, 96, 0.85);
-  --bg-surface-active: rgba(30, 64, 120, 0.9);
+  --page-gradient: linear-gradient(180deg, #050b18 0%, #07152e 50%, #0d2144 100%);
 
-  --border-subtle: rgba(140, 203, 255, 0.12);
-  --border-medium: rgba(140, 203, 255, 0.22);
-  --border-accent: rgba(232, 199, 120, 0.5);
+  --bg-surface: rgba(15, 35, 71, 0.82);
+  --bg-surface-hover: rgba(22, 49, 96, 0.9);
+  --bg-surface-active: rgba(30, 64, 120, 0.95);
+
+  --border-subtle: rgba(140, 203, 255, 0.14);
+  --border-medium: rgba(232, 199, 120, 0.25);
+  --border-accent: rgba(232, 199, 120, 0.45);
+  --border-gold-hairline: 1px solid rgba(232, 199, 120, 0.35);
 
   --text-primary: #f2f6ff;
+  --text-strong: #f2f6ff;
   --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-muted: #a9b7d0;
   --text-inverse: #050b18;
 
-  --accent-primary: #38bdf8;
-  --accent-primary-hover: #0ea5e9;
-  --accent-secondary: #8ccbff;
+  --brand-title: #f2c66d;
   --accent-gold: #e8c778;
   --accent-gold-glow: #ffe8a8;
-  --accent-pink: #ec4899;
-  --accent-green: #10b981;
-  --accent-rose: #f43f5e;
+  --accent-gold-pale: #ffe8a8;
+  --accent-primary: #3b82d6;
+  --accent-secondary: #8ccbff;
 
-  --glass-bg: rgba(7, 21, 46, 0.78);
-  --glass-bg-card: rgba(13, 33, 68, 0.82);
-  --glass-border: rgba(140, 203, 255, 0.18);
-  --glass-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55);
-  --glow-core: 0 0 35px rgba(140, 203, 255, 0.35);
+  --btn-primary-gradient: linear-gradient(135deg, #f7c35a 0%, #e8962e 100%);
+  --btn-primary-text: #050b18;
+  --tab-selected-bg: #3b82d6;
+
+  --status-correct-bg: rgba(108, 195, 106, 0.2);
+  --status-correct-border: #6cc36a;
+  --status-selected-bg: rgba(232, 199, 120, 0.18);
+  --status-selected-border: #e8c778;
+
+  --glass-bg: rgba(7, 21, 46, 0.85);
+  --glass-bg-card: rgba(15, 35, 71, 0.82);
+  --glass-border: rgba(232, 199, 120, 0.3);
+  --glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
+  --glow-core: 0 0 35px rgba(140, 203, 255, 0.3);
   --glow-gold: 0 0 25px rgba(232, 199, 120, 0.45);
 
-  --card-gradient: linear-gradient(135deg, rgba(13, 33, 68, 0.85) 0%, rgba(7, 21, 46, 0.92) 100%);
+  --card-gradient: linear-gradient(135deg, rgba(15, 35, 71, 0.85) 0%, rgba(7, 21, 46, 0.92) 100%);
   --hero-gradient: radial-gradient(circle at 50% 0%, rgba(30, 64, 120, 0.35) 0%, rgba(5, 11, 24, 1) 75%);
-  --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #e8c778 50%, #ffe8a8 100%);
+  --gold-gradient: linear-gradient(135deg, #f7c35a 0%, #e8962e 100%);
 }
 
 /* ==========================================================================
-   LIGHT THEME (Heavenly Morning Sun & Clouds)
+   LIGHT THEME ("Heavenly Morning")
+   Palette: sky gradient #EAF5FF -> #FFFCF4, crimson brand title #A3262A, navy text
    ========================================================================== */
 [data-theme="light"] {
   --bg-primary: #fffcf4;
   --bg-secondary: #f4f8fc;
   --bg-tertiary: #eaf5ff;
-  --bg-surface: rgba(255, 255, 255, 0.88);
-  --bg-surface-hover: rgba(255, 255, 255, 0.96);
+  --page-gradient: linear-gradient(180deg, #eaf5ff 0%, #fffcf4 100%);
+
+  --bg-surface: rgba(255, 255, 255, 0.92);
+  --bg-surface-hover: rgba(255, 255, 255, 0.98);
   --bg-surface-active: #ffffff;
 
-  --border-subtle: rgba(217, 182, 111, 0.18);
-  --border-medium: rgba(217, 182, 111, 0.32);
-  --border-accent: rgba(217, 182, 111, 0.6);
+  --border-subtle: rgba(217, 182, 111, 0.22);
+  --border-medium: rgba(217, 182, 111, 0.38);
+  --border-accent: rgba(233, 162, 59, 0.6);
+  --border-gold-hairline: 1px solid rgba(233, 162, 59, 0.35);
 
-  --text-primary: #1e293b;
+  --text-primary: #1e2f55;
+  --text-strong: #1e2f55;
   --text-secondary: #334155;
-  --text-muted: #64748b;
+  --text-muted: #5b6b85;
   --text-inverse: #ffffff;
 
-  --accent-primary: #0284c7;
-  --accent-primary-hover: #0369a1;
-  --accent-secondary: #38bdf8;
-  --accent-gold: #d97706;
-  --accent-gold-glow: #d9b66f;
-  --accent-pink: #db2777;
-  --accent-green: #059669;
-  --accent-rose: #e11d48;
+  --brand-title: #a3262a;
+  --accent-gold: #e9a23b;
+  --accent-gold-glow: #f7c35a;
+  --accent-gold-pale: #fef3c7;
+  --accent-primary: #2f7de1;
+  --accent-secondary: #60a5fa;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-bg-card: rgba(255, 255, 255, 0.92);
-  --glass-border: rgba(217, 182, 111, 0.24);
-  --glass-shadow: 0 10px 32px 0 rgba(40, 65, 94, 0.1);
+  --btn-primary-gradient: linear-gradient(135deg, #f7c35a 0%, #e8962e 100%);
+  --btn-primary-text: #1e2f55;
+  --tab-selected-bg: #2f7de1;
+
+  --status-correct-bg: #ddf5d3;
+  --status-correct-border: #6cc36a;
+  --status-selected-bg: #fdefc2;
+  --status-selected-border: #e9a23b;
+
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-bg-card: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(217, 182, 111, 0.3);
+  --glass-shadow: 0 10px 32px rgba(40, 65, 94, 0.1);
   --glow-core: 0 0 30px rgba(191, 227, 255, 0.5);
-  --glow-gold: 0 0 25px rgba(217, 182, 111, 0.4);
+  --glow-gold: 0 0 25px rgba(233, 162, 59, 0.35);
 
-  --card-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(244, 248, 252, 0.9) 100%);
-  --hero-gradient: radial-gradient(circle at 50% 0%, rgba(255, 246, 214, 0.7) 0%, rgba(234, 245, 255, 0.6) 45%, rgba(255, 252, 244, 1) 85%);
-  --gold-gradient: linear-gradient(135deg, #d97706 0%, #d9b66f 50%, #fef3c7 100%);
+  --card-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(244, 248, 252, 0.92) 100%);
+  --hero-gradient: radial-gradient(circle at 50% 0%, rgba(255, 246, 214, 0.5) 0%, rgba(234, 245, 255, 0.4) 45%, rgba(255, 252, 244, 0.9) 85%);
+  --gold-gradient: linear-gradient(135deg, #f7c35a 0%, #e8962e 100%);
 }
 
 /* ==========================================================================
