@@ -49,10 +49,22 @@ export class MobilePresentation {
     if (menuBtn && sheet) {
       menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (this.app?.sfx?.playPop) this.app.sfx.playPop();
-        sheet.classList.add('active');
-        sheet.style.display = 'block';
-        sheet.setAttribute('aria-hidden', 'false');
+        if (this.app?.toggleSettingsPopup) {
+          this.app.toggleSettingsPopup();
+        } else {
+          const isOpen = sheet.classList.contains('active');
+          if (isOpen) {
+            sheet.classList.remove('active');
+            sheet.style.display = 'none';
+            sheet.setAttribute('aria-hidden', 'true');
+            menuBtn.classList.remove('gear-active');
+          } else {
+            sheet.classList.add('active');
+            sheet.style.display = 'block';
+            sheet.setAttribute('aria-hidden', 'false');
+            menuBtn.classList.add('gear-active');
+          }
+        }
       });
     }
 

@@ -1319,3 +1319,27 @@ body.mobile-preview-active .mob-bottom-nav {
   color: #ffffff;
 }
 
+/* Tactile Gear Rotation and Dropdown Pop-Up Placement in Mobile View */
+.mob-action-btn#mob-btn-menu {
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.mob-action-btn#mob-btn-menu.gear-active {
+  transform: rotate(90deg) scale(1.1) !important;
+  color: var(--color-amber) !important;
+  border-color: var(--color-amber) !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.5) !important;
+}
+
+@media (max-width: 768px) {
+  .sheet-card.settings-popup-card {
+    top: 56px;
+    right: 8px;
+    left: auto;
+    width: min(380px, calc(100vw - 16px));
+    max-height: calc(100vh - 128px);
+    z-index: 100006;
+  }
+}
+
+

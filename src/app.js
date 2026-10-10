@@ -279,41 +279,72 @@ class AppController {
 
   setupMobileSettingsSheet() {
     const menuBtn = document.getElementById('btn-mobile-menu');
+    const mobMenuBtn = document.getElementById('mob-btn-menu');
     const sheet = document.getElementById('mobile-settings-sheet');
     const closeBtn = document.getElementById('btn-close-sheet');
     const backdrop = document.getElementById('sheet-backdrop');
     const sheetThemeBtn = document.getElementById('sheet-theme-btn');
     const sheetViewBtn = document.getElementById('sheet-view-btn');
+    const sheetFullscreenBtn = document.getElementById('sheet-fullscreen-btn');
+    const resetStarsBtn = document.getElementById('sheet-reset-stars-btn');
+    const sfxToggleBtn = document.getElementById('sheet-sfx-toggle');
 
     if (!sheet) return;
 
-    const openSheet = (e) => {
-      if (e) e.stopPropagation();
+    this.toggleSettingsPopup = (forceOpen) => {
+      const isCurrentlyOpen = sheet.classList.contains('active');
+      const shouldOpen = forceOpen !== undefined ? forceOpen : !isCurrentlyOpen;
+
       if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-      sheet.classList.add('active');
-      sheet.style.display = 'block';
-      sheet.setAttribute('aria-hidden', 'false');
+
+      if (shouldOpen) {
+        sheet.classList.add('active');
+        sheet.style.display = 'block';
+        sheet.setAttribute('aria-hidden', 'false');
+        if (menuBtn) menuBtn.classList.add('gear-active');
+        if (mobMenuBtn) mobMenuBtn.classList.add('gear-active');
+        this.updateSettingsPopupUI();
+      } else {
+        sheet.classList.remove('active');
+        sheet.style.display = 'none';
+        sheet.setAttribute('aria-hidden', 'true');
+        if (menuBtn) menuBtn.classList.remove('gear-active');
+        if (mobMenuBtn) mobMenuBtn.classList.remove('gear-active');
+      }
     };
 
-    const closeSheet = (e) => {
+    const handleMenuClick = (e) => {
       if (e) e.stopPropagation();
-      sheet.classList.remove('active');
-      sheet.style.display = 'none';
-      sheet.setAttribute('aria-hidden', 'true');
+      this.toggleSettingsPopup();
     };
 
     if (menuBtn) {
-      menuBtn.addEventListener('click', openSheet);
-      menuBtn.onclick = openSheet;
+      menuBtn.addEventListener('click', handleMenuClick);
+      menuBtn.onclick = handleMenuClick;
     }
-    if (closeBtn) closeBtn.addEventListener('click', closeSheet);
-    if (backdrop) backdrop.addEventListener('click', closeSheet);
+    if (mobMenuBtn) {
+      mobMenuBtn.addEventListener('click', handleMenuClick);
+      mobMenuBtn.onclick = handleMenuClick;
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        this.toggleSettingsPopup(false);
+      });
+    }
+    if (backdrop) {
+      backdrop.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        this.toggleSettingsPopup(false);
+      });
+    }
 
     if (sheetThemeBtn) {
       sheetThemeBtn.addEventListener('click', () => {
         if (this.sfx && this.sfx.playPop) this.sfx.playPop();
         const nextTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
         this.setTheme(nextTheme);
+        this.updateSettingsPopupUI();
       });
     }
 
@@ -321,8 +352,102 @@ class AppController {
       sheetViewBtn.addEventListener('click', () => {
         if (this.sfx && this.sfx.playPop) this.sfx.playPop();
         this.toggleViewMode();
-        closeSheet();
+        this.toggleSettingsPopup(false);
       });
+    }
+
+    if (sheetFullscreenBtn) {
+      sheetFullscreenBtn.addEventListener('click', () => {
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+          sheetFullscreenBtn.textContent = '✕ Exit Fullscreen';
+        } else {
+          document.exitFullscreen().catch(() => {});
+          sheetFullscreenBtn.textContent = '⛶ Fullscreen';
+        }
+      });
+    }
+
+    if (resetStarsBtn) {
+      resetStarsBtn.addEventListener('click', () => {
+        if (typeof window !== 'undefined' && window.confirm && window.confirm('Do you want to reset your collected adventure stars to 0?')) {
+          this.starsCount = 0;
+          try { localStorage.setItem('class4-collected-stars', '0'); } catch (_) {}
+          this.updateStarsBadge();
+          this.updateSettingsPopupUI();
+          if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+          this.showToast('⭐ Stars reset to 0', '⭐');
+        }
+      });
+    }
+
+    // Audio Language Pills
+    const langMalBtn = document.getElementById('sheet-lang-mal');
+    const langEngBtn = document.getElementById('sheet-lang-eng');
+    if (langMalBtn && langEngBtn) {
+      langMalBtn.addEventListener('click', () => {
+        langMalBtn.classList.add('active');
+        langEngBtn.classList.remove('active');
+        try { localStorage.setItem('preferred-narration-lang', 'mal'); } catch (_) {}
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.showToast('🔊 Malayalam Voice Selected', '🇮🇳');
+      });
+      langEngBtn.addEventListener('click', () => {
+        langEngBtn.classList.add('active');
+        langMalBtn.classList.remove('active');
+        try { localStorage.setItem('preferred-narration-lang', 'eng'); } catch (_) {}
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.showToast('🔊 English Voice Selected', '🇬🇧');
+      });
+    }
+
+    // Speech Speed Pills
+    const speedChildBtn = document.getElementById('sheet-speed-btn');
+    const speedNormalBtn = document.getElementById('sheet-speed-normal');
+    if (speedChildBtn && speedNormalBtn) {
+      speedChildBtn.addEventListener('click', () => {
+        speedChildBtn.classList.add('active');
+        speedNormalBtn.classList.remove('active');
+        this.speechRate = 0.85;
+        try { localStorage.setItem('preferred-speech-rate', '0.85'); } catch (_) {}
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.showToast('🧸 0.85x Child-Pace Voice Enabled', '🧸');
+      });
+      speedNormalBtn.addEventListener('click', () => {
+        speedNormalBtn.classList.add('active');
+        speedChildBtn.classList.remove('active');
+        this.speechRate = 1.0;
+        try { localStorage.setItem('preferred-speech-rate', '1.0'); } catch (_) {}
+        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+        this.showToast('⚡ 1.0x Normal Pace Enabled', '⚡');
+      });
+    }
+
+    // Sound Effects Toggle
+    if (sfxToggleBtn) {
+      sfxToggleBtn.addEventListener('click', () => {
+        this.sfxMuted = !this.sfxMuted;
+        sfxToggleBtn.classList.toggle('active', !this.sfxMuted);
+        sfxToggleBtn.textContent = this.sfxMuted ? '🔕 SFX Off' : '🔔 SFX On';
+        if (!this.sfxMuted && this.sfx && this.sfx.playChime) this.sfx.playChime();
+        this.showToast(this.sfxMuted ? '🔕 Sound Effects Muted' : '🔔 Sound Effects Enabled', '🔔');
+      });
+    }
+  }
+
+  updateSettingsPopupUI() {
+    const starsVal = document.getElementById('sheet-stars-count-val');
+    if (starsVal) {
+      starsVal.textContent = `${this.starsCount || 0} Stars Collected`;
+    }
+
+    const themeIcon = document.getElementById('sheet-theme-icon');
+    const themeText = document.getElementById('sheet-theme-text');
+    if (themeIcon && themeText) {
+      const isDark = (this.currentTheme || 'dark') === 'dark';
+      themeIcon.textContent = isDark ? '🌙' : '☀️';
+      themeText.textContent = isDark ? 'Dark Mode (Active)' : 'Light Mode (Active)';
     }
   }
 
