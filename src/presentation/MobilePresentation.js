@@ -53,6 +53,17 @@ export class MobilePresentation {
       });
     }
 
+    const themeBtn = document.getElementById('mob-btn-theme');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        if (this.app?.sfx?.playPop) this.app.sfx.playPop();
+        const nextTheme = (this.app?.currentTheme || 'light') === 'dark' ? 'light' : 'dark';
+        if (this.app?.setTheme) {
+          this.app.setTheme(nextTheme);
+        }
+      });
+    }
+
     const toggle3dBtn = document.getElementById('mob-btn-toggle-3d');
     const box3d = document.getElementById('mob-3d-view-box');
     if (toggle3dBtn && box3d) {

@@ -3,6 +3,45 @@
    Designed specifically for small screens, smartphones, and touch interaction
    ========================================================================== */
 
+/* Zero-Flash Automatic Viewport Adaptation */
+@media (max-width: 768px) {
+  #desktop-layout-root {
+    display: none !important;
+  }
+  #mobile-layout-root {
+    display: block !important;
+  }
+  .mob-bottom-nav,
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 769px) {
+  #mobile-layout-root:not(.in-preview-frame) {
+    display: none !important;
+  }
+  #desktop-layout-root {
+    display: block !important;
+  }
+  .mob-bottom-nav:not(.in-preview-frame),
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+body.mobile-preview-active #desktop-layout-root {
+  display: none !important;
+}
+
+body.mobile-preview-active #mobile-layout-root.in-preview-frame {
+  display: block !important;
+}
+
+body.mobile-preview-active .mob-bottom-nav {
+  display: flex !important;
+}
+
 /* Mobile App Header (Fixed 54px) */
 .mobile-app-header {
   position: sticky;
