@@ -1,12 +1,6 @@
 # Configuration Directory
 
-This directory contains configuration files for the Class 4 Catechism application.
-
 ## Files
-- `app.config.json`: Master application configuration specifying default runtime port, themes, agent personas, neural audio voice profiles, and visual asset paths.
+- `app.config.json`: reference configuration documenting the app's defaults: theme (`dark`), narration language (`malayalam`), OmniVoice audio paths and license, agent roles and visual asset paths.
 
-## Environment Variables
-The application can also be configured via runtime environment variables or client-side storage:
-- `PORT`: HTTP server port (Default: `8080`)
-- `GEMINI_API_KEY`: Optional Google AI Studio Gemini API Key for live AI queries and agent explanations.
-- `DEFAULT_THEME`: UI theme mode (`dark` or `light`).
+The site is static and does not read this file at runtime. Visitor choices (theme, narration language, speech pace, sound effects, stars) are saved in their browser; see the Configuration section of the main README.
