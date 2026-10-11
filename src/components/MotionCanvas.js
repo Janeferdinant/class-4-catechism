@@ -1,6 +1,6 @@
 /**
  * MotionCanvas Component
- * Provides 2D HUD overlays, audio waveform visualizer for speech synthesis,
+ * Provides 2D HUD overlays, the audio waveform visualizer for narration,
  * and particle motion graphics.
  */
 

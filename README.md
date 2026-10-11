@@ -1,277 +1,251 @@
 # Class 4 Catechism
 
 ## Overview
-The **Class 4 Catechism** application is an interactive, multi-agent AI educational web platform designed for students, teachers, and parents. It transforms the Class 4 Catechism curriculum into an engaging multimedia learning experience.
+**Class 4 Catechism** is an interactive, bilingual (Malayalam and English) learning website for students, teachers and parents. It turns the Class 4 Catechism textbook, *Jesus, the Source of Life* (ഈശോ ജീവന്റെ ഉറവിടം), into a child-friendly adventure.
 
-This project is used to teach Class 4 Catechism (Chapters 1–15) using a child-centric 5-year-old storytelling pedagogy, solve and cite questions across five historical examination papers (2023–2025), provide interactive 3D WebGL knowledge exploration, and deliver natural bilingual (Malayalam and English) neural voice narration without requiring active cloud API subscriptions.
+It covers all 15 chapters as simple stories for young children, solves five past semester exam papers (2023–2025) with textbook citations, and reads everything aloud in natural Malayalam and English voices. It is a static site: no server, account or API key is needed to use it.
 
 ## Purpose
-The main objectives of this project are:
-1. **Child-Friendly Theological Pedagogy**: Deliver complex spiritual concepts and sacraments through simple, memorable bedtime stories and moral lessons tailored to the cognitive level of young children.
-2. **Comprehensive Exam Preparation & Textbook Citations**: Provide verified solutions for the last five semester examination papers (2023–2025) with exact chapter, page, and doctrinal citations.
-3. **Multi-Agent Collaborative Architecture**: Demonstrate specialized agent collaboration (Orchestrator, Storyteller, Exam Solver, 3D Visualizer, Voiceover, and Quiz Master) to assemble real-time multimedia learning experiences.
+1. **Child-friendly teaching**: explain each chapter, sacrament and moral lesson as a short, memorable story.
+2. **Exam preparation**: give verified answers to the last five semester exam papers, each cited to its chapter.
+3. **Joyful practice**: star quizzes, sound effects and celebrations that reward learning once, fairly.
 
 ## Features
-- **Multi-Agent Autonomous Orchestration**: An intelligent coordinator delegates user goals across specialized agents for pedagogical storytelling, exam solution retrieval, 3D visualization, and gamification.
-- **Natural Neural Bilingual Audio Narration**: 30 pre-generated, broadcast-quality audio tracks using Microsoft Edge Neural voices (`ml-IN-SobhanaNeural` for Malayalam and `en-US-JennyNeural` for English) with instantaneous playback and global stop controls.
-- **3D WebGL Knowledge Universe & Slide-out Drawer**: Interactive Three.js particle cosmos mapping relationships between chapters, sacraments, and historical exam questions. Clicking any node smoothly focuses the camera and slides out a contextual details drawer.
-- **3D Pixar Motion Graphics with Ken Burns Animation**: Pixar-styled 3D diorama storybook art for all 15 chapters featuring dynamic mouse-tilt parallax, particle simulation, and a toggle to switch between 3D art and original textbook scans.
-- **5 Solved Examination Papers with Exact Citations**: Complete solutions for First and Second Semester exams (2023–2025), categorized with difficulty ratings, marking schemes, and reference citations.
-- **Gamified Star Quiz Engine**: Interactive chapter-by-chapter quiz with celebratory sound effects synthesized via Web Audio API, confetti animations, positive reinforcement, and gold star badging.
-- **Dual Light and Dark Themes**: Child-accessible high-contrast themes engineered with modern glassmorphism, cheerful gradients, and accessible typography.
+- **Adventure Map**: an illustrated island map (Three.js, orthographic 2.5D) linking the 15 chapters, the seven sacraments and the exam papers. Clicking an island zooms the map into it and opens its details with narration; clicking the empty sky, pressing Escape or closing the details zooms back out. On phones the island is framed above a half-height details sheet. Works without WebGL through an HTML fallback.
+- **Picture Slides**: Pixar-style storybook art for every chapter with a soft sparkle overlay, a switch to the original textbook pages, and fullscreen.
+- **Story Lessons**: story, moral lesson, key concepts and scripture for each chapter, in Malayalam and English.
+- **Exam Papers**: all questions from five papers (2023–2025) with answers, citations and a "simple explanation" for children.
+- **Star Quizzes**: kid-friendly questions with clues, celebration particles and sound effects. Each correct question earns one star, once.
+- **Natural narration (OmniVoice)**: every read-aloud item is pre-rendered in Malayalam and English with [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice), one consistent narrator voice per language. No robotic browser speech is used.
+- **Settings (gear icon)**: theme, narration language (switches even mid-playback), speech pace slider (0.5×–1.5×), sound effects, star reset, and display options (switch between the desktop and phone layouts, fullscreen).
+- **Fair, private progress**: every browser starts at 0 stars; one star per chapter and per quiz question, saved only in that browser.
+- **Glass interface**: soft light glass in the light theme and dark glass at night, applied to navigation, floating panels, dialogs, reading cards and controls, with an edge light, soft shadows and a pointer-following highlight. Solid surfaces for visitors who ask for less transparency or more contrast.
+- **Light and dark themes** with particle effects, and dedicated desktop and mobile layouts.
+- **Multi-Agent Learning Console**: an orchestrator and specialist agents (storyteller, exam solver, visualiser, voice, quiz master) that guide the learner.
 
 ## Repository Structure
 ```
-Class 4 Catechism/
-│
-├── src/                  # Source code
-│   ├── agents/           # Multi-agent orchestrator & specialized agent definitions
-│   ├── components/       # Interactive UI components (ThreeUniverse, Quiz, Voice, Slides)
-│   ├── data/             # Curriculum, exam paper, knowledge graph, and quiz datasets
-│   ├── services/         # External integrations (Gemini AI service)
-│   ├── styles/           # CSS design systems (main.css, themes.css)
-│   └── app.js            # Core client application bootstrap
-├── config/               # Configuration files
-│   ├── app.config.json   # Application runtime & component configuration
-│   └── README.md         # Configuration documentation
-├── data/                 # Input/output data
-│   ├── input/            # Raw textbook PDFs (Chapters 1-15) and exam paper scans (2023-2025)
-│   ├── output/           # Generated evaluation reports, audio, and transcripts
-│   └── README.md         # Data directory documentation
-├── docs/                 # Technical documentation
-│   ├── architecture.md   # Detailed multi-agent system architecture
-│   └── superpowers/      # Feature specifications and implementation plans
-├── tests/                # Test scripts and test cases (25 unit and integration suites)
-├── scripts/              # Utility and automation scripts (audio generation, data update)
-├── assets/               # Static assets
-│   ├── audio/            # Pre-generated MP3 audio files (Malayalam & English)
-│   ├── pixar/            # 3D Pixar-styled chapter storybook illustrations
-│   └── textbook/         # Historical textbook scans
-│
-├── .gitignore            # Git exclusion rules
-├── requirements.txt      # Python dependencies for offline document processing
-├── package.json          # Node.js configuration, dependencies, and test scripts
-├── CHANGELOG.md          # Version history and release notes
-└── README.md             # Project documentation
+class-4-catechism/
+├── index.html                 # Single-page app shell (desktop and mobile layouts)
+├── src/
+│   ├── app.js                 # Bootstrap: views, settings, narration, stars
+│   ├── agents/                # Orchestrator and specialist agents (learning console)
+│   ├── components/            # Adventure Map, slides, lessons, exams, quiz,
+│   │                          #   narration player, sound effects, progress store,
+│   │                          #   glass highlight (GlassEffects.js)
+│   ├── data/                  # Chapters, exam papers, quiz, map graph,
+│   │                          #   narration scripts and the rendered-clip manifest
+│   ├── presentation/          # Desktop and mobile presentation layers
+│   ├── services/              # Optional Gemini art generation
+│   └── styles/                # themes.css (tokens), main.css, mobile.css, glass.css (glass system)
+├── assets/
+│   ├── audio/narration/       # OmniVoice clips (mal/, eng/), narrator voices, generator cache
+│   ├── generated/             # Map backdrops, cutouts, islands/, avatars/, icons/
+│   ├── pixar/                 # Storybook art, one per chapter
+│   └── textbook/              # Textbook page scans, two per chapter
+├── scripts/
+│   ├── art/                   # Artwork processing (process_generated_art.py)
+│   └── audio/                 # Narration export, OmniVoice rendering, speech-recognition check
+├── tests/                     # Node test suites (node --test)
+├── docs/
+│   ├── architecture.md        # How the app is put together
+│   └── design/                # Artwork prompts and the approved UI mockup
+├── data/input/                # Source PDFs: textbook/, question-papers/ (not deployed)
+├── config/                    # Reference configuration (app.config.json)
+├── vercel.json, .vercelignore # Deployment settings
+├── package.json
+├── CHANGELOG.md
+└── README.md
 ```
 
 ## Directory Description
 | Directory/File | Description |
 | :--- | :--- |
-| `src/` | Main application source code, UI components, data stores, and agent logic |
-| `config/` | Application configuration files and theme/agent definitions |
-| `data/` | Input source documents (textbook & exam PDFs) and generated data |
-| `docs/` | Detailed technical documentation, architecture specs, and implementation plans |
-| `tests/` | Automated test suites (25 unit & integration tests) |
-| `scripts/` | Utility scripts for neural TTS audio generation and data normalization |
-| `assets/` | Static multimedia assets (30 pre-generated MP3s, 3D Pixar art, textbook scans) |
-| `requirements.txt` | Python dependencies for document processing and utility scripts |
-| `package.json` | Node.js manifest, dependencies, and script definitions |
-| `CHANGELOG.md` | Detailed project version release history |
-| `README.md` | Project overview, architecture, setup instructions, and guidelines |
+| `src/` | Application source: views, components, data, agents and styles |
+| `assets/` | Narration audio, artwork and textbook scans served by the site |
+| `scripts/art/` | Turns hand-generated images into the sizes and cutouts the UI uses |
+| `scripts/audio/` | Exports narration text, renders it with OmniVoice, and spot-checks it |
+| `tests/` | Automated tests for data, UI logic, narration coverage and progress |
+| `docs/` | Architecture notes, artwork prompts and the UI mockup |
+| `data/input/` | Original textbook chapters and exam papers (reference only) |
+| `config/` | Reference configuration documenting the app's defaults |
+| `CHANGELOG.md` | Version history |
 
 ## Requirements
 
 ### Software
-- **Node.js** — Version 18.x, 20.x, or 24.x (Tested on v24.19.0)
-- **Modern Web Browser** — Chrome 110+, Edge 110+, Firefox 110+, or Safari 16+ (WebGL & Web Audio enabled)
-- **Python** (Optional utility scripts) — Version 3.10+
-- **Git** — Version 2.30+
+- **Node.js** 20.x or later (tested on v24.19.0), for the local server and tests
+- **A modern browser**: Chrome, Edge, Firefox or Safari (WebGL and Web Audio). Current versions show the frosted glass; browsers without backdrop blur get solid panels instead.
+- **Git** 2.30+
+- Optional, only to regenerate assets:
+  - **Python** 3.10+ for artwork processing
+  - **Python 3.11 with an NVIDIA GPU (CUDA) and ffmpeg** for narration rendering
 
 ### Operating System
-- Windows 10/11, macOS 12+, or Linux (Ubuntu 20.04+, Debian 11+)
-
-### Runtime
-- **Node.js**
-- **Version**: 20.x or higher (Tested on Node.js v24.19.0)
+- Windows 10/11, macOS 12+ or Linux
 
 ## Installation
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/example/class-4-catechism.git
+git clone https://github.com/Janeferdinant/class-4-catechism.git
 cd class-4-catechism
 ```
 
-### 2. Create the Development Environment
-For Python utility scripts (optional):
-```bash
-python -m venv .venv
-```
-Windows:
-```powershell
-.venv\Scripts\Activate.ps1
-```
-macOS / Linux:
-```bash
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-Install Node.js dependencies:
+### 2. Install Dependencies
+The site has no runtime dependencies; Node.js is only used to serve it and run the tests.
 ```bash
 npm install
 ```
 
-If utilizing Python utility scripts:
+### 3. Optional: Asset Tools
+Artwork processing:
 ```bash
-pip install -r requirements.txt
+python -m pip install -r scripts/art/requirements.txt
+```
+Narration rendering (use a separate virtual environment; see the file for the PyTorch CUDA step):
+```bash
+python -m pip install -r scripts/audio/requirements.txt
 ```
 
-### 4. Configure the Application
-Copy or review configuration parameters in `config/app.config.json`. All static audio and visual assets are pre-generated and bundled locally, so no external API keys or cloud service accounts are required to run the classroom out of the box.
+## Regenerating Narration Audio
+
+All narration is pre-rendered, so the site needs no speech service at runtime. The spoken text comes from `src/data/narration.js`, the same module the site uses, so audio always matches what is on screen.
+
+1. After changing any lesson, exam or quiz text, export the scripts:
+   ```bash
+   npm run audio:scripts
+   ```
+2. Render with OmniVoice (only new or changed text is rendered):
+   ```bash
+   <omnivoice-venv>/Scripts/python scripts/audio/generate_omnivoice_audio.py
+   ```
+   Options: `--only ch3-` (one chapter), `--lang mal`, `--force`, `--redesign-voices`, `--manifest-only`. The narrator voices are designed once and kept in `assets/audio/narration/voices/`.
+3. Spot-check with speech recognition:
+   ```bash
+   <omnivoice-venv>/Scripts/python scripts/audio/verify_narration.py --sample 20
+   ```
+   English uses faster-whisper; Malayalam uses `thennal/whisper-medium-ml`.
+
+Clips are written to `assets/audio/narration/<lang>/` and listed in `src/data/narrationManifest.js`.
+
+> **License note:** the OmniVoice model weights are licensed **CC-BY-NC** (non-commercial use only). The free educational site is fine; commercial use would need differently licensed audio.
+
+## Regenerating Artwork
+Image prompts, file names and target folders are listed in [docs/design/ARTWORK_TO_GENERATE.md](docs/design/ARTWORK_TO_GENERATE.md). Put generated images in `assets/generated/incoming/` and run:
+```bash
+python scripts/art/process_generated_art.py
+```
 
 ## Configuration
+The site is static and needs no configuration. User choices (theme, narration language, speech pace, sound effects, stars) are saved in the visitor's browser.
 
-Configuration files are located in:
-`config/`
+`config/app.config.json` documents the defaults (dark theme, Malayalam narration, OmniVoice audio paths, agent roles). The app does not read it at runtime.
 
-### Configuration Parameters
-| Parameter | Description | Required | Default |
-| :--- | :--- | :--- | :--- |
-| `application.port` | Local HTTP server port | No | `8080` |
-| `ui.defaultTheme` | Default user interface theme (`dark` or `light`) | Yes | `dark` |
-| `ui.defaultLanguage` | Default narration and story language (`malayalam` or `english`) | Yes | `malayalam` |
-| `ui.soundEffectsEnabled` | Enable Web Audio synthesizer sound effects | No | `true` |
-| `audio.ttsProvider` | Primary voiceover provider | Yes | `msedge-neural` |
-| `audio.malayalamVoice` | Neural Malayalam voice model identifier | Yes | `ml-IN-SobhanaNeural` |
-| `audio.englishVoice` | Neural English voice model identifier | Yes | `en-US-JennyNeural` |
-| `visuals.defaultView` | Default picture slide display (`pixar` or `textbook`) | Yes | `pixar` |
-
-### Environment Variables
-| Variable | Description | Required |
+| Setting | Where it lives | Default |
 | :--- | :--- | :--- |
-| `PORT` | Custom port to bind HTTP server | No |
-| `GEMINI_API_KEY` | Optional Google AI Studio key for live AI questions | No |
-| `DEFAULT_THEME` | Override default theme (`dark` / `light`) | No |
+| Theme | Gear menu, saved as `app-theme` | `dark` |
+| Narration language | Gear menu, saved as `preferred-narration-lang` | Malayalam |
+| Speech pace | Gear menu slider, saved as `preferred-speech-rate` | `1.0×` |
+| Sound effects | Gear menu, saved as `sound-effects` | on |
+| Stars | Earned in lessons and quizzes, saved as `class4-progress-v1` | `0` |
+| Layout | Gear menu, Display & Modes (desktop or phone layout), saved as `app-view-mode` | follows the screen size |
+| Explore card | Closed or reopened on the map, saved as `explore-card-dismissed` | shown |
+| Gemini API key | Optional, entered in the app to generate new chapter art, saved as `gemini_api_key` | none |
 
-> **Security**: Do not commit passwords, API keys, access tokens, certificates, or other credentials to the repository. The application uses client-side session configuration and pre-generated static assets to ensure zero credential leakage.
+> **Security**: never commit passwords, API keys or tokens. The Gemini key, if used, stays in the visitor's browser.
 
 ## Usage
 
 ### Basic Usage
-Start the local HTTP web server:
 ```bash
 npm start
 ```
-
-### Example
-```bash
-npx -y http-server -p 8080 -c-1
-```
-Open your web browser and navigate to:
-```
-http://localhost:8080
-```
+Then open `http://localhost:8080`.
 
 ### Typical Workflow
-1. **Launch & Choose Language**: Open `http://localhost:8080`, select **Malayalam (മലയാളം)** or **English**, and pick your preferred theme (Dark / Light).
-2. **Interactive Storytelling**: Navigate through Chapters 1 to 15. Read the 5-year-old story cards and listen to the natural neural voiceover by pressing **Play Story Audio**.
-3. **Explore 3D Pixar Motion Graphics**: Inspect the chapter illustrations in 3D mode. Hover or tilt the screen to see 3D perspective depth, and toggle between 3D Pixar Art and original textbook scans.
-4. **Discover the 3D Universe**: Click **3D Universe** in the navigation bar. Orbit the WebGL knowledge graph, click on any node (Chapters, Sacraments, Exams), and explore the slide-out drawer details.
-5. **Exam Solutions & Star Quiz**: Switch to **Solved Exams** to inspect cited answers for the 2023–2025 semester exams, or launch the **Star Quiz** to earn gold stars and celebrate with confetti!
+1. **Adventure Map**: explore the islands; click any chapter, sacrament or exam paper to zoom in, then press **🔊 Malayalam** or **🔊 English**. Click the empty sky, press Escape or close the details to zoom back out.
+2. **Picture Slides**: page through the chapter art, switching between storybook art and textbook pages.
+3. **Story Lessons**: read the story, moral, key concepts and scripture; the audio buttons read the open tab. Collect each chapter's star once.
+4. **Exam Papers**: pick a paper, listen to any question and answer, and open the simple explanation.
+5. **Star Quizzes**: answer questions, use a clue when stuck, and earn a star for each question answered correctly.
+6. Use the **gear icon** to change theme, narration language, speech pace or sound effects, to switch between the desktop and phone layouts, or to go fullscreen.
 
 ## Input Data
-The application requires the following input data:
-| Input | Format | Description | Required |
+| Input | Format | Location | Description |
 | :--- | :--- | :--- | :--- |
-| Textbook Chapters 1–15 | PDF | Class 4 Catechism textbook scans located in `data/input/` | Yes |
-| Past Exam Papers (2023–2025) | PDF | 5 historical semester question papers located in `data/input/` | Yes |
-| Multi-Agent Specification | PDF | Architecture design guidelines (`multi  agent.pdf`) located in `data/input/` | Yes |
-| Gemini API Key | String | Optional key entered in UI for live conversational queries | No |
+| Textbook chapters 1–15 | PDF | `data/input/textbook/chapter-01.pdf` … `chapter-15.pdf` | Source of the lesson content |
+| Exam papers 2023–2025 | PDF | `data/input/question-papers/<paper-id>.pdf` | Source of the solved questions |
+| Multi-agent design notes | PDF | `data/input/multi-agent-design.pdf` | Basis of the learning console design |
 
-### Input Requirements
-1. Textbook PDFs must cover Chapters 1 through 15 of Class 4 Catechism.
-2. Question papers must preserve original Malayalam question text for accurate citation matching.
-3. Audio playback requires browser support for standard MPEG audio codecs (MP3).
+The curriculum is already extracted into `src/data/`; the PDFs are kept for reference and are not deployed.
 
 ## Output
-The application generates the following outputs:
 | Output | Format | Description |
 | :--- | :--- | :--- |
-| Interactive Web Classroom | HTML5 / CSS3 / WebGL | Responsive, kid-friendly animated classroom UI |
-| Neural Voiceover Narration | Audio (MP3) | Broadcast-quality Malayalam and English story voiceovers |
-| Solved Exam Answer Cards | Structured HTML | Categorized questions with solutions and textbook references |
-| Quiz Badges & Star Progress | Browser LocalStorage | Gamified star scores, progress tracking, and celebratory effects |
+| Interactive classroom | HTML, CSS, JavaScript, WebGL | The website |
+| Narration | MP3 (48 kbps mono) | 357 Malayalam and English clips |
+| Progress | Browser localStorage | Stars and settings for that browser |
 
 ## Workflow
 ```
-Input (Textbooks & Question Papers)
+Source PDFs (textbook, exam papers)
   │
   ▼
-Validation (Data integrity & schema verification)
+Curriculum data (src/data/*.js)
+  │
+  ├──► Narration scripts (src/data/narration.js) ──► OmniVoice clips (assets/audio/narration/)
   │
   ▼
-Processing (Multi-agent decomposition: stories, solutions, 3D nodes)
-  │
-  ▼
-Output Generation (Pre-generated neural audio, 3D WebGL scenes, quizzes)
-  │
-  ▼
-Validation (Automated unit tests & audio checks)
-  │
-  ▼
-Final Output (Interactive Classroom web application)
+Static website (index.html + src/) ──► Tests (npm test) ──► Vercel deployment
 ```
 
 ## Integrations
-This project integrates with the following systems:
 | System | Purpose | Interface |
 | :--- | :--- | :--- |
-| Three.js WebGL Engine | 3D knowledge graph universe rendering & camera orbit | Browser ES6 Module / CDN |
-| Microsoft Edge Neural TTS | Offline generation of natural Malayalam (`SobhanaNeural`) audio | Node.js script (`scripts/generateNeuralMalayalamAudio.js`) |
-| Google Gemini AI API | Optional dynamic agent explanations and personalized Q&A | REST API via `GeminiAIService.js` |
-| Web Audio API | Sound effects generation (chimes, clicks, celebratory fanfares) | Native Browser AudioContext |
+| Three.js r128 | Adventure Map rendering | CDN script |
+| OmniVoice (k2-fsa) | Offline rendering of all narration | `scripts/audio/generate_omnivoice_audio.py` |
+| Web Audio API | Sound effects | Browser AudioContext |
+| Google Gemini API | Optional generation of new chapter art | `src/services/GeminiAIService.js` |
+| Vercel | Hosting | Vercel CLI (`.vercelignore` keeps tools and sources out) |
 
-### External Dependencies
-- Google Gemini API (`https://generativelanguage.googleapis.com`)
-- Three.js library (`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`)
-- Canvas Confetti (`https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js`)
+### External Dependencies (loaded by the browser)
+- Three.js (`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`)
+- Google Gemini API, only when a key is entered
 
 ## Development
 
 ### Development Environment
-Recommended development environment:
-- **IDE**: Visual Studio Code, Cursor, or Antigravity IDE
-- **Runtime**: Node.js v20.x or v24.x
-- **Version**: 1.2.0
-- **Git**: Git 2.30+
+- **IDE**: Visual Studio Code or similar
+- **Runtime**: Node.js 20.x or later
+- **Version**: 1.2.0 (redesign in progress on `new-ui/ux`)
 
 ### Coding Standards
-- Follow standard ES6+ JavaScript modular architecture.
-- Use meaningful variable, class, and function names.
-- Keep components focused on a single responsibility (`Single Responsibility Principle`).
-- Add graceful fallbacks for missing browser capabilities (e.g. SpeechSynthesis fallback if MP3s fail).
-- Add tests for new functionality under `tests/`.
-- Update documentation and changelogs when behavior changes.
+- ES modules, no build step; keep components focused on one job.
+- Read-aloud text belongs in `src/data/narration.js`; regenerate audio after changing it.
+- Glass surfaces use the `--gl-*` tokens and tiers in `src/styles/glass.css`. Blur only surfaces with artwork or scrolling content behind them; reading cards get tint and an edge light instead.
+- Respect `prefers-reduced-motion` and `prefers-reduced-transparency` in new effects.
+- Add tests under `tests/` for new behaviour, and update this README and the changelog.
 
 ## Git Workflow
 
 ### Branches
 ```
-main
- │
- ├── feature/<feature-name>
- ├── bugfix/<bug-name>
- └── release/<version>
+main                  # production (deployed)
+ └── new-ui/ux        # current redesign; merged only after approval
 ```
 
 ### Commit Messages
-Use descriptive commit messages.
-Examples:
-- `feat: add neural Malayalam audio voiceover`
-- `feat: implement interactive 3D WebGL knowledge drawer`
-- `fix: resolve quiz scoring and audio stop button`
-- `docs: update architecture documentation and changelog`
+Use conventional, descriptive messages, for example:
+- `feat(audio): narrate quiz clues`
+- `fix(stars): award each quiz star once`
+- `docs: update README and changelog`
 
 ### Pull Requests
-Before submitting a pull request:
-- [x] Code has been tested.
-- [x] Automated tests pass (`npm test`).
-- [x] Documentation has been updated.
-- [x] No credentials or sensitive information are included.
-- [x] Changes have been reviewed.
-- [x] Commit history is clean.
+- [ ] `npm test` passes
+- [ ] Narration regenerated if any read-aloud text changed
+- [ ] README and CHANGELOG updated
+- [ ] No credentials or personal information included
 
 ## Testing
 
@@ -279,122 +253,92 @@ Before submitting a pull request:
 ```bash
 npm test
 ```
-Or run directly via Node.js test runner:
-```bash
-node --test tests/*.test.js
-```
-
-Example for Python utility testing:
-```bash
-pytest
-```
+This runs every suite in `tests/` with the Node.js test runner.
 
 ### Manual Testing
-1. **Audio Verification**: Click **Play Story Audio** for Malayalam and English across chapters, and click **Stop Audio** to ensure immediate halt.
-2. **3D Universe Verification**: Click into **3D Universe**, rotate the cosmos, click on nodes (e.g., Chapter 7 or Sacrament), and verify that the drawer slides out with accurate details.
-3. **Quiz Verification**: Start chapter quizzes, select right and wrong options, and observe sounds, confetti, and star tallying.
-4. **Theme Toggle**: Switch between Dark and Light mode and check contrast across all components.
+1. **Narration**: play a story, an exam answer and a quiz question in both languages; switch language in the gear menu while one plays; move the pace slider.
+2. **Adventure Map**: open chapter, sacrament and exam islands; each should zoom into view (above the sheet on a phone) and play its narration. Clicking the empty sky or pressing Escape should close it and zoom out; dragging the map should not.
+3. **Stars**: collect a chapter star twice and replay a quiz; the count should rise only once per item and survive a reload.
+4. **Themes and layouts**: check light and dark themes on desktop and on a phone-sized screen.
+5. **Glass and accessibility**: turn off transparency effects (Windows: Settings › Personalization › Colors; macOS/iOS: Reduce transparency) and check that panels become solid; with reduced motion on, the map zoom should cut instead of glide and buttons should not move on hover.
 
 ### Test Requirements
-1. All 15 chapters must contain complete English and Malayalam text and moral lessons.
-2. All 5 exam papers must have solutions verified against chapter citations.
-3. Pre-generated audio files (`ch1_mal.mp3` through `ch15_mal.mp3` and `ch1_eng.mp3` through `ch15_eng.mp3`) must exist and have non-zero size.
+1. All 15 chapters have complete English and Malayalam text and moral lessons.
+2. All 5 exam papers have answers cited to chapters.
+3. Every narration script has a rendered, non-empty clip in `src/data/narrationManifest.js`.
+4. Every browser starts at 0 stars; a chapter star or quiz star can be earned only once.
+5. Clicking an island centres and zooms it, clicking empty sky or closing the details returns to the full map, and the zoomed sky never shows its edges.
+6. The glass stylesheet loads last, defines tokens for both themes, blurs navigation and dialogs but not reading cards, and keeps its accessibility fallbacks.
 
 ## Logging
-Logs are stored in:
-- Client-side: Browser Developer Console (`F12` -> `Console`)
-- Server-side: Local HTTP server terminal output
-
-Log levels:
-- **DEBUG** — Detailed diagnostic information (node orbit calculations, particle counts)
-- **INFO** — Normal application operation (audio loaded, chapter switched, quiz started)
-- **WARNING** — Potential issue that does not stop execution (audio fallback triggered)
-- **ERROR** — Operation failed (failed to load specific asset)
-- **CRITICAL** — Critical failure (browser does not support canvas or WebGL)
+The site logs to the browser console (`F12` → Console):
+- **Warnings**: a narration clip failed to load, or WebGL is unavailable and the HTML map fallback is used.
+- **Errors**: an asset or script failed to load.
 
 ## Error Handling
-Common errors and solutions are documented below.
 
-### WebGL Context Unavailable
-- **Cause**: Browser hardware acceleration disabled or outdated graphics driver.
-- **Solution**: The application automatically degrades to a 2D canvas fallback animation (`MotionCanvas.js`). Enable hardware acceleration in browser settings (`chrome://settings/system`).
+### WebGL Unavailable
+- **Cause**: hardware acceleration disabled or an old graphics driver.
+- **Result**: the Adventure Map renders the same islands as HTML buttons. Enable hardware acceleration for the full map.
 
-### Audio Playback Blocked by Browser
-- **Cause**: Browser autoplay restrictions requiring user interaction before playing audio.
-- **Solution**: Audio playback is strictly triggered on explicit user click of the **Play Story Audio** button, adhering to autoplay policies.
+### Audio Blocked by the Browser
+- **Cause**: browsers only allow audio after a user action.
+- **Result**: narration always starts from a button press, so this does not affect normal use.
 
-### Gemini API Key Invalid or Missing
-- **Cause**: User entered an invalid key or left it empty when testing live AI features.
-- **Solution**: The application displays a gentle inline notification and seamlessly uses pre-generated static content without failing.
+### Narration Not Available
+- **Cause**: text was changed without regenerating audio.
+- **Result**: the button shows "This narration is not available yet." Regenerate the audio (see above).
 
 ## Known Issues / Limitations
-1. On very low-end mobile devices, 3D WebGL particle counts may cause minor frame drops.
-2. Web Speech API synthesis quality depends on OS language packages if offline MP3s are disabled.
+1. Clues, simple explanations, and the exam-paper, agent and group islands on the map have English text only, so they are read in English (the map hides its Malayalam button there).
+2. Malayalam narration quality is good but slightly less polished than English (OmniVoice has less Malayalam training data).
+3. Very low-end phones may drop frames during particle effects.
+4. Island zoom needs WebGL. In the HTML fallback, clicking an island opens its details without zooming.
 
 ## Troubleshooting
 
-### Problem: Malayalam audio does not play
-- **Symptoms**: Clicking the audio button does not produce sound.
-- **Possible Cause**: Audio muted, browser volume zero, or MP3 file blocked by browser security settings.
-- **Solution**: Ensure your speaker is unmuted and the local server is running (`npm start`) so assets are served over HTTP rather than `file://`.
+### Problem: No sound
+- **Possible cause**: device muted, or the site opened as a `file://` page.
+- **Solution**: unmute, and serve the site with `npm start` (or use the deployed site).
 
-### Problem: 3D Universe shows a blank canvas
-- **Symptoms**: Particle graph is not visible.
-- **Possible Cause**: WebGL disabled or Three.js CDN blocked.
-- **Solution**: Check browser developer console for network errors and verify WebGL is enabled at `chrome://gpu`.
+### Problem: Adventure Map is blank
+- **Possible cause**: the Three.js CDN is blocked.
+- **Solution**: check the console for network errors; the HTML fallback appears if WebGL itself is unavailable.
 
 ## Security
-The following information must not be committed to the repository:
-- Passwords
-- API keys (Google AI Studio, ElevenLabs, OpenAI)
-- Access tokens
-- Private keys
-- Certificates containing private information
-- Database credentials
-- Personal student or teacher information
-- Other confidential information
-
-Use environment variables, client-side session memory, or approved secret-management systems where applicable.
+Do not commit passwords, API keys, access tokens, private keys or personal student and teacher information. `.env*` files are ignored by git.
 
 ## Versioning
-The project follows:
-[Semantic Versioning 2.0.0](https://semver.org/)
+The project follows [Semantic Versioning 2.0.0](https://semver.org/).
 
-Current version:
-**1.2.0**
-
-See [CHANGELOG.md](file:///c:/Users/Asus/Documents/Antigravity-Projects/multiagent/CHANGELOG.md) for the complete change history.
+Current version: **1.2.0**. The redesign on `new-ui/ux` is listed under *Unreleased* in the [changelog](CHANGELOG.md).
 
 ## Documentation
-Additional documentation is available in:
-`docs/`
-
-Important documents:
-- [architecture.md](file:///c:/Users/Asus/Documents/Antigravity-Projects/multiagent/docs/architecture.md) — Detailed Multi-Agent architecture specification
-- [app.config.json](file:///c:/Users/Asus/Documents/Antigravity-Projects/multiagent/config/app.config.json) — Master application configuration
-- [CHANGELOG.md](file:///c:/Users/Asus/Documents/Antigravity-Projects/multiagent/CHANGELOG.md) — Release notes and changelog history
+- [docs/architecture.md](docs/architecture.md): how the app is put together
+- [docs/design/ARTWORK_TO_GENERATE.md](docs/design/ARTWORK_TO_GENERATE.md): artwork prompts, file names and folders
+- [docs/design/mockup/](docs/design/mockup/): the approved UI mockup (desktop and mobile)
+- [config/app.config.json](config/app.config.json): reference configuration
+- [CHANGELOG.md](CHANGELOG.md): release notes
 
 ## Known Dependencies
 | Dependency | Version | Purpose |
 | :--- | :--- | :--- |
-| `msedge-tts` | `^2.0.9` | Broadcast-grade natural neural text-to-speech audio synthesis |
-| Three.js | `r128` | 3D WebGL interactive universe and particle node graph |
-| Canvas-Confetti | `1.9.4` | Gamified celebratory particle explosions for quizzes |
+| Three.js | `r128` | Adventure Map rendering |
+| OmniVoice (Python, development only) | `0.2.1` | Renders the narration; model weights are CC-BY-NC |
+| Pillow, numpy (Python, development only) | see `scripts/art/requirements.txt` | Artwork processing |
 
-## Academic Mentorship & Maintenance
+## Academic Mentorship
 - **Academic Mentor**:
   ### Asst. Prof. Jane Rose
   *Department of Computer Science & Engineering (CSE)*
-- **Project Architecture**: Multi-Agent Interactive Learning Team
-- **Maintainer**: Engineering Team
-- **Contact**: `edtech@catechism-academy.org` / Educational Technology Support
 
 ## Change History
 | Version | Date | Author | Description |
 | :--- | :--- | :--- | :--- |
 | **1.0.0** | 2026-10-10 | Multi-Agent Team | Initial release with 15 chapters, 5 solved exam papers, and quiz engine |
 | **1.1.0** | 2026-10-10 | Multi-Agent Team | Added clickable 3D nodes, stop audio controls, and bilingual Malayalam support |
-| **1.2.0** | 2026-10-10 | Multi-Agent Team | Pre-generated natural neural voiceover, 3D Pixar motion graphics, and folder organization |
+| **1.2.0** | 2026-10-10 | Multi-Agent Team | Pre-generated voiceover, 3D Pixar motion graphics, and folder organization |
+| *Unreleased* | 2026-10-11 | Redesign (`new-ui/ux`) | Adventure Map redesign and artwork, island zoom, glass design system, OmniVoice narration everywhere, working settings, fair star progress, repository clean-up |
 
 ## License / Usage
 This repository is proprietary and intended for educational instruction and learning use only. Redistribution or external commercial use is not permitted without explicit authorization.

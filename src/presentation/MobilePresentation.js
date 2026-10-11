@@ -17,10 +17,17 @@ export class MobilePresentation {
     this.currentQuizIndex = 0;
     this.is3dOpen = false;
     this.slideArtMode = 'pixar';
+    this.activeStoryTab = 'story';
+    if (typeof window !== 'undefined') {
+      window.mobileApp = this;
+    }
   }
 
   init() {
     if (typeof document === 'undefined') return;
+    if (typeof window !== 'undefined') {
+      window.mobileApp = this;
+    }
     this.setupBottomNav();
     this.setupMobileHeader();
     this.renderChapterDeck();
@@ -85,7 +92,8 @@ export class MobilePresentation {
       toggle3dBtn.addEventListener('click', () => {
         this.is3dOpen = !this.is3dOpen;
         box3d.style.display = this.is3dOpen ? 'block' : 'none';
-        toggle3dBtn.textContent = this.is3dOpen ? '❌ Close 3D Map' : '🌐 Open 3D Map View';
+        toggle3dBtn.innerHTML = this.is3dOpen ? 'Hide the Map <span aria-hidden="true">✕</span>' : 'Explore the Map <span aria-hidden="true">→</span>';
+        toggle3dBtn.setAttribute('aria-expanded', String(this.is3dOpen));
         if (this.is3dOpen && this.app?.threeUniverse) {
           const container = document.getElementById('mob-three-container');
           if (container && this.app.threeUniverse.renderer) {
@@ -166,7 +174,7 @@ export class MobilePresentation {
     `;
   }
 
-  /* ---------------- View 2: Picture Slides ---------------- */
+  /* ---------------- View 2: Picture Slides (Mockup 10) ---------------- */
   renderSlidesView() {
     const container = document.getElementById('mob-slide-card-container');
     if (!container) return;
@@ -176,8 +184,20 @@ export class MobilePresentation {
     const currentImg = isTextbook ? ch.textbookUrl : ch.imageUrl;
 
     container.innerHTML = `
+      <div class="mob-screen-top-nav">
+        <button class="mob-btn-back-link" onclick="window.mobileApp.switchMobileView('universe')">
+          ‹ Back to Map
+        </button>
+        <span class="mob-screen-header-title">Picture Slides</span>
+      </div>
+
       <div class="mob-slide-hero">
-        <img id="mob-slide-hero-img" src="${currentImg}" alt="${ch.titleEng}" class="mob-slide-img" />
+        <div class="mob-slide-frame-container">
+          <img id="mob-slide-hero-img" src="${currentImg}" alt="${ch.titleEng}" class="mob-slide-img" />
+          <button class="mob-slide-overlay-arrow prev" onclick="window.mobileApp.prevSlide()" ${ch.number === 1 ? 'disabled' : ''} aria-label="Previous Slide">‹</button>
+          <button class="mob-slide-overlay-arrow next" onclick="window.mobileApp.nextSlide()" ${ch.number === 15 ? 'disabled' : ''} aria-label="Next Slide">›</button>
+          <div class="mob-slide-counter-chip">${ch.number} / 15</div>
+        </div>
         <div class="mob-slide-badge-row">
           <span class="mob-slide-indicator">Chapter ${ch.number} of 15</span>
           <button class="mob-btn-art-toggle" onclick="window.mobileApp.toggleSlideArtMode()">
@@ -185,34 +205,59 @@ export class MobilePresentation {
           </button>
         </div>
       </div>
+
       <div class="mob-slide-content">
-        <h3 class="mob-slide-title-mal">${ch.titleMal}</h3>
-        <p class="mob-slide-title-eng">${ch.titleEng}</p>
+        <h3 class="mob-slide-title-serif">${ch.titleEng}</h3>
+        <p class="mob-slide-title-mal">${ch.titleMal}</p>
+
+        <!-- Horizontal Thumbnail Strip (Mockup 10) -->
+        <div class="mob-slide-thumb-strip">
+          ${CHAPTERS_DATA.map(c => `
+            <button class="mob-thumb-item ${c.number === ch.number ? 'active' : ''}" onclick="window.mobileApp.jumpToSlide(${c.number})" title="Slide ${c.number}">
+              <img src="${c.imageUrl}" alt="Ch ${c.number}" class="mob-thumb-img" loading="lazy" />
+              <span class="mob-thumb-num">${c.number}</span>
+            </button>
+          `).join('')}
+        </div>
+
         <div class="mob-slide-story-box">
           <p class="mob-slide-story-text">${ch.story5yoMal || ch.story5yo}</p>
         </div>
+
         <div class="mob-slide-audio-cta">
-          <button class="mob-btn-big-audio mal" onclick="window.app.playVoice('mal', ${ch.number})">
+          <button class="mob-btn-big-audio mal" onclick="window.app && window.app.playVoice ? window.app.playVoice('mal', ${ch.number}) : (window.app && window.app.playChapterAudio && window.app.playChapterAudio(${ch.number}, 'mal'))">
             🔊 മലയാളം കഥ കേൾക്കൂ (Play Malayalam Audio)
           </button>
-          <button class="mob-btn-big-audio eng" onclick="window.app.playVoice('eng', ${ch.number})">
+          <button class="mob-btn-big-audio eng" onclick="window.app && window.app.playVoice ? window.app.playVoice('eng', ${ch.number}) : (window.app && window.app.playChapterAudio && window.app.playChapterAudio(${ch.number}, 'eng'))">
             🔊 English Story Narration (Play English Audio)
           </button>
-          <button class="mob-btn-stop-audio-pill" onclick="window.app.stopVoice()">
+          <button class="mob-btn-stop-audio-pill" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
             🛑 Stop Audio (ഓഡിയോ നിർത്തുക)
           </button>
         </div>
+
         <div class="mob-slide-nav-row">
           <button class="mob-slide-nav-btn" onclick="window.mobileApp.prevSlide()" ${ch.number === 1 ? 'disabled' : ''}>
-            ◀ മുമ്പത്തേത് (Prev)
+            ◀ Prev
           </button>
           <span class="mob-slide-counter">${ch.number} / 15</span>
           <button class="mob-slide-nav-btn" onclick="window.mobileApp.nextSlide()" ${ch.number === 15 ? 'disabled' : ''}>
-            അടുത്തത് (Next) ▶
+            Next ▶
           </button>
+        </div>
+
+        <div class="mob-tab-mentor-footer">
+          Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
         </div>
       </div>
     `;
+  }
+
+  jumpToSlide(chNum) {
+    this.activeChapter = Number(chNum) || 1;
+    if (this.app) this.app.activeChapter = this.activeChapter;
+    this.renderSlidesView();
+    if (this.app?.sfx?.playPop) this.app.sfx.playPop();
   }
 
   toggleSlideArtMode() {
@@ -251,7 +296,7 @@ export class MobilePresentation {
     }
   }
 
-  /* ---------------- View 3: Story Lessons ---------------- */
+  /* ---------------- View 3: Story Lessons (Mockup 09) ---------------- */
   renderStoryClassroomView() {
     const strip = document.getElementById('mob-story-strip-container');
     const card = document.getElementById('mob-story-lesson-card');
@@ -268,43 +313,107 @@ export class MobilePresentation {
     `;
 
     const ch = CHAPTERS_DATA.find(c => c.number === this.activeChapter) || CHAPTERS_DATA[0];
+    const currentTab = this.activeStoryTab || 'story';
+
+    let tabBodyHtml = '';
+    if (currentTab === 'moral') {
+      tabBodyHtml = `
+        <div class="mob-lesson-section highlight">
+          <h4 class="mob-sec-label">🌟 Moral Lesson (സുവർണ്ണ പാഠം)</h4>
+          <p class="mob-sec-body">${ch.moralLesson}</p>
+          <div class="mob-mal-card"><p class="mob-mal-text">${ch.moralLessonMal}</p></div>
+          <button class="mob-btn-section-audio moral" onclick="window.app && window.app.playVoice ? window.app.playVoice('lesson', ${ch.number}) : (window.app && window.app.playChapterAudio && window.app.playChapterAudio(${ch.number}, 'mal'))">
+            🌟 സുവർണ്ണ പാഠം കേൾക്കാം (Listen to Lesson)
+          </button>
+        </div>
+      `;
+    } else if (currentTab === 'concepts') {
+      tabBodyHtml = `
+        <div class="mob-lesson-section">
+          <h4 class="mob-sec-label">💡 Key Concepts (പ്രധാന ആശയങ്ങൾ)</h4>
+          <div class="mob-concepts-list">
+            ${(ch.keyConcepts || []).map(c => `
+              <div class="mob-concept-item">
+                <strong class="mob-concept-title">${c.termEng} <span class="mob-concept-mal">(${c.termMal})</span></strong>
+                <p class="mob-concept-desc">${c.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    } else if (currentTab === 'scripture') {
+      tabBodyHtml = `
+        <div class="mob-lesson-section">
+          <h4 class="mob-sec-label">📖 Holy Scripture (വിശുദ്ധ വേദപുസ്തകം)</h4>
+          <blockquote class="mob-scripture-quote">"${ch.scriptureEng || ''}"</blockquote>
+          <div class="mob-mal-card">
+            <blockquote class="mob-scripture-quote-mal">"${ch.scripture || ''}"</blockquote>
+          </div>
+        </div>
+      `;
+    } else {
+      // 'story'
+      tabBodyHtml = `
+        <div class="mob-lesson-section">
+          <h4 class="mob-sec-label">🌟 Faith Story (കുഞ്ഞു കഥ)</h4>
+          <p class="mob-sec-body">${ch.story5yo}</p>
+          <div class="mob-mal-card"><p class="mob-mal-text">${ch.story5yoMal}</p></div>
+        </div>
+      `;
+    }
 
     card.innerHTML = `
-      <div class="mob-lesson-header">
-        <span class="mob-lesson-badge">പാഠം ${ch.number}</span>
-        <h2 class="mob-lesson-heading-mal">${ch.titleMal}</h2>
-        <p class="mob-lesson-heading-eng">${ch.titleEng}</p>
+      <div class="mob-screen-top-nav">
+        <button class="mob-btn-back-link" onclick="window.mobileApp.switchMobileView('universe')">
+          ‹ Back to Map
+        </button>
+        <span class="mob-screen-header-title">Story Lessons</span>
       </div>
+
+      <div class="mob-lesson-header">
+        <span class="mob-lesson-badge">Chapter ${ch.number}</span>
+        <h2 class="mob-lesson-heading-serif">${ch.titleEng}</h2>
+        <p class="mob-lesson-heading-mal">${ch.titleMal}</p>
+      </div>
+
       <div class="mob-lesson-image-wrap">
         <img src="${ch.imageUrl}" alt="${ch.titleEng}" class="mob-lesson-banner-img" />
       </div>
-      <div class="mob-lesson-section">
-        <h4 class="mob-sec-label">🌟 കുഞ്ഞു കഥ (5-Year-Old Story)</h4>
-        <p class="mob-sec-body">${ch.story5yoMal}</p>
-        <p class="mob-sec-body text-secondary" style="font-size:0.88rem; margin-top:8px;">${ch.story5yo}</p>
-        <div class="mob-lesson-audio-row">
-          <button class="mob-btn-section-audio mal" onclick="window.app.playVoice('mal', ${ch.number})">
-            🔊 മലയാളം കഥ (Malayalam Audio)
-          </button>
-          <button class="mob-btn-section-audio eng" onclick="window.app.playVoice('eng', ${ch.number})">
-            🔊 English Narration
-          </button>
-        </div>
+
+      <!-- 4 Tab Pills (Mockup 09) -->
+      <div class="mob-story-tabs-row" role="tablist">
+        <button class="mob-tab-pill ${currentTab === 'story' ? 'active' : ''}" onclick="window.mobileApp.switchStoryTab('story')">Story</button>
+        <button class="mob-tab-pill ${currentTab === 'moral' ? 'active' : ''}" onclick="window.mobileApp.switchStoryTab('moral')">Moral</button>
+        <button class="mob-tab-pill ${currentTab === 'concepts' ? 'active' : ''}" onclick="window.mobileApp.switchStoryTab('concepts')">Key Points</button>
+        <button class="mob-tab-pill ${currentTab === 'scripture' ? 'active' : ''}" onclick="window.mobileApp.switchStoryTab('scripture')">Scripture</button>
       </div>
-      <div class="mob-lesson-section highlight">
-        <h4 class="mob-sec-label">❤️ നമ്മൾ പഠിക്കേണ്ട കാര്യം (Golden Rule)</h4>
-        <p class="mob-sec-body">${ch.moralLessonMal}</p>
-        <p class="mob-sec-body text-secondary" style="font-size:0.88rem; margin-top:8px;">${ch.moralLesson}</p>
-        <button class="mob-btn-section-audio moral" onclick="window.app.playVoice('lesson', ${ch.number})">
-          🌟 സുവർണ്ണ പാഠം കേൾക്കാം (Listen to Lesson)
+
+      <div class="mob-story-tab-body">
+        ${tabBodyHtml}
+      </div>
+
+      <div class="mob-lesson-audio-row">
+        <button class="mob-btn-section-audio mal" onclick="window.app && window.app.playVoice ? window.app.playVoice('mal', ${ch.number}) : (window.app && window.app.playChapterAudio && window.app.playChapterAudio(${ch.number}, 'mal'))">
+          🔊 മലയാളം കഥ (Malayalam Audio)
+        </button>
+        <button class="mob-btn-section-audio eng" onclick="window.app && window.app.playVoice ? window.app.playVoice('eng', ${ch.number}) : (window.app && window.app.playChapterAudio && window.app.playChapterAudio(${ch.number}, 'eng'))">
+          🔊 English Narration
+        </button>
+        <button class="mob-btn-stop-audio-pill" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
+          🛑 Stop Audio
         </button>
       </div>
-      <div class="mob-lesson-section">
-        <h4 class="mob-sec-label">📖 ദൈവവചനം (Scripture)</h4>
-        <blockquote class="mob-scripture-quote">"${ch.scripture}"</blockquote>
-        ${ch.scriptureEng ? `<p class="mob-scripture-ref">"${ch.scriptureEng}"</p>` : ''}
+
+      <div class="mob-tab-mentor-footer">
+        Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
       </div>
     `;
+  }
+
+  switchStoryTab(tabName) {
+    this.activeStoryTab = tabName;
+    this.renderStoryClassroomView();
+    if (this.app?.sfx?.playPop) this.app.sfx.playPop();
   }
 
   jumpToChapterLesson(chNum) {
@@ -346,8 +455,15 @@ export class MobilePresentation {
       : paper.questions;
 
     list.innerHTML = `
+      <div class="mob-screen-top-nav">
+        <button class="mob-btn-back-link" onclick="window.mobileApp.switchMobileView('universe')">
+          ‹ Back to Map
+        </button>
+        <span class="mob-screen-header-title">Exam Papers</span>
+      </div>
+
       <div class="mob-paper-meta-card glass-panel">
-        <h4>${paper.title}</h4>
+        <h4 class="mob-paper-title-serif">${paper.title}</h4>
         <p class="mob-paper-scope">📚 Syllabus: ${paper.syllabus || 'Chapters 1-15'}</p>
         <div class="mob-paper-badges-row">
           <span class="mob-meta-badge">📝 ${paper.questions.length} Questions</span>
@@ -386,16 +502,23 @@ export class MobilePresentation {
               ` : ''}
 
               <div class="mob-q-audio-row">
-                <button class="mob-btn-audio-pill" onclick="window.app.speakMalayalam('${(q.qMal + '. ഉത്തരം: ' + (q.answerMal || '')).replace(/'/g, "\\'")}')">
-                  🔊 കേൾക്കുക (Listen)
+                <button class="mob-btn-audio-pill" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'mal')">
+                  🔊 മലയാളം
                 </button>
-                <button class="mob-btn-stop-audio-pill" onclick="window.app.stopVoice()">
+                <button class="mob-btn-audio-pill" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'eng')">
+                  🔊 English
+                </button>
+                <button class="mob-btn-stop-audio-pill" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
                   🛑 Stop
                 </button>
               </div>
             </div>
           </details>
         `).join('')}
+      </div>
+
+      <div class="mob-tab-mentor-footer">
+        Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
       </div>
     `;
 
@@ -411,7 +534,7 @@ export class MobilePresentation {
     this.renderExamSolverView();
   }
 
-  /* ---------------- View 5: Star Quizzes ---------------- */
+  /* ---------------- View 5: Star Quizzes (Mockup 12) ---------------- */
   renderQuizView() {
     const container = document.getElementById('mob-quiz-card-container');
     if (!container) return;
@@ -422,9 +545,16 @@ export class MobilePresentation {
     if (this.currentQuizIndex >= questions.length) {
       const starsEarned = this.app?.starsCount || 0;
       container.innerHTML = `
+        <div class="mob-screen-top-nav">
+          <button class="mob-btn-back-link" onclick="window.mobileApp.switchMobileView('universe')">
+            ‹ Back to Map
+          </button>
+          <span class="mob-screen-header-title">Star Quizzes</span>
+        </div>
+
         <div class="mob-quiz-card glass-panel text-center mob-quiz-completed">
           <div class="mob-quiz-celebration-hero">🎉 🏆 ✨</div>
-          <h2 class="mob-quiz-title">You Are a Star Champion!</h2>
+          <h2 class="mob-quiz-title-serif">You Are a Star Champion!</h2>
           <p class="mob-quiz-complete-sub">
             മിടുക്കൻ / മിടുക്കി! You explored all ${questions.length} quiz adventures!
           </p>
@@ -432,9 +562,13 @@ export class MobilePresentation {
             ⭐ <strong>${starsEarned} Stars Collected</strong>
           </div>
           <p class="mob-quiz-blessing">Jesus loves your joyful and eager heart! Keep shining bright!</p>
-          <button class="mob-btn-restart-quiz" onclick="window.mobileApp.restartQuiz()">
+          <button class="mob-btn-restart-quiz btn-primary-gold" onclick="window.mobileApp.restartQuiz()">
             🔄 Play Again (വീണ്ടും കളിക്കാം)
           </button>
+        </div>
+
+        <div class="mob-tab-mentor-footer">
+          Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
         </div>
       `;
       return;
@@ -443,12 +577,20 @@ export class MobilePresentation {
     const q = questions[this.currentQuizIndex];
     const totalQ = questions.length;
     const progressPercent = Math.round(((this.currentQuizIndex) / totalQ) * 100);
+    const chapterHeading = q.chapter ? `Chapter ${q.chapter} Quiz` : `Quiz Adventure`;
 
     container.innerHTML = `
+      <div class="mob-screen-top-nav">
+        <button class="mob-btn-back-link" onclick="window.mobileApp.switchMobileView('universe')">
+          ‹ Back to Map
+        </button>
+        <span class="mob-screen-header-title">Star Quizzes</span>
+      </div>
+
       <div class="mob-quiz-card glass-panel">
         <div class="mob-quiz-header">
-          <span class="mob-quiz-badge">Question ${this.currentQuizIndex + 1} of ${totalQ}</span>
-          <span class="mob-quiz-star-indicator">⭐ Collected: ${this.app?.starsCount || 0}</span>
+          <span class="mob-quiz-badge">${chapterHeading}</span>
+          <span class="mob-quiz-counter-text">Question ${this.currentQuizIndex + 1} of ${totalQ}</span>
         </div>
         <div class="mob-quiz-progress-bar-bg">
           <div class="mob-quiz-progress-bar-fill" style="width: ${progressPercent}%;"></div>
@@ -458,15 +600,21 @@ export class MobilePresentation {
           <div class="mob-quiz-emoji">${q.emoji || '✨'}</div>
           <h3 class="mob-quiz-question-mal">${q.questionMal || q.q || ''}</h3>
           ${q.questionEng ? `<p class="mob-quiz-question-eng">${q.questionEng}</p>` : ''}
+          <button class="mob-btn-audio-pill mob-quiz-read-aloud" onclick="window.app && window.app.narrate && window.app.narrate('quiz-${q.id}')" title="Read the question and choices aloud">
+            🔊 Read Aloud
+          </button>
         </div>
 
         <div class="mob-quiz-options-list" id="mob-quiz-options-list">
-          ${q.options.map((opt, i) => `
+          ${q.options.map((opt, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return `
             <button class="mob-quiz-option-btn" id="mob-opt-btn-${i}" onclick="window.mobileApp.handleQuizAnswer(${i}, ${q.correctIndex !== undefined ? q.correctIndex : (q.correct !== undefined ? q.correct : 0)})">
-              <span class="mob-opt-num">${i + 1}</span>
+              <span class="mob-opt-letter">${letter}</span>
               <span class="mob-opt-text">${opt}</span>
             </button>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
 
         <div id="mob-quiz-feedback" class="mob-quiz-feedback" style="display: none;"></div>
@@ -474,14 +622,18 @@ export class MobilePresentation {
         <div class="mob-quiz-clue-row">
           ${q.eli5Hint ? `
             <button class="mob-btn-clue-toggle" onclick="window.mobileApp.toggleQuizHint()">
-              💡 Need a Clue? (സൂചന)
+              💡 Need a Clue? (Leo)
             </button>
           ` : ''}
           ${q.citation ? `<span class="mob-quiz-citation">📖 ${q.citation}</span>` : ''}
         </div>
         <div id="mob-quiz-hint-box" class="mob-quiz-hint-box" style="display: none;">
-          🧸 <strong>Clue:</strong> ${q.eli5Hint || ''}
+          🧸 <strong>Leo's Clue:</strong> ${q.eli5Hint || ''}
         </div>
+      </div>
+
+      <div class="mob-tab-mentor-footer">
+        Academic Mentor: Asst. Prof. Jane Rose · Department of Computer Science & Engineering (CSE)
       </div>
     `;
   }
@@ -520,20 +672,21 @@ export class MobilePresentation {
       if (isCorrect) {
         if (this.app?.sfx?.playChime) this.app.sfx.playChime();
         if (this.app?.sfx?.playFanfare) this.app.sfx.playFanfare();
-        if (this.app?.addStar) this.app.addStar(1);
+        // One star per question, the first time it is answered correctly
+        const newStar = Boolean(q && this.app?.awardQuizStar && this.app.awardQuizStar(q.id));
         this.updateStars(this.app?.starsCount || 0);
 
         feedback.className = 'mob-quiz-feedback success';
         feedback.innerHTML = `
           <div class="mob-feedback-header">
-            <span class="mob-feedback-icon">🌟</span>
-            <div>
-              <strong>വളരെ ശരി! (Super Job!) +1 Star ⭐</strong>
+            <img src="assets/generated/angel-cherub-cutout.webp" alt="Angel Mascot" class="mob-quiz-angel-img" />
+            <div class="mob-feedback-text-col">
+              <strong>വളരെ ശരി! (Super Job!)${newStar ? ' +1 Star ⭐' : ''}</strong>
               <p>${q?.encouragement || 'Wonderful answer! Jesus is smiling at your heart!'}</p>
             </div>
           </div>
-          <button class="mob-btn-next-quiz" onclick="window.mobileApp.nextQuizQuestion()">
-            അടുത്ത ചോദ്യം (Next Question ➡)
+          <button class="mob-btn-next-quiz btn-primary-gold" onclick="window.mobileApp.nextQuizQuestion()">
+            Next Question ➔
           </button>
         `;
       } else {
@@ -544,17 +697,17 @@ export class MobilePresentation {
         feedback.innerHTML = `
           <div class="mob-feedback-header">
             <span class="mob-feedback-icon">🎈</span>
-            <div>
+            <div class="mob-feedback-text-col">
               <strong>നല്ല ശ്രമം! (Good Try!)</strong>
               <p>ശരിയായ ഉത്തരം: <strong>${correctText}</strong></p>
             </div>
           </div>
           <div class="mob-quiz-feedback-actions">
             <button class="mob-btn-retry-quiz" onclick="window.mobileApp.retryCurrentQuiz()">
-              🔄 Try Again (വീണ്ടും ശ്രമിക്കാം)
+              🔄 Try Again
             </button>
-            <button class="mob-btn-next-quiz" onclick="window.mobileApp.nextQuizQuestion()">
-              തുടരുക (Next Question ➡)
+            <button class="mob-btn-next-quiz btn-primary-gold" onclick="window.mobileApp.nextQuizQuestion()">
+              Next Question ➔
             </button>
           </div>
         `;
@@ -581,7 +734,29 @@ export class MobilePresentation {
   toggleQuizHint() {
     const hintBox = document.getElementById('mob-quiz-hint-box');
     if (hintBox) {
-      hintBox.style.display = hintBox.style.display === 'none' ? 'block' : 'none';
+      const opening = hintBox.style.display === 'none';
+      hintBox.style.display = opening ? 'block' : 'none';
+      // Read the clue aloud when it opens (clues exist in English only)
+      const questions = this.app?.quiz?.questions?.length ? this.app.quiz.questions : KID_QUIZ_QUESTIONS;
+      const q = questions[this.currentQuizIndex];
+      if (opening && q && q.eli5Hint && this.app?.narrate) this.app.narrate(`quiz-${q.id}-hint`, 'eng');
+    }
+  }
+
+  toggleAgentPanel() {
+    const panel = document.getElementById('mob-agent-panel');
+    if (!panel) return;
+    const isHidden = panel.style.display === 'none' || !panel.classList.contains('active');
+    if (isHidden) {
+      panel.style.display = 'block';
+      panel.classList.add('active');
+      panel.setAttribute('aria-hidden', 'false');
+      if (this.app?.sfx?.playPop) this.app.sfx.playPop();
+    } else {
+      panel.classList.remove('active');
+      panel.style.display = 'none';
+      panel.setAttribute('aria-hidden', 'true');
+      if (this.app?.sfx?.playPop) this.app.sfx.playPop();
     }
   }
 }

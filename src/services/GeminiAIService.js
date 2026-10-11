@@ -1,9 +1,9 @@
 /**
  * GeminiAIService
- * Client-side integration with Google AI Studio Gemini API for:
- * 1. Studio-grade natural neural Malayalam TTS audio synthesis
- * 2. On-demand 4K 3D Pixar/DreamWorks storybook image generation via Imagen 3
- * 3. Secure client-side API key management via localStorage
+ * Optional client-side integration with Google AI Studio for:
+ * 1. On-demand 4K 3D Pixar/DreamWorks storybook image generation via Imagen 3
+ * 2. Client-side API key management via localStorage
+ * (Narration is pre-rendered with OmniVoice and does not use this service.)
  */
 
 export class GeminiAIService {
@@ -44,59 +44,6 @@ export class GeminiAIService {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.removeItem(this.storageKey);
     }
-  }
-
-  /**
-   * Constructs the payload for Google Cloud / AI Studio TTS synthesis
-   * with natural human storytelling parameters (gentle speaking rate, warm pitch)
-   */
-  buildTTSPayload(text) {
-    return {
-      input: { text: text || '' },
-      voice: {
-        languageCode: 'ml-IN',
-        name: 'ml-IN-Wavenet-A',
-        ssmlGender: 'FEMALE'
-      },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        pitch: 1.05,
-        speakingRate: 0.95,
-        volumeGainDb: 1.0
-      }
-    };
-  }
-
-  /**
-   * Generates natural Malayalam speech audio using Google Cloud / Gemini AI Studio TTS API
-   * Returns a playable HTML5 Audio object or throws error on failure.
-   */
-  async synthesizeMalayalamVoice(text) {
-    if (!this.hasKey()) {
-      throw new Error('Google AI Studio Gemini API Key is not configured.');
-    }
-
-    const payload = this.buildTTSPayload(text);
-    const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(this.apiKey)}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `TTS API error (${response.status})`);
-    }
-
-    const data = await response.json();
-    if (!data.audioContent) {
-      throw new Error('No audio content returned by TTS endpoint.');
-    }
-
-    const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
-    return new Audio(audioUrl);
   }
 
   /**

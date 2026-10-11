@@ -2,10 +2,12 @@
  * QuizEngine Component
  * Interactive gamified assessment crafted for young children.
  * Features positive reinforcement, star collection, audio readout,
- * large bubbly touch targets, and robust event-driven answering.
+ * locked options upon answering, transparent Angel Cherub mascot,
+ * and clear accessible states matching Mockup 06.
  */
 
 import { KID_QUIZ_QUESTIONS } from '../data/quizQuestionsData.js';
+import { CHAPTERS_DATA } from '../data/chaptersData.js';
 
 export class QuizEngine {
   constructor() {
@@ -15,6 +17,7 @@ export class QuizEngine {
     this.stars = 0;
     this.streak = 0;
     this.lastFeedback = null;
+    this.isAnswered = false;
     this.onAnswerFeedback = null;
   }
 
@@ -25,6 +28,7 @@ export class QuizEngine {
     this.stars = 0;
     this.streak = 0;
     this.lastFeedback = null;
+    this.isAnswered = false;
   }
 
   getScore() {
@@ -51,13 +55,19 @@ export class QuizEngine {
     const q = this.getCurrentQuestion();
     if (!q) return { correct: false, score: this.score, stars: this.stars };
 
+    // Prevent double-submission if already answered
+    if (this.isAnswered && this.lastFeedback) {
+      return this.lastFeedback;
+    }
+
     const isCorrect = (index === q.correctIndex) || (q.options && q.options[index] === q.correctAnswer);
+    this.isAnswered = true;
+
     if (isCorrect) {
       this.score += 10;
       this.stars += 1;
       this.streak += 1;
     } else {
-      // Gentle encouragement: no negative score or penalty for children!
       this.streak = 0;
     }
 
@@ -70,7 +80,9 @@ export class QuizEngine {
       score: this.score,
       stars: this.stars,
       streak: this.streak,
-      encouragement: isCorrect ? (q.encouragement || "Super job! You earned a star! ⭐") : "Almost there! Let's try again with a happy heart! 💖",
+      encouragement: isCorrect
+        ? (q.encouragement || "Super job! You earned a star! ⭐")
+        : "Almost there! Keep trying with a happy heart! 💖",
       citation: q.citation,
       hint: q.eli5Hint || q.hint
     };
@@ -87,12 +99,12 @@ export class QuizEngine {
     if (idx !== -1) {
       return this.answerByIndex(idx);
     }
-    // Fallback comparison
     const isCorrect = chosenOption === q.correctAnswer;
     if (isCorrect) {
       this.score += 10;
       this.stars += 1;
     }
+    this.isAnswered = true;
     return { correct: isCorrect, score: this.score, stars: this.stars };
   }
 
@@ -100,6 +112,7 @@ export class QuizEngine {
     if (this.currentIndex < this.questions.length - 1) {
       this.currentIndex++;
       this.lastFeedback = null;
+      this.isAnswered = false;
       return this.getCurrentQuestion();
     }
     return null;
@@ -111,81 +124,147 @@ export class QuizEngine {
     this.stars = 0;
     this.streak = 0;
     this.lastFeedback = null;
+    this.isAnswered = false;
   }
 
   renderQuizCardHTML() {
     const q = this.getCurrentQuestion();
+    const totalQ = this.questions.length;
+
+    // Completed State
     if (!q) {
       return `
-        <div class="quiz-completed-box glass-panel text-center">
+        <div class="quiz-completed-box glass-panel text-center animate-fade-in">
           <div class="celebration-badge-hero">🎉 🏆 ✨</div>
-          <h2 class="adventure-title">You Did It, Star Champion!</h2>
-          <p class="final-score">You earned <strong>${this.stars} Golden Stars</strong> and <strong>${this.score} Points</strong>!</p>
-          <p class="encouragement-msg">Jesus is smiling at your happy, eager heart today!</p>
-          <button class="btn-bubble-primary" onclick="window.app.restartQuiz()">
+          <h2 class="quiz-celebration-title">You Did It, Star Champion!</h2>
+          <p class="quiz-final-score">
+            You answered <strong class="gold-text">${this.stars} of ${totalQ}</strong> questions correctly and scored <strong>${this.score} Points</strong>!
+          </p>
+          <p class="quiz-star-rule">Each question gives you a star the first time you get it right.</p>
+          <div class="celebration-angel-frame">
+            <img src="assets/generated/angel-cherub-cutout.webp" alt="Angel Cherub" class="celebration-angel-cutout" />
+          </div>
+          <p class="quiz-encouragement-msg">Jesus is smiling at your happy, eager heart today!</p>
+          <button class="btn-primary-gold-pill" onclick="window.app && window.app.restartQuiz && window.app.restartQuiz()">
             🔄 Play Again With Leo
           </button>
         </div>
       `;
     }
 
+    const chNum = q.chapter || 1;
+    const chData = CHAPTERS_DATA.find(c => c.number === chNum);
+    const chTitle = chData ? chData.titleEng : `Chapter ${chNum}`;
+    const progressPct = ((this.currentIndex + 1) / totalQ) * 100;
+    const isAnswered = this.isAnswered;
+    const feedback = this.lastFeedback;
+
     return `
-      <div class="quiz-adventure-card glass-panel" data-quiz-index="${this.currentIndex}">
-        <!-- Top Fun Ribbon -->
-        <div class="quiz-ribbon">
-          <div class="quiz-star-counter">
-            <span class="star-icon">⭐</span>
-            <span>${this.stars} Stars</span>
-          </div>
-          <div class="quiz-progress-pill">
-            Adventure ${this.currentIndex + 1} of ${this.questions.length}
-          </div>
-          <button class="btn-voice-mini" onclick="window.app.speakQuizQuestion()" title="Listen to Leo read this question">
-            🔊 Read Aloud
-          </button>
-        </div>
-
-        <!-- Question Title with Emoji -->
-        <div class="quiz-question-hero">
-          <div class="question-emoji-bubble">${q.emoji || '✨'}</div>
-          <h3 class="q-mal-title">${q.questionMal}</h3>
-          <p class="q-eng-subtitle">${q.questionEng}</p>
-        </div>
-
-        <!-- Feedback Banner if answered -->
-        ${this.lastFeedback ? `
-          <div class="feedback-banner ${this.lastFeedback.correct ? 'feedback-success' : 'feedback-tryagain'}">
-            <span class="feedback-icon">${this.lastFeedback.correct ? '🌟' : '🎈'}</span>
-            <div>
-              <strong>${this.lastFeedback.correct ? 'Hooray!' : 'Good Try!'}</strong>
-              <p>${this.lastFeedback.encouragement}</p>
+      <div class="quiz-stage-card glass-panel animate-slide-fade" data-quiz-index="${this.currentIndex}">
+        <!-- Top Card Header: Chapter Name, Question Counter & Gold Progress Bar -->
+        <div class="quiz-card-header">
+          <div class="quiz-header-top-row">
+            <div class="quiz-chapter-title-group">
+              <span class="quiz-ch-badge">Chapter ${chNum} Quiz</span>
+              <h3 class="quiz-ch-name-serif">${chTitle}</h3>
             </div>
-            ${this.lastFeedback.correct ? `
-              <button class="btn-bubble-next" onclick="window.app.nextQuizQuestion()">Next ➡</button>
-            ` : `
-              <button class="btn-bubble-next" onclick="window.app.nextQuizQuestion()">Keep Going ➡</button>
-            `}
+            <div class="quiz-counter-pill">
+              Question ${this.currentIndex + 1} of ${totalQ}
+            </div>
           </div>
-        ` : ''}
-
-        <!-- Big Rounded Choice Buttons -->
-        <div class="quiz-bubbly-grid">
-          ${q.options.map((opt, idx) => `
-            <button class="btn-choice-bubbly" data-choice-index="${idx}" onclick="window.app.chooseQuizOption(${idx})">
-              <span class="choice-num">${idx + 1}</span>
-              <span class="choice-text">${opt}</span>
-            </button>
-          `).join('')}
+          <div class="quiz-gold-progress-track">
+            <div class="quiz-gold-progress-bar" style="width: ${progressPct}%;"></div>
+          </div>
         </div>
 
-        <!-- Helpful Clue and Citation -->
-        <div class="quiz-bottom-clues">
-          <button class="btn-clue-toggle" onclick="window.app.showQuizHint()">
-            💡 Need a Clue from Leo?
-          </button>
-          <span class="citation-tag">📖 ${q.citation}</span>
+        <!-- Split Content Area: Left Question & Options + Right Angel Mascot -->
+        <div class="quiz-split-layout">
+          <!-- Left Question Pane -->
+          <div class="quiz-question-pane">
+            <div class="quiz-question-box">
+              <div class="quiz-emoji-badge">${q.emoji || '✨'}</div>
+              <div class="quiz-question-texts">
+                <h4 class="quiz-q-malayalam">${q.questionMal}</h4>
+                <p class="quiz-q-english">${q.questionEng}</p>
+              </div>
+              <button class="btn-voice-read-aloud" onclick="window.app && window.app.speakQuizQuestion && window.app.speakQuizQuestion()" title="Listen to question read aloud">
+                🔊 Read Aloud
+              </button>
+            </div>
+
+            <!-- 3 Full-Width Options List -->
+            <div class="quiz-options-list ${isAnswered ? 'options-locked' : ''}" role="radiogroup" aria-label="Quiz Answer Options">
+              ${q.options.map((opt, idx) => {
+                const letter = ['A', 'B', 'C', 'D'][idx] || (idx + 1);
+                let stateClass = '';
+                let stateBadge = '';
+
+                if (isAnswered && feedback) {
+                  if (idx === q.correctIndex) {
+                    stateClass = 'option-state-correct';
+                    stateBadge = '<span class="option-check-badge">✓ Correct</span>';
+                  } else if (idx === feedback.chosenIndex && !feedback.correct) {
+                    stateClass = 'option-state-incorrect';
+                    stateBadge = '<span class="option-cross-badge">✕ Try Again</span>';
+                  }
+                }
+
+                return `
+                  <button 
+                    class="quiz-option-row ${stateClass}" 
+                    data-choice-index="${idx}" 
+                    ${isAnswered ? 'disabled' : ''} 
+                    onclick="window.app && window.app.chooseQuizOption && window.app.chooseQuizOption(${idx})"
+                  >
+                    <span class="option-letter-circle">${letter}</span>
+                    <span class="option-text-label">${opt}</span>
+                    ${stateBadge}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Bottom Action Bar: Citation + Clue + Next Question -->
+            <div class="quiz-bottom-bar">
+              <div class="quiz-bar-left">
+                <span class="quiz-citation-badge">📖 Reference: ${q.citation}</span>
+              </div>
+              <div class="quiz-bar-right">
+                <button class="btn-clue-pill" onclick="window.app && window.app.showQuizHint && window.app.showQuizHint()">
+                  💡 Need a clue from Leo?
+                </button>
+                <button 
+                  class="btn-primary-gold-pill btn-next-question ${!isAnswered ? 'btn-next-disabled' : ''}" 
+                  ${!isAnswered ? 'disabled' : ''} 
+                  onclick="window.app && window.app.nextQuizQuestion && window.app.nextQuizQuestion()"
+                >
+                  ${(this.currentIndex === totalQ - 1) ? 'Finish Quiz ★' : 'Next Question →'}
+                </button>
+              </div>
+            </div>
+
+            <!-- Clue Box (Hidden by default) -->
+            <div id="quiz-hint-box" class="quiz-hint-box" style="display:none;"></div>
+          </div>
+
+          <!-- Right Mascot & Feedback Pane: Angel Cherub Cutout -->
+          <div class="quiz-mascot-pane">
+            <div class="quiz-angel-stage">
+              <img src="assets/generated/angel-cherub-cutout.webp" alt="Angel Cherub" class="angel-cherub-cutout-img ${isAnswered && feedback && feedback.correct ? 'angel-celebrate-bounce' : ''}" />
+
+              ${isAnswered && feedback ? `
+                <div class="quiz-feedback-speech-bubble ${feedback.correct ? 'bubble-correct' : 'bubble-tryagain'} animate-pop-in">
+                  <span class="bubble-verdict-title">${feedback.correct ? '✨ Correct!' : '🎈 Gentle Cheer!'}</span>
+                  <p class="bubble-encouragement">${feedback.encouragement}</p>
+                </div>
+              ` : `
+                <div class="quiz-angel-idle-note">
+                  <p>Pick the best answer and earn a shiny golden star! ⭐</p>
+                </div>
+              `}
+            </div>
+          </div>
         </div>
-        <div id="quiz-hint-box" class="quiz-hint-box" style="display:none;"></div>
       </div>
     `;
   }

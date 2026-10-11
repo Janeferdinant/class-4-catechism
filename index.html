@@ -9,7 +9,10 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gayathri:wght@400;700&family=Inter:wght@400;500;600;700&family=Manjari:wght@400;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Gayathri:wght@400;700&family=Inter:wght@400;500;600;700&family=Manjari:wght@400;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- SVG Favicon to eliminate 404 error -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝️</text></svg>">
 
   <!-- Three.js 3D WebGL Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -18,6 +21,7 @@
   <link rel="stylesheet" href="src/styles/themes.css">
   <link rel="stylesheet" href="src/styles/main.css">
   <link rel="stylesheet" href="src/styles/mobile.css">
+  <link rel="stylesheet" href="src/styles/glass.css">
 </head>
 <body>
 
@@ -26,64 +30,75 @@
   <!-- ================= App Header ================= -->
   <header class="app-header">
     <div class="brand-wrapper">
-      <div class="brand-icon-orbit">✨</div>
+      <div class="brand-cross-icon" aria-hidden="true">
+        <svg width="24" height="30" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 0H15V8H23V14H15V30H9V14H1V8H9V0Z" fill="url(#headerGoldCross)"/>
+          <defs>
+            <linearGradient id="headerGoldCross" x1="1" y1="0" x2="23" y2="30" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#FFE082"/>
+              <stop offset="0.5" stop-color="#F5A623"/>
+              <stop offset="1" stop-color="#D97706"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="brand-text">
-        <h1>Class 4 Catechism</h1>
-        <p>Interactive Classroom • Chapters 1–15 & 5 Solved Papers</p>
+        <h1 class="brand-title">Class 4 Catechism</h1>
+        <p class="brand-subtitle">Jesus, the Source of Life</p>
       </div>
     </div>
 
     <!-- Navigation Tabs -->
     <nav class="nav-tabs" aria-label="Main Navigation">
       <button class="tab-btn active" data-view="universe" id="tab-universe">
-        <span>🌐</span> Adventure Map
+        <img src="assets/generated/icons/icon-adventure-map.webp" alt="" class="nav-tab-icon" width="28" height="28" />
+        <span class="nav-tab-label">Adventure Map</span>
       </button>
       <button class="tab-btn" data-view="slides" id="tab-slides">
-        <span>🎞️</span> Picture Slides
+        <img src="assets/generated/icons/icon-picture-slides.webp" alt="" class="nav-tab-icon" width="28" height="28" />
+        <span class="nav-tab-label">Picture Slides</span>
       </button>
       <button class="tab-btn" data-view="classroom" id="tab-classroom">
-        <span>📖</span> Story Lessons
+        <img src="assets/generated/icons/icon-story-lessons.webp" alt="" class="nav-tab-icon" width="28" height="28" />
+        <span class="nav-tab-label">Story Lessons</span>
       </button>
       <button class="tab-btn" data-view="solver" id="tab-solver">
-        <span>📝</span> Exam Papers
+        <img src="assets/generated/icons/icon-exam-papers.webp" alt="" class="nav-tab-icon" width="28" height="28" />
+        <span class="nav-tab-label">Exam Papers</span>
       </button>
       <button class="tab-btn" data-view="quiz" id="tab-quiz">
-        <span>⭐</span> Star Quizzes
+        <img src="assets/generated/icons/icon-star-quizzes.webp" alt="" class="nav-tab-icon" width="28" height="28" />
+        <span class="nav-tab-label">Star Quizzes</span>
       </button>
     </nav>
 
     <!-- Header Utilities -->
     <div class="header-actions">
       <!-- Star Collection Badge -->
-      <div class="header-star-badge" title="Collected Adventure Stars!">
-        <span class="star-icon">⭐</span>
-        <span id="header-star-count">0 Stars</span>
+      <div class="header-star-badge" id="header-star-badge" title="Collected Adventure Stars!">
+        <span class="star-icon">★</span>
+        <span id="header-star-count">0</span>
       </div>
 
-      <!-- Live Audio Waveform HUD -->
-      <canvas id="motion-audio-canvas" title="Real-time Voiceover Waveform"></canvas>
-      <span id="audio-indicator" class="btn-audio-status">🔇 Audio Ready</span>
+      <!-- Theme Switcher Segmented Control -->
+      <div class="theme-segmented-ctrl" id="theme-toggle-btn" role="group" aria-label="Toggle Theme">
+        <button type="button" class="theme-segment" id="theme-btn-light" aria-label="Light Theme">
+          <span>☀️</span> Light
+        </button>
+        <button type="button" class="theme-segment active" id="theme-btn-dark" aria-label="Night Theme">
+          <span>🌙</span> Night
+        </button>
+      </div>
 
       <!-- Stop Audio Button -->
-      <button id="btn-stop-audio-global" class="btn-stop-audio" onclick="window.app.stopVoice()" title="Stop playing audio (ഓഡിയോ നിർത്തുക)">
-        🛑 Stop Audio
+      <button id="btn-stop-audio-global" class="btn-stop-audio" onclick="window.app.stopVoice()" title="Stop playing audio" aria-label="Stop audio">
+        <span class="stop-icon-dot" aria-hidden="true">⏹</span>
+        <span class="stop-audio-label">Stop Audio</span>
       </button>
 
-      <!-- Mobile / Desktop View Mode Toggle -->
-      <button id="btn-mobile-toggle" class="btn-mobile-toggle" title="Preview Mobile Layout in smartphone simulator">
-        <span id="mobile-toggle-icon">📱</span>
-        <span id="mobile-toggle-label">Preview Mobile Layout</span>
-      </button>
-
-      <!-- Theme Switcher -->
-      <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
-        <span id="theme-icon">☀️</span>
-        <span id="theme-label">Light Mode</span>
-      </button>
-
-      <!-- Mobile Settings Menu Trigger -->
-      <button id="btn-mobile-menu" class="btn-mobile-menu" title="Menu & Settings" aria-label="Settings">
-        <span>⚙️</span>
+      <!-- Settings Menu Trigger -->
+      <button id="btn-mobile-menu" class="btn-mobile-menu" title="Settings & Menu" aria-label="Settings">
+        <span class="gear-icon">⚙️</span>
       </button>
     </div>
   </header>
@@ -96,118 +111,219 @@
 
     <!-- VIEW 1: 3D UNIVERSE & MULTI-AGENT LAB -->
     <section id="view-universe" class="view-section active">
-      <div class="universe-layout">
-        <!-- 3D Canvas Viewport -->
-        <div class="viewport-3d-card glass-panel">
-          <div class="hud-overlay">
-            <div class="hud-pill">
-              <span class="pulse-dot"></span>
-              <span>Galileo Multi-Agent Mesh: Real-Time 3D Simulation</span>
-            </div>
-          </div>
+      <!-- Celestial Adventure Hero Environment -->
+      <div class="celestial-hero-stage">
+        <!-- Dynamic Environment Backdrop -->
+        <div class="celestial-backdrop-art" id="celestial-backdrop-art" data-map-backdrop></div>
 
-          <div id="three-canvas-container"></div>
+        <!-- Atmospheric particle canvas (sky layer, behind the islands) -->
+        <canvas id="hero-particle-canvas" class="hero-particle-canvas" aria-hidden="true"></canvas>
 
-          <!-- 3D Node Side-Drawer Overlay -->
-          <div id="three-node-drawer" class="three-node-drawer"></div>
+        <!-- Floating Scripture Quote -->
+        <div class="floating-scripture-quote" id="floating-scripture-quote">
+          <span class="scripture-quote-text">“Your word is a lamp to my feet and a light to my path.”</span>
+          <span class="scripture-ref-tag">Psalm 119:105</span>
+        </div>
 
-          <!-- Bottom Viewport Controls -->
-          <div class="viewport-controls-bottom">
-            <div class="filter-btn-group">
-              <button class="filter-chip active" data-filter="all" onclick="window.app.filterUniverse('all')">Show All</button>
+        <!-- Left Hero Figure Cutout (Light Mode: Jesus with Children) -->
+        <div class="hero-jesus-cutout" id="hero-jesus-cutout" style="display: none;">
+          <img src="assets/generated/jesus-children-cutout.webp" alt="Jesus with Little Children" class="jesus-cutout-img" />
+        </div>
+
+        <!-- Flying Dove Accent Cutout -->
+        <div class="hero-dove-cutout" id="hero-dove-cutout">
+          <img src="assets/generated/dove-cutout.webp" alt="Holy Spirit Dove" class="dove-cutout-img" />
+        </div>
+
+        <!-- Main Universe Grid: 3D Viewport & Multi-Agent Console -->
+        <div class="universe-layout">
+          <!-- 3D Canvas Stage Area -->
+          <div class="viewport-3d-stage">
+            <!-- Compact Glass Filter Bar -->
+            <div class="universe-filter-bar" role="group" aria-label="Filter the Adventure Map">
+              <button class="filter-chip" data-filter="all" onclick="window.app.filterUniverse('all')">Show All</button>
               <button class="filter-chip" data-filter="agent" onclick="window.app.filterUniverse('agent')">Agents (6)</button>
-              <button class="filter-chip" data-filter="chapter" onclick="window.app.filterUniverse('chapter')">Chapters (15)</button>
+              <button class="filter-chip active" data-filter="chapter" onclick="window.app.filterUniverse('chapter')">Chapters (15)</button>
               <button class="filter-chip" data-filter="sacrament" onclick="window.app.filterUniverse('sacrament')">Sacraments (7)</button>
               <button class="filter-chip" data-filter="exam" onclick="window.app.filterUniverse('exam')">Exams (5)</button>
             </div>
-            <div id="node-inspect-box" class="glass-card" style="display:none; padding:8px 14px; font-size:0.8rem;"></div>
+
+            <!-- Three.js canvas; ThreeUniverse adds its own label overlay inside -->
+            <div id="three-canvas-container"></div>
+
+            <!-- Foreground particles: drift over the islands, stay under the labels -->
+            <canvas id="hero-foreground-canvas" class="hero-foreground-canvas" aria-hidden="true"></canvas>
+
+            <!-- Floating Explorer Card (Bottom-Left). Closing it leaves a small pill to bring it back. -->
+            <div class="hero-floating-card" id="explore-card" role="region" aria-labelledby="explore-card-title">
+              <button type="button" class="explore-card-close" id="btn-close-explore-card" aria-label="Close the Explore card" onclick="window.app.dismissExploreCard()">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+              <div class="floating-card-body">
+                <h4 id="explore-card-title">Explore the Adventure Map</h4>
+                <p>Discover 15 beautiful chapters through stories, images, quizzes and more!</p>
+                <button class="btn-start-exploring" id="btn-start-exploring" onclick="window.app.exploreChapterOne()">
+                  Start Exploring <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+            <button type="button" class="explore-reopen-pill" id="btn-reopen-explore-card" hidden onclick="window.app.reopenExploreCard()">
+              <span class="console-star" aria-hidden="true">★</span> Explore the Map
+            </button>
           </div>
+
+          <!-- Multi-Agent Live Orchestrator Console Panel & Node Drawer (Right Column) -->
+          <aside class="universe-side-column">
+            <div class="agent-console-panel glass-panel" id="agent-console-panel">
+              <div class="panel-header">
+                <div class="panel-title-wrap">
+                  <span class="console-star">★</span>
+                  <h3>Multi-Agent Learning Console</h3>
+                </div>
+              </div>
+
+              <div class="agents-single-column">
+                <div class="agent-row">
+                  <img src="assets/generated/avatars/avatar-galileo.webp" alt="Galileo Multi-Agent Nexus" class="agent-avatar-img" />
+                  <div class="agent-meta">
+                    <div class="agent-name">Galileo Multi-Agent Nexus</div>
+                    <div class="agent-role"><span class="agent-status-dot online"></span> Online • Ready to help</div>
+                  </div>
+                </div>
+                <div class="agent-row">
+                  <img src="assets/generated/avatars/avatar-orchestrator.webp" alt="Orchestrator" class="agent-avatar-img" />
+                  <div class="agent-meta">
+                    <div class="agent-name">Orchestrator</div>
+                    <div class="agent-role"><span class="agent-status-dot online"></span> Coordinating your learning</div>
+                  </div>
+                </div>
+                <div class="agent-row">
+                  <img src="assets/generated/avatars/avatar-leo.webp" alt="Leo (Story)" class="agent-avatar-img" />
+                  <div class="agent-meta">
+                    <div class="agent-name">Leo (Story)</div>
+                    <div class="agent-role"><span class="agent-status-dot online"></span> Stories with love</div>
+                  </div>
+                </div>
+                <div class="agent-row">
+                  <img src="assets/generated/avatars/avatar-sophia.webp" alt="Sophia (Solver)" class="agent-avatar-img" />
+                  <div class="agent-meta">
+                    <div class="agent-name">Sophia (Solver)</div>
+                    <div class="agent-role"><span class="agent-status-dot online"></span> Explains &amp; clarifies</div>
+                  </div>
+                </div>
+                <div class="agent-row">
+                  <img src="assets/generated/avatars/avatar-barnaby.webp" alt="Barnaby (Quiz)" class="agent-avatar-img" />
+                  <div class="agent-meta">
+                    <div class="agent-name">Barnaby (Quiz)</div>
+                    <div class="agent-role"><span class="agent-status-dot online"></span> Quizzes &amp; practice</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Live Learning Stream: the three newest real orchestrator events -->
+            <div class="live-stream-box" aria-live="polite">
+              <div class="stream-header">
+                <span class="console-star" aria-hidden="true">★</span>
+                <span>Live Learning Stream</span>
+              </div>
+              <div class="stream-lines" id="agent-trace-feed"></div>
+            </div>
+
+            <!-- 3D Node Side-Drawer Overlay -->
+            <div id="three-node-drawer" class="three-node-drawer" style="display:none;"></div>
+          </aside>
         </div>
+      </div>
 
-        <!-- Multi-Agent Live Orchestrator Console (Galileo Observability) -->
-        <aside class="agent-console-panel glass-panel">
-          <div class="panel-header">
-            <h3>🤖 Galileo Multi-Agent Nexus</h3>
-            <span class="badge-tag">ACTIVE MESH</span>
+      <!-- Bottom 5-Destination Interactive Navigation Grid (Overlapping Stage by ~40px) -->
+      <div class="hero-nav-cards-grid">
+        <button type="button" class="hero-nav-card active-card glass-panel" onclick="window.app.switchView('universe')">
+          <img src="assets/generated/icons/icon-adventure-map.webp" alt="" class="nav-card-3d-icon" />
+          <div class="nav-card-info">
+            <h4>Adventure Map</h4>
+            <p>Interactive 3D knowledge world</p>
           </div>
-
-          <div class="agents-grid-status">
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#6366f1;"></span>
-              <div><strong>Orchestrator</strong><div class="text-muted">Master Router</div></div>
-            </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#ec4899;"></span>
-              <div><strong>Leo (Story)</strong><div class="text-muted">5yo Pedagogy</div></div>
-            </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#10b981;"></span>
-              <div><strong>Sophia (Solver)</strong><div class="text-muted">Citation Engine</div></div>
-            </div>
-            <div class="agent-mini-card">
-              <span class="agent-dot" style="background:#f59e0b;"></span>
-              <div><strong>Barnaby (Quiz)</strong><div class="text-muted">Gamification</div></div>
-            </div>
+        </button>
+        <button type="button" class="hero-nav-card glass-panel" onclick="window.app.switchView('slides')">
+          <img src="assets/generated/icons/icon-picture-slides.webp" alt="" class="nav-card-3d-icon" />
+          <div class="nav-card-info">
+            <h4>Picture Slides</h4>
+            <p>Beautiful chapter illustrations</p>
           </div>
-
-          <div class="panel-header">
-            <span class="text-muted" style="font-size:0.8rem; font-weight:700;">LIVE ORCHESTRATION STREAM</span>
-            <span class="text-muted" style="font-size:0.75rem;">Memory vs Working Context</span>
+        </button>
+        <button type="button" class="hero-nav-card glass-panel" onclick="window.app.switchView('classroom')">
+          <img src="assets/generated/icons/icon-story-lessons.webp" alt="" class="nav-card-3d-icon" />
+          <div class="nav-card-info">
+            <h4>Story Lessons</h4>
+            <p>Engaging faith stories</p>
           </div>
-
-          <!-- Trace Feed -->
-          <div id="agent-trace-feed" class="trace-feed-container"></div>
-        </aside>
+        </button>
+        <button type="button" class="hero-nav-card glass-panel" onclick="window.app.switchView('solver')">
+          <img src="assets/generated/icons/icon-exam-papers.webp" alt="" class="nav-card-3d-icon" />
+          <div class="nav-card-info">
+            <h4>Exam Papers</h4>
+            <p>Solved previous papers</p>
+          </div>
+        </button>
+        <button type="button" class="hero-nav-card glass-panel" onclick="window.app.switchView('quiz')">
+          <img src="assets/generated/icons/icon-star-quizzes.webp" alt="" class="nav-card-3d-icon" />
+          <div class="nav-card-info">
+            <h4>Star Quizzes</h4>
+            <p>Test what you learned</p>
+          </div>
+        </button>
       </div>
     </section>
 
     <!-- VIEW 2: 4K / HD PRESENTATION SLIDES -->
     <section id="view-slides" class="view-section">
       <div class="slides-wrapper">
-        <div class="slides-toolbar glass-panel">
-          <div class="slide-nav-controls">
-            <button id="btn-slide-prev" class="btn-ctrl">⬅ Previous</button>
-            <span id="slide-indicator" class="font-weight-bold" style="padding:0 12px; font-weight:700;">1 / 15</span>
-            <button id="btn-slide-next" class="btn-ctrl">Next ➡</button>
-          </div>
-          <div class="slide-extra-actions">
-            <button id="btn-slide-voice-mal" class="btn-ctrl" title="Listen in Malayalam">🔊 മലയാളം</button>
-            <button id="btn-slide-voice" class="btn-ctrl" title="Listen in English">🔊 English</button>
-            <button id="btn-slide-stop" class="btn-ctrl" title="Stop audio (നിർത്തുക)">🛑 Stop</button>
-            <button id="btn-slide-fullscreen" class="btn-ctrl">⛶ Fullscreen (4K)</button>
-          </div>
-        </div>
-
-        <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; margin-bottom:12px; overflow:hidden;">
-          <div id="slide-progress-bar" style="height:100%; width:6.66%; background:linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); transition:width 300ms ease;"></div>
-        </div>
-
-        <div id="slide-deck-container" class="slide-deck-frame glass-panel"></div>
+        <div id="slide-deck-container" class="slide-deck-frame"></div>
       </div>
     </section>
 
     <!-- VIEW 3: 5-YEAR-OLD STORY CLASSROOM -->
     <section id="view-classroom" class="view-section">
       <div class="classroom-wrapper">
-        <div class="classroom-intro-card glass-panel">
-          <h2>🦁 Welcome to the Little Angels Adventure Room!</h2>
-          <p class="text-secondary">Explore all 15 Chapters with playful stories, friendly animal guides, and daily golden rules!</p>
+        <!-- Horizontal Chapter Strip (retained for mobile & compact) -->
+        <div id="classroom-ch-strip" class="chapter-selector-strip" style="display:none;"></div>
+
+        <div class="classroom-layout-columns">
+          <!-- Left Sidebar: Chapter List (Matching Mockup 04) -->
+          <aside class="classroom-sidebar glass-panel">
+            <div class="sidebar-header">
+              <span class="sidebar-icon">📖</span>
+              <h3>Select a Chapter</h3>
+            </div>
+            <div class="classroom-ch-list" id="classroom-ch-list">
+              <!-- Populated by app.js -->
+            </div>
+          </aside>
+
+          <!-- Right Column: Active Lesson Container -->
+          <div class="classroom-main-panel">
+            <div id="classroom-lesson-container"></div>
+          </div>
         </div>
-
-        <!-- Horizontal Chapter Strip -->
-        <div id="classroom-ch-strip" class="chapter-selector-strip"></div>
-
-        <!-- Active Lesson Container -->
-        <div id="classroom-lesson-container"></div>
       </div>
     </section>
 
     <!-- VIEW 4: EXAM SOLVER & CITATION ENGINE -->
     <section id="view-solver" class="view-section">
       <div class="solver-wrapper">
+        <div class="solver-hero-header">
+          <h2 class="solver-page-title">Solved Examination Papers</h2>
+          <p class="solver-page-subtitle">Practice with real questions and detailed explanations</p>
+        </div>
+
         <div class="solver-filter-bar glass-panel">
           <div id="paper-tabs-row" class="paper-tabs-row"></div>
-          <input type="text" id="solver-search-input" class="solver-search-input" placeholder="🔍 Search question or chapter citation...">
+          <div class="solver-search-wrap">
+            <span class="search-lens-icon">🔍</span>
+            <input type="text" id="solver-search-input" class="solver-search-input" placeholder="Search by question, answer, or chapter citation...">
+          </div>
         </div>
 
         <div id="solver-content-container"></div>
@@ -225,13 +341,14 @@
 
   <!-- ================= Application Footer ================= -->
   <footer class="app-footer">
-    <div class="mob-mentor-banner footer-container desktop-mentor-banner glass-panel">
-      <span class="mob-mentor-icon mentor-badge-avatar">🎓</span>
-      <div class="mob-mentor-details mentor-info">
-        <span class="mob-mentor-role mentor-role-badge">Academic Mentor</span>
-        <h4 class="mob-mentor-name mentor-name">Asst. Prof. Jane Rose</h4>
-        <p class="mob-mentor-dept mentor-dept">Department of Computer Science & Engineering (CSE)</p>
-      </div>
+    <div class="desktop-mentor-banner footer-container" role="contentinfo" aria-label="Academic mentor">
+      <span class="mentor-badge-avatar" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3 1.5 8.5 12 14l8.5-4.46V16H22V8.5L12 3Z" fill="currentColor"/><path d="M5.5 11.6v4.2C7 17.6 9.4 18.5 12 18.5s5-.9 6.5-2.7v-4.2L12 15l-6.5-3.4Z" fill="currentColor" opacity=".75"/></svg>
+      </span>
+      <span class="mentor-role-badge">Academic Mentor</span>
+      <span class="mentor-name">Asst. Prof. Jane Rose</span>
+      <span class="footer-separator" aria-hidden="true">|</span>
+      <span class="mentor-dept">Department of Computer Science & Engineering (CSE)</span>
     </div>
   </footer>
   </div> <!-- end #desktop-layout-root -->
@@ -257,25 +374,27 @@
 
   <!-- ================= DEDICATED MOBILE PRESENTATION LAYER ================= -->
   <div id="mobile-layout-root" class="mobile-layout-root" style="display: none;">
-    <!-- Dedicated Mobile Header -->
+    <!-- Dedicated Mobile Header (56px, dark navy in both themes, per Mockup 07) -->
     <header class="mobile-app-header">
       <div class="mob-brand">
-        <span class="mob-logo">✨</span>
-        <span class="mob-title">Class 4 Catechism</span>
+        <span class="mob-logo-cross">✝</span>
+        <h1 class="mob-title-serif">Class 4 Catechism</h1>
       </div>
       <div class="mob-header-actions">
         <div class="mob-star-badge" title="Collected Stars">
-          <span class="mob-star-icon">⭐</span>
+          <span class="mob-star-icon">★</span>
           <span id="mob-header-star-count">0</span>
         </div>
-        <button id="mob-btn-theme" class="mob-action-btn" title="Toggle Day/Night Theme" aria-label="Toggle Theme">
-          🌓
+        <!-- Shown only while narration is playing -->
+        <button id="mob-btn-stop-audio" class="mob-action-btn mob-header-audio-chip" aria-label="Stop audio" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
+          <span aria-hidden="true">■</span> Stop
         </button>
-        <button id="mob-btn-stop-audio" class="mob-action-btn" title="Stop Audio" onclick="window.app.stopVoice()">
-          🛑
+        <button id="mob-btn-theme" class="mob-action-btn" aria-label="Switch between day and night theme">
+          <svg class="mob-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+          <svg class="mob-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
-        <button id="mob-btn-menu" class="mob-action-btn" title="Settings & Menu" aria-label="Settings">
-          ⚙️
+        <button id="mob-btn-menu" class="mob-action-btn" aria-label="Open menu and settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
         </button>
       </div>
     </header>
@@ -284,19 +403,36 @@
     <main class="mobile-main-workspace" id="mobile-main-workspace">
       <!-- Dedicated Mobile View 1: Adventure Chapter Deck -->
       <section id="mob-view-universe" class="mob-view-section active">
-        <div class="mob-hero-banner glass-panel">
-          <div class="mob-hero-title">
-            <h3>🗺️ Chapter Adventure Deck</h3>
-            <p>15 Holy Chapters • 5-Year-Old Stories & Moral Lessons</p>
+        <div class="mob-hero-banner celestial-mob-hero">
+          <canvas id="mob-hero-particle-canvas" class="mob-particle-canvas" aria-hidden="true"></canvas>
+          <div class="mob-hero-content">
+            <span class="mob-hero-kicker">Welcome to</span>
+            <h2 class="mob-hero-headline">Class 4 Catechism</h2>
+            <p class="mob-hero-subheadline">Jesus, the Source of Life</p>
+            <p class="mob-hero-subheadline mob-hero-mal">ഈശോ ജീവന്റെ ഉറവിടം</p>
           </div>
-          <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle">
-            🌐 Open 3D Map View
+          <img src="assets/generated/jesus-children-cutout.webp" alt="" class="mob-hero-figure" aria-hidden="true" />
+          <button id="mob-btn-toggle-3d" class="mob-btn-3d-toggle" aria-expanded="false" aria-controls="mob-3d-view-box">
+            Explore the Map <span aria-hidden="true">→</span>
           </button>
         </div>
+
+        <!-- Compact Mentor Card directly under the hero (Section 5.2 requirement) -->
+        <div class="mob-compact-mentor-under-hero glass-panel">
+          <span class="mob-mentor-kicker">ACADEMIC MENTOR</span>
+          <h4 class="mob-mentor-name">Asst. Prof. Jane Rose</h4>
+          <p class="mob-mentor-dept">Department of Computer Science & Engineering (CSE)</p>
+        </div>
+
+        <button id="mob-btn-agent-console" class="mob-btn-console-toggle" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()">
+          <span class="console-star" aria-hidden="true">★</span> Open the Learning Console
+        </button>
+
         <div id="mob-3d-view-box" class="mob-3d-view-box glass-panel" style="display: none;">
-          <div class="mob-3d-hint">👆 Touch & drag to orbit • Pinch to zoom</div>
+          <div class="mob-3d-hint">Tap an island to open its chapter · drag sideways to look around</div>
+          <div class="mob-map-backdrop" data-map-backdrop aria-hidden="true"></div>
+          <canvas id="mob-map-particle-canvas" class="mob-particle-canvas" aria-hidden="true"></canvas>
           <div id="mob-three-container" class="mob-three-container"></div>
-          <div id="mob-three-node-drawer" class="mob-three-node-drawer" style="display: none;"></div>
         </div>
         <div class="mob-chapter-cards-grid" id="mob-chapter-cards-grid">
           <!-- Populated by MobilePresentation.js -->
@@ -341,6 +477,10 @@
       </section>
     </main>
 
+    <!-- Node details bottom sheet. Kept outside the blurred map box: backdrop-filter
+         on an ancestor would trap this fixed-position sheet inside that box. -->
+    <div id="mob-three-node-drawer" class="mob-three-node-drawer" style="display: none;"></div>
+
     <!-- Dedicated Mobile Bottom Navigation -->
     <nav class="mob-bottom-nav" id="mob-bottom-nav" aria-label="Mobile Navigation">
       <button class="mob-nav-btn active" data-mob-view="universe" id="mob-nav-universe">
@@ -364,6 +504,81 @@
         <span class="mob-nav-label">Quiz</span>
       </button>
     </nav>
+
+    <!-- Dedicated Mobile Multi-Agent Panel (Mockup 14) -->
+    <div id="mob-agent-panel" class="mob-agent-panel" style="display: none;" aria-hidden="true">
+      <div class="mob-agent-backdrop" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()"></div>
+      <div class="mob-agent-sheet glass-panel">
+        <div class="mob-agent-header">
+          <div class="mob-agent-title-row">
+            <span class="mob-agent-title-star">⭐</span>
+            <h3 class="mob-agent-headline">Multi-Agent Learning Console</h3>
+          </div>
+          <button class="mob-btn-close-agent" onclick="window.mobileApp && window.mobileApp.toggleAgentPanel && window.mobileApp.toggleAgentPanel()" aria-label="Close Agent Console">✕</button>
+        </div>
+        <div class="mob-agent-list">
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-galileo.webp" alt="Galileo" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Galileo Multi-Agent Nexus</h4>
+              <span class="mob-agent-role">System Coordinator & Knowledge Core</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-orchestrator.webp" alt="Orchestrator" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Orchestrator</h4>
+              <span class="mob-agent-role">Workflow & Task Director</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-leo.webp" alt="Leo" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Leo (Story)</h4>
+              <span class="mob-agent-role">Bilingual Narrator & Faith Mentor</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-sophia.webp" alt="Sophia" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Sophia (Solver)</h4>
+              <span class="mob-agent-role">Catechism & Exam Specialist</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+          <div class="mob-agent-row">
+            <img src="assets/generated/avatars/avatar-barnaby.webp" alt="Barnaby" class="mob-agent-avatar" />
+            <div class="mob-agent-info">
+              <h4 class="mob-agent-name">Barnaby (Quiz)</h4>
+              <span class="mob-agent-role">Interactive Challenges & Badges</span>
+            </div>
+            <div class="mob-agent-status-badge">
+              <span class="mob-status-dot online"></span>
+              <span class="mob-status-label">Online</span>
+            </div>
+          </div>
+        </div>
+        <div class="mob-agent-stream-panel">
+          <h5 class="mob-agent-stream-title">Live Stream</h5>
+          <div class="mob-agent-stream-content" id="mob-agent-stream-lines" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
   </div> <!-- end #mobile-layout-root -->
 
 
@@ -398,13 +613,39 @@
       <div class="popup-caret"></div>
       <div class="sheet-header">
         <div class="sheet-title-group">
-          <span class="sheet-icon">⚙️</span>
-          <h3>Settings & Audio</h3>
+          <span class="sheet-icon-cross">✝</span>
+          <h3 class="sheet-title-serif">Class 4 Catechism</h3>
         </div>
         <button id="btn-close-sheet" class="btn-close-sheet" aria-label="Close Settings">✕</button>
       </div>
       <div class="sheet-content">
-        <!-- Appearance Theme -->
+        <!-- 5 Destinations (Mockup 08: Mobile Navigation Menu) -->
+        <div class="sheet-nav-destinations" id="sheet-nav-destinations">
+          <button class="sheet-dest-btn active" onclick="window.app && window.app.switchView('universe'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">🗺️</span>
+            <span class="sheet-dest-title">Adventure Map</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('slides'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">🎞️</span>
+            <span class="sheet-dest-title">Picture Slides</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('classroom'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">📖</span>
+            <span class="sheet-dest-title">Story Lessons</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('solver'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">📝</span>
+            <span class="sheet-dest-title">Exam Papers</span>
+          </button>
+          <button class="sheet-dest-btn" onclick="window.app && window.app.switchView('quiz'); window.app && window.app.toggleSettingsPopup && window.app.toggleSettingsPopup();">
+            <span class="sheet-dest-icon">⭐</span>
+            <span class="sheet-dest-title">Star Quizzes</span>
+          </button>
+        </div>
+
+        <div class="sheet-divider"></div>
+
+        <!-- Appearance Theme (Mockup 08) -->
         <div class="sheet-section">
           <div class="sheet-section-title">🌓 Appearance</div>
           <div class="sheet-segmented-pill">
@@ -417,18 +658,27 @@
         <!-- Audio & Narration -->
         <div class="sheet-section">
           <div class="sheet-section-title">🔊 Bilingual Narration & Speech</div>
-          <div class="sheet-row">
-            <span class="sheet-sublabel">Voice Language:</span>
-            <div class="sheet-pill-group">
-              <button id="sheet-lang-mal" data-lang="mal" class="sheet-pill-btn active">മലയാളം</button>
-              <button id="sheet-lang-eng" data-lang="eng" class="sheet-pill-btn">English</button>
+          <div class="sheet-row" style="align-items: center; justify-content: space-between;">
+            <span class="sheet-sublabel">Voice Waveform:</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <canvas id="motion-audio-canvas" title="Real-time Voiceover Waveform"></canvas>
+              <span id="audio-indicator" class="btn-audio-status">🔇 Audio Ready</span>
             </div>
           </div>
           <div class="sheet-row">
-            <span class="sheet-sublabel">Speech Pace:</span>
-            <div class="sheet-pill-group">
-              <button id="sheet-speed-btn" data-speed="0.85" class="sheet-pill-btn active">0.85x Child Pace</button>
-              <button id="sheet-speed-normal" data-speed="1.0" class="sheet-pill-btn">1.0x Normal</button>
+            <span class="sheet-sublabel" id="sheet-lang-label">Voice Language:</span>
+            <div class="sheet-pill-group" role="group" aria-labelledby="sheet-lang-label">
+              <button type="button" id="sheet-lang-mal" data-lang="mal" class="sheet-pill-btn active" aria-pressed="true">മലയാളം</button>
+              <button type="button" id="sheet-lang-eng" data-lang="eng" class="sheet-pill-btn" aria-pressed="false">English</button>
+            </div>
+          </div>
+          <div class="sheet-row sheet-speed-row">
+            <label class="sheet-sublabel" for="sheet-speed-slider">Speech Pace:</label>
+            <div class="sheet-speed-control">
+              <span class="sheet-speed-end" aria-hidden="true">Slower</span>
+              <input type="range" id="sheet-speed-slider" data-speed min="0.5" max="1.5" step="0.05" value="1" aria-valuetext="1.00 times normal speed">
+              <span class="sheet-speed-end" aria-hidden="true">Faster</span>
+              <output id="sheet-speed-value" for="sheet-speed-slider">1.00×</output>
             </div>
           </div>
           <div class="sheet-row">
@@ -441,6 +691,10 @@
         <div class="sheet-section">
           <div class="sheet-section-title">📱 Display & Modes</div>
           <div class="sheet-row">
+            <button id="btn-mobile-toggle" class="sheet-action-btn btn-mobile-toggle" title="Preview Mobile Layout in smartphone simulator">
+              <span id="mobile-toggle-icon">📱</span>
+              <span id="mobile-toggle-label">Preview Mobile Layout</span>
+            </button>
             <button id="sheet-view-btn" class="sheet-action-btn view-toggle-btn">
               💻 Presentation Mode
             </button>

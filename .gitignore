@@ -2,24 +2,32 @@
 node_modules/
 package-lock.json.bak
 
-# Environment and Credentials
-.env
-.env.local
-.env.*.local
+# Environment and credentials (the Vercel CLI writes .env.local with an access token)
+.env*
 *.key
 *.pem
 
-# Scratch & Temporary Media
-.tempmediaStorage/
+# Local tools and scratch folders
+.vercel
+.serena/
 .superpowers/
+.playwright-mcp/
+.scratch-review/
+.tempmediaStorage/
 scratch/
 scratch_audio/
 temp_audio_scratch/
 *.log
+__pycache__/
 
-# Operating System Files
+# Local reference material (not part of the site)
+ref-data/
+Class 4 Catechism UI Showcase.png
+
+# Raw hand-generated art (processed copies are written into assets/generated/)
+assets/generated/incoming/
+
+# Operating system files
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-.vercel

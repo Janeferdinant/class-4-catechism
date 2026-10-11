@@ -170,7 +170,7 @@ export class KnowledgeGraphAgent extends BaseAgent {
 
 export class VoiceoverAgent extends BaseAgent {
   constructor() {
-    super('agent_voice', 'Aria the Narrator', 'Speech Synthesis & Dynamic Voiceover Engine', '#06b6d4');
+    super('agent_voice', 'Aria the Narrator', 'Bilingual Narration (OmniVoice)', '#06b6d4');
   }
 
   createVoiceProfile(character = 'leo') {
@@ -185,8 +185,8 @@ export class VoiceoverAgent extends BaseAgent {
       agentName: this.name,
       profile: profiles[character] || profiles.leo,
       reasoningSteps: [
-        `Calibrated pitch and cadence to optimize clarity and warmth for young listeners`,
-        `Integrated Web Speech API fallback protocols`
+        `Chose the pre-rendered OmniVoice narrator for the selected language`,
+        `Applied the listener's speech pace without changing the voice's pitch`
       ]
     };
   }

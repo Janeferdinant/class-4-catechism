@@ -1,12 +1,25 @@
-# Ignore only the root raw data folder (raw PDFs)
+# Source PDFs (the curriculum is already in src/data/)
 /data/
 !src/data/
 !src/data/**
 
-# Ignore test and documentation folders
+# Development-only folders
 /docs/
 /tests/
 /scripts/
-requirements.txt
+/config/
+
+# Narration generator inputs (the site only needs the mp3 clips)
+assets/audio/narration/voices/
+assets/audio/narration/cache.json
+assets/audio/narration/scripts.json
+
+# Local-only folders: raw hand-generated art, reference material, tool caches
+assets/generated/incoming/
+ref-data/
 .superpowers/
 .tempmediaStorage/
+.serena/
+.playwright-mcp/
+.scratch-review/
+Class 4 Catechism UI Showcase.png

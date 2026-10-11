@@ -11,7 +11,8 @@
     "supportedThemes": ["dark", "light"],
     "soundEffectsEnabled": true,
     "defaultLanguage": "malayalam",
-    "supportedLanguages": ["malayalam", "english"]
+    "supportedLanguages": ["malayalam", "english"],
+    "glassStyle": { "light": "soft light glass", "dark": "dark glass", "stylesheet": "src/styles/glass.css" }
   },
   "agents": {
     "orchestratorModel": "gemini-1.5-flash",
@@ -28,13 +29,13 @@
       },
       {
         "id": "visualizer_3d",
-        "name": "3D Universe & Motion Graphics Specialist",
-        "role": "Three.js WebGL node graphs and Ken Burns animations"
+        "name": "Adventure Map & Motion Graphics Specialist",
+        "role": "Adventure Map (Three.js), island zoom and particle effects"
       },
       {
         "id": "voiceover",
         "name": "Bilingual Voiceover Specialist",
-        "role": "Neural Malayalam and English voice narration"
+        "role": "Malayalam and English narration pre-rendered with OmniVoice"
       },
       {
         "id": "quiz_master",
@@ -44,11 +45,12 @@
     ]
   },
   "audio": {
-    "ttsProvider": "msedge-neural",
-    "malayalamVoice": "ml-IN-SobhanaNeural",
-    "englishVoice": "en-US-JennyNeural",
-    "preGeneratedPath": "assets/audio/",
-    "enableFallbackWebSpeech": true
+    "ttsProvider": "omnivoice",
+    "model": "k2-fsa/OmniVoice",
+    "modelLicense": "CC-BY-NC-4.0 (non-commercial use)",
+    "preGeneratedPath": "assets/audio/narration/",
+    "manifest": "src/data/narrationManifest.js",
+    "enableFallbackWebSpeech": false
   },
   "visuals": {
     "pixarAssetsPath": "assets/pixar/",

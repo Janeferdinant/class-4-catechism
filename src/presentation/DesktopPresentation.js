@@ -58,6 +58,6 @@ export class DesktopPresentation {
 
   updateStars(count) {
     const starEl = document.getElementById('header-star-count');
-    if (starEl) starEl.textContent = `${count} Stars`;
+    if (starEl) starEl.textContent = `${count}`;
   }
 }

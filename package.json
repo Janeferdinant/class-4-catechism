@@ -1,26 +1,24 @@
 {
   "name": "class-4-catechism",
   "version": "1.2.0",
-  "description": "Class 4 Catechism - Multi-Agent Interactive Academy with 3D WebGL Universe, Neural Malayalam Audio, Exam Solutions, and Gamified Quizzes",
+  "description": "Class 4 Catechism - bilingual (Malayalam/English) interactive classroom: Adventure Map, Picture Slides, Story Lessons, solved Exam Papers and Star Quizzes, with OmniVoice narration",
   "main": "src/app.js",
   "type": "module",
   "scripts": {
     "start": "npx -y http-server -p 8080 -c-1",
     "test": "node --test tests/*.test.js",
-    "audio:generate": "node scripts/generateNeuralMalayalamAudio.js"
+    "audio:scripts": "node scripts/audio/extract_narration.mjs"
   },
   "keywords": [
     "multi-agent",
     "catechism",
     "threejs",
     "webgl",
-    "malayalam-tts",
+    "malayalam",
+    "omnivoice",
     "gamification",
     "interactive-learning"
   ],
   "author": "Antigravity Multi-Agent Team",
-  "license": "Proprietary",
-  "dependencies": {
-    "msedge-tts": "^2.0.9"
-  }
+  "license": "Proprietary"
 }
