@@ -11,7 +11,8 @@
     "supportedThemes": ["dark", "light"],
     "soundEffectsEnabled": true,
     "defaultLanguage": "malayalam",
-    "supportedLanguages": ["malayalam", "english"]
+    "supportedLanguages": ["malayalam", "english"],
+    "glassStyle": { "light": "soft light glass", "dark": "dark glass", "stylesheet": "src/styles/glass.css" }
   },
   "agents": {
     "orchestratorModel": "gemini-1.5-flash",
@@ -29,7 +30,7 @@
       {
         "id": "visualizer_3d",
         "name": "Adventure Map & Motion Graphics Specialist",
-        "role": "Adventure Map (Three.js) and Ken Burns animations"
+        "role": "Adventure Map (Three.js), island zoom and particle effects"
       },
       {
         "id": "voiceover",

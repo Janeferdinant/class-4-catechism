@@ -11,15 +11,16 @@ It covers all 15 chapters as simple stories for young children, solves five past
 3. **Joyful practice**: star quizzes, sound effects and celebrations that reward learning once, fairly.
 
 ## Features
-- **Adventure Map**: an illustrated island map (Three.js, orthographic 2.5D) linking the 15 chapters, the seven sacraments and the exam papers. Clicking an island opens its details with narration. Works without WebGL through an HTML fallback.
-- **Picture Slides**: Pixar-style storybook art for every chapter with Ken Burns motion and a switch to the original textbook pages.
+- **Adventure Map**: an illustrated island map (Three.js, orthographic 2.5D) linking the 15 chapters, the seven sacraments and the exam papers. Clicking an island zooms the map into it and opens its details with narration; closing the details zooms back out. On phones the island is framed above a half-height details sheet. Works without WebGL through an HTML fallback.
+- **Picture Slides**: Pixar-style storybook art for every chapter with a soft sparkle overlay, a switch to the original textbook pages, and fullscreen.
 - **Story Lessons**: story, moral lesson, key concepts and scripture for each chapter, in Malayalam and English.
 - **Exam Papers**: all questions from five papers (2023–2025) with answers, citations and a "simple explanation" for children.
 - **Star Quizzes**: kid-friendly questions with clues, celebration particles and sound effects. Each correct question earns one star, once.
 - **Natural narration (OmniVoice)**: every read-aloud item is pre-rendered in Malayalam and English with [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice), one consistent narrator voice per language. No robotic browser speech is used.
-- **Settings (gear icon)**: theme, narration language (switches even mid-playback), speech pace slider (0.5×–1.5×), sound effects, and star reset.
+- **Settings (gear icon)**: theme, narration language (switches even mid-playback), speech pace slider (0.5×–1.5×), sound effects, star reset, and display options (switch between the desktop and phone layouts, fullscreen).
 - **Fair, private progress**: every browser starts at 0 stars; one star per chapter and per quiz question, saved only in that browser.
-- **Light and dark themes** with glass panels and particle effects, and dedicated desktop and mobile layouts.
+- **Glass interface**: soft light glass in the light theme and dark glass at night, applied to navigation, floating panels, dialogs, reading cards and controls, with an edge light, soft shadows and a pointer-following highlight. Solid surfaces for visitors who ask for less transparency or more contrast.
+- **Light and dark themes** with particle effects, and dedicated desktop and mobile layouts.
 - **Multi-Agent Learning Console**: an orchestrator and specialist agents (storyteller, exam solver, visualiser, voice, quiz master) that guide the learner.
 
 ## Repository Structure
@@ -30,12 +31,13 @@ class-4-catechism/
 │   ├── app.js                 # Bootstrap: views, settings, narration, stars
 │   ├── agents/                # Orchestrator and specialist agents (learning console)
 │   ├── components/            # Adventure Map, slides, lessons, exams, quiz,
-│   │                          #   narration player, sound effects, progress store
+│   │                          #   narration player, sound effects, progress store,
+│   │                          #   glass highlight (GlassEffects.js)
 │   ├── data/                  # Chapters, exam papers, quiz, map graph,
 │   │                          #   narration scripts and the rendered-clip manifest
 │   ├── presentation/          # Desktop and mobile presentation layers
 │   ├── services/              # Optional Gemini art generation
-│   └── styles/                # main.css, mobile.css, themes.css
+│   └── styles/                # themes.css (tokens), main.css, mobile.css, glass.css (glass system)
 ├── assets/
 │   ├── audio/narration/       # OmniVoice clips (mal/, eng/), narrator voices, generator cache
 │   ├── generated/             # Map backdrops, cutouts, islands/, avatars/, icons/
@@ -73,7 +75,7 @@ class-4-catechism/
 
 ### Software
 - **Node.js** 20.x or later (tested on v24.19.0), for the local server and tests
-- **A modern browser**: Chrome, Edge, Firefox or Safari (WebGL and Web Audio)
+- **A modern browser**: Chrome, Edge, Firefox or Safari (WebGL and Web Audio). Current versions show the frosted glass; browsers without backdrop blur get solid panels instead.
 - **Git** 2.30+
 - Optional, only to regenerate assets:
   - **Python** 3.10+ for artwork processing
@@ -147,7 +149,9 @@ The site is static and needs no configuration. User choices (theme, narration la
 | Speech pace | Gear menu slider, saved as `preferred-speech-rate` | `1.0×` |
 | Sound effects | Gear menu, saved as `sound-effects` | on |
 | Stars | Earned in lessons and quizzes, saved as `class4-progress-v1` | `0` |
-| Gemini API key | Optional, entered in the app to generate new chapter art | none |
+| Layout | Gear menu, Display & Modes (desktop or phone layout), saved as `app-view-mode` | follows the screen size |
+| Explore card | Closed or reopened on the map, saved as `explore-card-dismissed` | shown |
+| Gemini API key | Optional, entered in the app to generate new chapter art, saved as `gemini_api_key` | none |
 
 > **Security**: never commit passwords, API keys or tokens. The Gemini key, if used, stays in the visitor's browser.
 
@@ -160,12 +164,12 @@ npm start
 Then open `http://localhost:8080`.
 
 ### Typical Workflow
-1. **Adventure Map**: explore the islands; open any chapter, sacrament or exam paper and press **🔊 Malayalam** or **🔊 English**.
+1. **Adventure Map**: explore the islands; click any chapter, sacrament or exam paper to zoom in, then press **🔊 Malayalam** or **🔊 English**. Close the details to zoom back out.
 2. **Picture Slides**: page through the chapter art, switching between storybook art and textbook pages.
 3. **Story Lessons**: read the story, moral, key concepts and scripture; the audio buttons read the open tab. Collect each chapter's star once.
 4. **Exam Papers**: pick a paper, listen to any question and answer, and open the simple explanation.
 5. **Star Quizzes**: answer questions, use a clue when stuck, and earn a star for each question answered correctly.
-6. Use the **gear icon** to change theme, narration language, speech pace or sound effects.
+6. Use the **gear icon** to change theme, narration language, speech pace or sound effects, to switch between the desktop and phone layouts, or to go fullscreen.
 
 ## Input Data
 | Input | Format | Location | Description |
@@ -219,6 +223,8 @@ Static website (index.html + src/) ──► Tests (npm test) ──► Vercel d
 ### Coding Standards
 - ES modules, no build step; keep components focused on one job.
 - Read-aloud text belongs in `src/data/narration.js`; regenerate audio after changing it.
+- Glass surfaces use the `--gl-*` tokens and tiers in `src/styles/glass.css`. Blur only surfaces with artwork or scrolling content behind them; reading cards get tint and an edge light instead.
+- Respect `prefers-reduced-motion` and `prefers-reduced-transparency` in new effects.
 - Add tests under `tests/` for new behaviour, and update this README and the changelog.
 
 ## Git Workflow
@@ -251,15 +257,18 @@ This runs every suite in `tests/` with the Node.js test runner.
 
 ### Manual Testing
 1. **Narration**: play a story, an exam answer and a quiz question in both languages; switch language in the gear menu while one plays; move the pace slider.
-2. **Adventure Map**: open chapter, sacrament and exam islands and play their narration.
+2. **Adventure Map**: open chapter, sacrament and exam islands; each should zoom into view (above the sheet on a phone), play its narration, and zoom back out when closed.
 3. **Stars**: collect a chapter star twice and replay a quiz; the count should rise only once per item and survive a reload.
 4. **Themes and layouts**: check light and dark themes on desktop and on a phone-sized screen.
+5. **Glass and accessibility**: turn off transparency effects (Windows: Settings › Personalization › Colors; macOS/iOS: Reduce transparency) and check that panels become solid; with reduced motion on, the map zoom should cut instead of glide and buttons should not move on hover.
 
 ### Test Requirements
 1. All 15 chapters have complete English and Malayalam text and moral lessons.
 2. All 5 exam papers have answers cited to chapters.
 3. Every narration script has a rendered, non-empty clip in `src/data/narrationManifest.js`.
 4. Every browser starts at 0 stars; a chapter star or quiz star can be earned only once.
+5. Clicking an island centres and zooms it, closing the details returns to the full map, and the zoomed sky never shows its edges.
+6. The glass stylesheet loads last, defines tokens for both themes, blurs navigation and dialogs but not reading cards, and keeps its accessibility fallbacks.
 
 ## Logging
 The site logs to the browser console (`F12` → Console):
@@ -284,6 +293,7 @@ The site logs to the browser console (`F12` → Console):
 1. Clues, simple explanations, and the exam-paper, agent and group islands on the map have English text only, so they are read in English (the map hides its Malayalam button there).
 2. Malayalam narration quality is good but slightly less polished than English (OmniVoice has less Malayalam training data).
 3. Very low-end phones may drop frames during particle effects.
+4. Island zoom needs WebGL. In the HTML fallback, clicking an island opens its details without zooming.
 
 ## Troubleshooting
 
@@ -328,7 +338,7 @@ Current version: **1.2.0**. The redesign on `new-ui/ux` is listed under *Unrelea
 | **1.0.0** | 2026-10-10 | Multi-Agent Team | Initial release with 15 chapters, 5 solved exam papers, and quiz engine |
 | **1.1.0** | 2026-10-10 | Multi-Agent Team | Added clickable 3D nodes, stop audio controls, and bilingual Malayalam support |
 | **1.2.0** | 2026-10-10 | Multi-Agent Team | Pre-generated voiceover, 3D Pixar motion graphics, and folder organization |
-| *Unreleased* | 2026-10-11 | Redesign (`new-ui/ux`) | Adventure Map redesign and artwork, OmniVoice narration everywhere, working settings, fair star progress, repository clean-up |
+| *Unreleased* | 2026-10-11 | Redesign (`new-ui/ux`) | Adventure Map redesign and artwork, island zoom, glass design system, OmniVoice narration everywhere, working settings, fair star progress, repository clean-up |
 
 ## License / Usage
 This repository is proprietary and intended for educational instruction and learning use only. Redistribution or external commercial use is not permitted without explicit authorization.

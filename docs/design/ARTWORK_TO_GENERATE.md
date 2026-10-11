@@ -1,8 +1,8 @@
-# Artwork to generate — Class 4 Catechism redesign
+# Artwork guide — Class 4 Catechism
 
-The site already runs with placeholder art at every path below, so you can add images one at a time. Each new image replaces its placeholder automatically.
+All 28 images in this guide have been generated and processed into `assets/generated/`. Use it to replace or regenerate any of them: the prompts below produce matching art, and a replaced image shows up on the site automatically.
 
-## How to deliver the images
+## How to replace an image
 
 1. **Generate** each image using the prompt in this file.
 2. **Save** it into this folder, using the exact file name given (PNG, JPG or WebP all work):
@@ -26,7 +26,7 @@ The site already runs with placeholder art at every path below, so you can add i
    It prints PASS or FAIL for each file.
 4. **Refresh** the site with a hard refresh (Ctrl+F5) so the browser doesn't show cached images.
 
-Nothing else is needed. The code already loads every file at the path the script writes. You can re-run the script at any time: it re-processes whatever is in the incoming folder, so adding a few images at a time is fine. When you're happy, commit the updated files under `assets/generated/` together with the code. The raw files in `incoming/` are git-ignored.
+Nothing else is needed. The code already loads every file at the path the script writes. You can re-run the script at any time: it re-processes whatever is in the incoming folder, so replacing a few images at a time is fine. When you're happy, commit the updated files under `assets/generated/`. The raw files in `incoming/` are git-ignored and never deployed.
 
 **About transparent backgrounds.** Islands, icons and the Jesus group must end up transparent.
 
@@ -44,7 +44,7 @@ Nothing else is needed. The code already loads every file at the path the script
 
 ---
 
-## Priority 1 — Adventure Map backdrops (2 images)
+## 1. Adventure Map backdrops (2 images)
 
 These sit behind the whole map. The app draws the islands, the golden path, the stars and the shooting stars on top, so **do not paint islands, paths, people or a dense star field** into these.
 
@@ -53,6 +53,7 @@ Layout matters because the page puts other things on top:
 - **Upper middle-right (about 55–75% from the left, top third):** the golden cathedral, where chapter 15 sits.
 - **Far-right fifth:** covered by the agent console, so keep important details out of it.
 - **Bottom strip:** covered by the feature cards, so a soft cloud bank works well there.
+- **Zoom:** clicking an island zooms the map (and this sky) in up to about 2.8×, so favour soft shapes such as clouds and light over fine lines, which look blurry when enlarged.
 
 ### `map-backdrop-light.png`  · 16:9 landscape · at least 1920×1080 (2560×1440 ideal) · opaque
 
@@ -68,7 +69,7 @@ Wide cinematic children's storybook landscape of a peaceful heavenly night above
 
 ---
 
-## Priority 2 — 15 chapter islands (15 images)
+## 2. Chapter islands (15 images)
 
 Each island stands for one chapter. Use the same camera angle, lighting and scale for all 15, so they look like one set. If your tool supports it, generate them in one session and reuse the first good island as a style reference.
 
@@ -166,9 +167,9 @@ On a plain solid flat magenta (#FF00FF) background.
 
 ---
 
-## Priority 3 — Jesus with the children (1 image)
+## 3. Jesus with the children (1 image)
 
-It appears at the bottom-left of the light Adventure Map and in the mobile welcome card. The current version has painted clouds behind the figures. This one needs to be the figures only.
+It appears at the bottom-left of the light Adventure Map and in the mobile welcome card. It must be the figures only (no sky or scenery), because it is cut out and placed over the map.
 
 ### `jesus-children.png`  · 4:3 landscape · at least 1536×1152 · transparent
 
@@ -179,9 +180,9 @@ On a plain solid flat magenta (#FF00FF) background.
 
 ---
 
-## Priority 4 — Agent avatars (3 required, 2 optional)
+## 4. Agent avatars (5 images)
 
-These are small round portraits in the Multi-Agent Learning Console. Galileo and Orchestrator already have usable 3D portraits. Leo, Sophia and Barnaby are flat clip-art and don't match, so redo those three. Redo the other two as well if you want all five to match exactly.
+These are small round portraits in the Multi-Agent Learning Console. All five share the same 3D animated-film style, so regenerate them as a set if you change one noticeably.
 
 **Every avatar is:** square 1:1, at least 1024×1024, opaque. The site crops it into a circle, so keep the face centered.
 
@@ -200,21 +201,21 @@ Head-and-shoulders portrait of a bright, friendly 9-year-old girl with shoulder-
 Head-and-shoulders portrait of a playful 8-year-old boy with wavy brown hair, holding up a shiny gold star and grinning at the viewer. Polished 3D animated-film character style, soft studio lighting, face centered in the frame, plain soft light-blue background (#DCEBFA). No text, no logo, no watermark.
 ```
 
-### `avatar-galileo.png` — Galileo Multi-Agent Nexus (optional)
+### `avatar-galileo.png` — Galileo Multi-Agent Nexus
 ```
 Head-and-shoulders portrait of a kindly elderly astronomer with a neat grey beard and a navy velvet cap, wearing a navy robe embroidered with small gold stars and holding a small brass telescope, smiling at the viewer. Polished 3D animated-film character style, soft studio lighting, face centered in the frame, plain soft light-blue background (#DCEBFA). No text, no logo, no watermark.
 ```
 
-### `avatar-orchestrator.png` — Orchestrator (optional)
+### `avatar-orchestrator.png` — Orchestrator
 ```
 Head-and-shoulders portrait of a friendly young teacher in his twenties with neat dark hair, a white shirt and a navy vest, holding a slim conductor's baton, smiling at the viewer. Polished 3D animated-film character style, soft studio lighting, face centered in the frame, plain soft light-blue background (#DCEBFA). No text, no logo, no watermark.
 ```
 
 ---
 
-## Priority 5 — Navigation icons (3 required, 2 optional)
+## 5. Navigation icons (5 images)
 
-These appear in the top navigation and the five feature cards. The current exam and slides icons have unrelated words painted in ("FINAL EXAM – BIOLOGY", "VACATION SNAPSHOT"), and the map icon is just an island. The book and star icons are fine, so remake those only if you want a perfectly matched set.
+These appear in the top navigation and the five feature cards. Keep them as one matched set, with no words painted into any icon.
 
 **Every icon is:** square 1:1, at least 1024×1024, transparent, with the object centered and filling about 80% of the frame.
 
@@ -236,13 +237,13 @@ A glossy 3D game-style icon of a sheet of paper on a red clipboard, with blank g
 On a plain solid flat magenta (#FF00FF) background.
 ```
 
-### `icon-story-lessons.png` (optional)
+### `icon-story-lessons.png`
 ```
 A glossy 3D game-style icon of an open red storybook with golden page edges and a soft golden glow rising from the pages, with a red ribbon bookmark. Soft studio lighting, gentle shadow, centered, fills most of the frame. No letters, no numbers, no text anywhere, no logo, no watermark.
 On a plain solid flat magenta (#FF00FF) background.
 ```
 
-### `icon-star-quizzes.png` (optional)
+### `icon-star-quizzes.png`
 ```
 A glossy 3D game-style icon of a shiny gold star medal with a soft sparkle, slightly tilted. Soft studio lighting, gentle shadow, centered, fills most of the frame. No letters, no numbers, no text anywhere, no logo, no watermark.
 On a plain solid flat magenta (#FF00FF) background.
@@ -250,27 +251,19 @@ On a plain solid flat magenta (#FF00FF) background.
 
 ---
 
-## Not needed
+## Not covered by this guide
 
-- **Chapter illustrations and textbook scans:** the existing 15 are used as they are.
+- **Chapter illustrations (`assets/pixar/`) and textbook scans (`assets/textbook/`):** used as they are.
 - **Dove and quiz angel:** the current cutouts are good.
 - **Stars, shooting stars, sparkles, clouds drifting and light along the path:** the app animates these in code, so don't paint them into any image.
 
 ## Checklist
 
-| # | File name (in `assets/generated/incoming/`) | Shape | Background | Required |
+| # | File name (in `assets/generated/incoming/`) | Shape | Background | Written to |
 |---|---|---|---|---|
-| 1 | `map-backdrop-light.png` | 16:9 | opaque | yes |
-| 2 | `map-backdrop-dark.png` | 16:9 | opaque | yes |
-| 3–17 | `island-ch01.png` … `island-ch15.png` | 1:1 | transparent | yes |
-| 18 | `jesus-children.png` | 4:3 | transparent | yes |
-| 19 | `avatar-leo.png` | 1:1 | opaque | yes |
-| 20 | `avatar-sophia.png` | 1:1 | opaque | yes |
-| 21 | `avatar-barnaby.png` | 1:1 | opaque | yes |
-| 22 | `avatar-galileo.png` | 1:1 | opaque | optional |
-| 23 | `avatar-orchestrator.png` | 1:1 | opaque | optional |
-| 24 | `icon-adventure-map.png` | 1:1 | transparent | yes |
-| 25 | `icon-picture-slides.png` | 1:1 | transparent | yes |
-| 26 | `icon-exam-papers.png` | 1:1 | transparent | yes |
-| 27 | `icon-story-lessons.png` | 1:1 | transparent | optional |
-| 28 | `icon-star-quizzes.png` | 1:1 | transparent | optional |
+| 1 | `map-backdrop-light.png` | 16:9 | opaque | `assets/generated/adventure_map_light.jpg` |
+| 2 | `map-backdrop-dark.png` | 16:9 | opaque | `assets/generated/adventure_map_dark.jpg` |
+| 3–17 | `island-ch01.png` … `island-ch15.png` | 1:1 | transparent | `assets/generated/islands/island-chNN.webp` |
+| 18 | `jesus-children.png` | 4:3 | transparent | `assets/generated/jesus-children-cutout.webp` |
+| 19–23 | `avatar-leo.png`, `avatar-sophia.png`, `avatar-barnaby.png`, `avatar-galileo.png`, `avatar-orchestrator.png` | 1:1 | opaque | `assets/generated/avatars/` |
+| 24–28 | `icon-adventure-map.png`, `icon-picture-slides.png`, `icon-exam-papers.png`, `icon-story-lessons.png`, `icon-star-quizzes.png` | 1:1 | transparent | `assets/generated/icons/` |
