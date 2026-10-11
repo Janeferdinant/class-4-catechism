@@ -26,3 +26,6 @@ Desktop.ini
 .vercel
 .serena/
 Class 4 Catechism UI Showcase.png
+
+# Raw hand-generated art (processed copies are written into assets/generated/)
+assets/generated/incoming/
