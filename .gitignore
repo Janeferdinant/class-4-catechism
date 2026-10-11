@@ -29,3 +29,6 @@ Class 4 Catechism UI Showcase.png
 
 # Raw hand-generated art (processed copies are written into assets/generated/)
 assets/generated/incoming/
+
+# Any local env file (Vercel CLI writes .env.local with an access token)
+.env*
