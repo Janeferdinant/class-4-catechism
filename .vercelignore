@@ -10,3 +10,10 @@
 requirements.txt
 .superpowers/
 .tempmediaStorage/
+
+# Local-only folders: raw hand-generated art, reference material, tool caches
+assets/generated/incoming/
+ref-data/
+.serena/
+.playwright-mcp/
+.scratch-review/
