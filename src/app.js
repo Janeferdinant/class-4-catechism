@@ -388,9 +388,11 @@ class AppController {
       });
     }
 
-    // Escape closes the settings popup
+    // Escape closes the settings popup, or else the open map details (zooming the map back out)
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && sheet.classList.contains('active')) this.toggleSettingsPopup(false);
+      if (e.key !== 'Escape') return;
+      if (sheet.classList.contains('active')) this.toggleSettingsPopup(false);
+      else if (this.threeUniverse && this.threeUniverse.selectedId) this.closeUniverseDrawer();
     });
 
     // Dismiss when clicking anywhere outside popup card or gear buttons
@@ -656,6 +658,8 @@ class AppController {
       this.threeUniverse = new ThreeUniverse(container, (drawerData, rawNode) => {
         this.handleNodeClick(drawerData, rawNode);
       });
+      // Tapping empty sky while an island is open closes its details and zooms out.
+      this.threeUniverse.onDeselect = () => this.closeUniverseDrawer();
       this.threeUniverse.init(GRAPH_DATA.nodes, GRAPH_DATA.edges);
     }
   }

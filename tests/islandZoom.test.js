@@ -97,3 +97,34 @@ test('Island zoom: the sky layer zooms with the camera and never shows its edges
   assert.ok(f.originY - scale * f.originY + ty <= 0.1);
   assert.ok(f.originY + scale * (f.height - f.originY) + ty >= f.height - 0.1);
 });
+
+test('Island zoom: tapping empty sky while an island is open zooms back out', async () => {
+  const map = await makeMap();
+  let closed = 0;
+  map.onDeselect = () => { closed += 1; };
+
+  map.handleTap(null);
+  assert.equal(closed, 0, 'nothing to close when no island is open');
+
+  map.selectedId = 'ch_3';
+  map.handleTap(null);
+  assert.equal(closed, 1, 'empty sky closes the open island');
+});
+
+test('Island zoom: without a details panel, empty sky resets the view itself', async () => {
+  const map = await makeMap();
+  map.selectedId = 'ch_3';
+  map.panTarget = { x: 20, y: -10, zoom: 2.4 };
+  map.handleTap(null);
+  assert.deepEqual(map.panTarget, { x: 0, y: 0, zoom: 1 });
+  assert.equal(map.selectedId, null);
+});
+
+test('Island zoom: tapping another island switches to it', async () => {
+  const map = await makeMap();
+  const picked = [];
+  map.selectNode = (node) => picked.push(node.id);
+  map.selectedId = 'ch_3';
+  map.handleTap({ id: 'ch_7' });
+  assert.deepEqual(picked, ['ch_7']);
+});

@@ -381,6 +381,7 @@ export class ThreeUniverse {
   constructor(containerElement, onNodeSelect) {
     this.container = containerElement;
     this.onNodeSelect = onNodeSelect;
+    this.onDeselect = null;        // called when empty sky is tapped while a node is open
     this.scene = null;
     this.camera = null;
     this.renderer = null;
@@ -902,9 +903,12 @@ export class ThreeUniverse {
     };
     this.onPointerUp = (e) => {
       if (dragging && !moved && e.target && this.container.contains(e.target) && !e.target.closest('button')) {
-        const node = pick(e.clientX, e.clientY);
-        if (node) this.selectNode(node);
+        this.handleTap(pick(e.clientX, e.clientY));
       }
+      dragging = false;
+    };
+    // A touch that turns into a page scroll is cancelled by the browser: not a tap.
+    this.onPointerCancel = () => {
       dragging = false;
     };
     this.onPointerMove = (e) => {
@@ -925,19 +929,29 @@ export class ThreeUniverse {
       if (e.pointerType === 'mouse') {
         const node = pick(e.clientX, e.clientY);
         this.setHovered(node ? node.id : null);
-        this.container.style.cursor = node ? 'pointer' : 'grab';
+        this.container.style.cursor = node ? 'pointer' : (this.selectedId ? 'zoom-out' : 'grab');
       }
     };
 
     this.container.addEventListener('pointerdown', this.onPointerDown);
     this.container.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
-    window.addEventListener('pointercancel', this.onPointerUp);
+    window.addEventListener('pointercancel', this.onPointerCancel);
     this.container.addEventListener('mouseleave', () => {
       this.pointer.x = 0;
       this.pointer.y = 0;
       this.setHovered(null);
     });
+  }
+
+  /** A tap or click on the map: open the node under it, or zoom back out from empty sky. */
+  handleTap(node) {
+    if (node) {
+      this.selectNode(node);
+    } else if (this.selectedId) {
+      if (this.onDeselect) this.onDeselect();
+      else this.resetView();
+    }
   }
 
   orderOf(object) {
@@ -1388,7 +1402,7 @@ export class ThreeUniverse {
     if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
     if (this.resizeObserver) this.resizeObserver.disconnect();
     window.removeEventListener('pointerup', this.onPointerUp);
-    window.removeEventListener('pointercancel', this.onPointerUp);
+    window.removeEventListener('pointercancel', this.onPointerCancel);
     if (this.scene) {
       this.scene.traverse(obj => {
         if (obj.geometry) obj.geometry.dispose();

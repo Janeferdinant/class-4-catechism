@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Hand-generated artwork**: chapter islands, map backdrops, the Jesus-with-children cutout, navigation icons and agent avatars, with `scripts/art/process_generated_art.py` to cut out, size and verify new images ([docs/design/ARTWORK_TO_GENERATE.md](docs/design/ARTWORK_TO_GENERATE.md) lists the prompts).
 - **Particles in both themes**: night stars, constellations, nebula glow, fireflies and shooting stars; day sun rays, cloud wisps, gold dust and light orbs. Pauses when hidden and respects reduced motion.
 - **Glass design system** (`src/styles/glass.css`): soft light glass in the light theme and dark glass at night, in four tiers (navigation, floating panels, dialogs, reading cards) plus controls, with edge lights, soft shadows, an ambient background, hover and press micro-interactions and a pointer-following highlight. Blur is used only where artwork or scrolling content sits behind a surface (far fewer blurred elements than before: 15 to 2 on the exam list, 19 to 3 on the phone home screen). Solid fallbacks for reduced transparency, higher contrast, Windows high contrast and browsers without backdrop blur.
-- **Island zoom**: clicking an island zooms the Adventure Map into it (the painted sky zooms with it) and closing the details zooms back out; other islands dim and the decorative figures step aside. On phones the island is framed above a half-height glass details sheet on every screen size tested (360 to 430 px wide).
+- **Island zoom**: clicking an island zooms the Adventure Map into it (the painted sky zooms with it); clicking the empty sky, pressing Escape or closing the details zooms back out, and the cursor shows a zoom-out icon over empty sky; other islands dim and the decorative figures step aside. On phones the island is framed above a half-height glass details sheet on every screen size tested (360 to 430 px wide).
 - **Explore the Adventure Map card** can be closed and reopened; the choice is remembered.
 - **Dedicated mobile screens**: glass header and bottom bar that follow the theme, illustrated welcome card, touch map, node sheet, and mobile Story Lessons, Slides, Exam Papers and Star Quizzes.
 - **OmniVoice narration everywhere**: 357 clips (137 Malayalam, 220 English, about 52 minutes) rendered with [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice): chapter stories, moral lessons, scripture and key concepts; every exam question with its answer and simple explanation; every quiz question with its choices and clue; and the Adventure Map details. One designed narrator voice per language, cloned for every clip.
@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Light theme settings popup was navy with near-invisible labels; it is now light glass with readable text.
 - Phones showed the desktop preview's gold frame and shadow around the screen.
+- On phones, a swipe that turned into a page scroll could count as a tap and open the island under the finger.
 - "Collect Chapter Star" could be pressed repeatedly for unlimited stars; replaying the quiz re-awarded stars.
 - Settings gear: one click opened and closed the popup (duplicate handlers). Escape now closes it.
 - Sound effects switch did not mute sound effects.

@@ -11,7 +11,7 @@ It covers all 15 chapters as simple stories for young children, solves five past
 3. **Joyful practice**: star quizzes, sound effects and celebrations that reward learning once, fairly.
 
 ## Features
-- **Adventure Map**: an illustrated island map (Three.js, orthographic 2.5D) linking the 15 chapters, the seven sacraments and the exam papers. Clicking an island zooms the map into it and opens its details with narration; closing the details zooms back out. On phones the island is framed above a half-height details sheet. Works without WebGL through an HTML fallback.
+- **Adventure Map**: an illustrated island map (Three.js, orthographic 2.5D) linking the 15 chapters, the seven sacraments and the exam papers. Clicking an island zooms the map into it and opens its details with narration; clicking the empty sky, pressing Escape or closing the details zooms back out. On phones the island is framed above a half-height details sheet. Works without WebGL through an HTML fallback.
 - **Picture Slides**: Pixar-style storybook art for every chapter with a soft sparkle overlay, a switch to the original textbook pages, and fullscreen.
 - **Story Lessons**: story, moral lesson, key concepts and scripture for each chapter, in Malayalam and English.
 - **Exam Papers**: all questions from five papers (2023–2025) with answers, citations and a "simple explanation" for children.
@@ -164,7 +164,7 @@ npm start
 Then open `http://localhost:8080`.
 
 ### Typical Workflow
-1. **Adventure Map**: explore the islands; click any chapter, sacrament or exam paper to zoom in, then press **🔊 Malayalam** or **🔊 English**. Close the details to zoom back out.
+1. **Adventure Map**: explore the islands; click any chapter, sacrament or exam paper to zoom in, then press **🔊 Malayalam** or **🔊 English**. Click the empty sky, press Escape or close the details to zoom back out.
 2. **Picture Slides**: page through the chapter art, switching between storybook art and textbook pages.
 3. **Story Lessons**: read the story, moral, key concepts and scripture; the audio buttons read the open tab. Collect each chapter's star once.
 4. **Exam Papers**: pick a paper, listen to any question and answer, and open the simple explanation.
@@ -257,7 +257,7 @@ This runs every suite in `tests/` with the Node.js test runner.
 
 ### Manual Testing
 1. **Narration**: play a story, an exam answer and a quiz question in both languages; switch language in the gear menu while one plays; move the pace slider.
-2. **Adventure Map**: open chapter, sacrament and exam islands; each should zoom into view (above the sheet on a phone), play its narration, and zoom back out when closed.
+2. **Adventure Map**: open chapter, sacrament and exam islands; each should zoom into view (above the sheet on a phone) and play its narration. Clicking the empty sky or pressing Escape should close it and zoom out; dragging the map should not.
 3. **Stars**: collect a chapter star twice and replay a quiz; the count should rise only once per item and survive a reload.
 4. **Themes and layouts**: check light and dark themes on desktop and on a phone-sized screen.
 5. **Glass and accessibility**: turn off transparency effects (Windows: Settings › Personalization › Colors; macOS/iOS: Reduce transparency) and check that panels become solid; with reduced motion on, the map zoom should cut instead of glide and buttons should not move on hover.
@@ -267,7 +267,7 @@ This runs every suite in `tests/` with the Node.js test runner.
 2. All 5 exam papers have answers cited to chapters.
 3. Every narration script has a rendered, non-empty clip in `src/data/narrationManifest.js`.
 4. Every browser starts at 0 stars; a chapter star or quiz star can be earned only once.
-5. Clicking an island centres and zooms it, closing the details returns to the full map, and the zoomed sky never shows its edges.
+5. Clicking an island centres and zooms it, clicking empty sky or closing the details returns to the full map, and the zoomed sky never shows its edges.
 6. The glass stylesheet loads last, defines tokens for both themes, blurs navigation and dialogs but not reading cards, and keeps its accessibility fallbacks.
 
 ## Logging

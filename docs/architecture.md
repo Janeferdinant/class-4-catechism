@@ -39,6 +39,7 @@ Particles, celebration bursts and the artwork sparkles come from `MotionGraphics
 
 ### Island zoom
 - `focusOn(target)` sets a camera target that centres the painted island (its measured alpha bounds, not the texture square) and zooms until it fills a little under half the view; `animate()` eases toward it with time-based easing (an instant cut under reduced motion). `resetView()` returns home when the details close.
+- `handleTap(node)` receives every tap that was not a drag: a node opens (or switches to) that node; empty sky while a node is open calls `onDeselect`, which the app wires to `closeUniverseDrawer()`. Escape does the same from the keyboard. A cancelled touch (one that became a page scroll) is ignored.
 - The painted sky is a CSS layer (`[data-map-backdrop]`: the desktop stage backdrop and the phone map's backdrop). `syncBackdrop()` applies the camera's pan and zoom to it each frame about the canvas centre, clamping the translation so its edges never show.
 - While zoomed, other islands and labels dim, the decorative figures fade, and the desktop canvas fades out toward the details column.
 - Phones: `compactFocusBand()` measures how much of the map stays visible above the half-height details sheet (from the sheet's and map box's real CSS), and the island is framed inside that band.
