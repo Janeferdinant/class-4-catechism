@@ -24,6 +24,7 @@ import { LayoutSelector } from './presentation/LayoutSelector.js';
 import { MobilePresentation } from './presentation/MobilePresentation.js';
 import { DesktopPresentation } from './presentation/DesktopPresentation.js';
 import { ProgressStore } from './components/ProgressStore.js';
+import { initGlassHighlights } from './components/GlassEffects.js';
 import { clipIds, nodeClipSequence } from './data/narration.js';
 
 class AppController {
@@ -77,6 +78,7 @@ class AppController {
     this.initQuizView();
     this.setupOrchestratorFeed();
     this.setupKeyboardShortcuts();
+    initGlassHighlights();
     this.updateHeaderStars();
 
 
@@ -760,6 +762,12 @@ class AppController {
       mobDrawer.innerHTML = drawerHtml;
       mobDrawer.style.display = 'block';
       mobDrawer.classList.add('open');
+      // Bring the phone map up under the header so the zoomed island sits above the sheet.
+      const mapBox = document.getElementById('mob-3d-view-box');
+      if (mapBox && mapBox.offsetParent !== null && window.innerWidth <= 768) {
+        const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        mapBox.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' });
+      }
     }
     this.orchestrator.logTrace('3D Knowledge Graph', 'Node Explored', `Opened side-drawer for "${drawerData.title}"`);
   }

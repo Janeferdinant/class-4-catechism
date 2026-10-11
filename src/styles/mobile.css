@@ -43,7 +43,7 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 /* Mobile App Header (Fixed 54px - Always Visible on Scroll) */
-/* Navy in both themes, per the mobile mockups */
+/* Navy base; glass.css turns it into dark glass at night and soft light glass in the light theme */
 .mobile-app-header {
   position: fixed;
   top: 0;
@@ -343,23 +343,33 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-3d-view-box {
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 64px;
   margin-bottom: 16px;
   padding: 10px;
   border-radius: var(--radius-lg);
 }
 
 .mob-3d-view-box.glass-panel {
-  background-size: cover;
-  background-position: 72% 40%;
+  background: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-[data-theme="light"] .mob-3d-view-box.glass-panel {
+/* The painted sky is its own layer so the map can zoom it with the islands */
+.mob-map-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: 72% 40%;
+  pointer-events: none;
+}
+
+[data-theme="light"] .mob-map-backdrop {
   background-image: linear-gradient(180deg, rgba(234, 245, 255, 0.35), rgba(255, 252, 244, 0.1)), url('../../assets/generated/adventure_map_light.jpg');
 }
 
-[data-theme="dark"] .mob-3d-view-box.glass-panel {
+[data-theme="dark"] .mob-map-backdrop {
   background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.5), rgba(5, 11, 24, 0.2)), url('../../assets/generated/adventure_map_dark.jpg');
 }
 

@@ -562,6 +562,33 @@ body.audio-playing .btn-stop-audio:hover {
   cursor: grabbing;
 }
 
+/* Island focus: clicking an island zooms the map into it (ThreeUniverse.focusOn).
+   While zoomed, the canvas fades out toward the details column instead of
+   ending in a hard edge, the other labels dim, and the decorative figures step
+   aside so the island has the stage. */
+.celestial-hero-stage.map-focused #three-canvas-container {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+}
+
+.floating-scripture-quote,
+.hero-jesus-cutout,
+.hero-dove-cutout {
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.celestial-hero-stage.map-focused .floating-scripture-quote,
+.celestial-hero-stage.map-focused .hero-jesus-cutout,
+.celestial-hero-stage.map-focused .hero-dove-cutout {
+  opacity: 0;
+}
+
+.three-labels-overlay.has-focus .island-label-pill:not(.active),
+.three-labels-overlay.has-focus .orb-label-pill:not(.active) {
+  opacity: 0.55;
+}
+
 .three-universe-canvas {
   display: block;
 }
@@ -4192,6 +4219,16 @@ body.mobile-view-active {
   border-right: 2px solid var(--border-accent);
   position: relative;
   background-color: var(--bg-primary);
+}
+
+/* The frame is for previewing the phone layout on a desktop; on a real phone
+   the screen edge is the frame. */
+@media (max-width: 768px) {
+  body.mobile-view-active {
+    box-shadow: none !important;
+    border-left: 0;
+    border-right: 0;
+  }
 }
 
 .mobile-view-active .app-header {

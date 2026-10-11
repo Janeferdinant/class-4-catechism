@@ -8,6 +8,9 @@
  * nodes (agents, sacraments, exams, clusters) appear as glowing orbs linked by the real
  * graph edges. Every node has a real HTML label button projected over it, so the map is
  * keyboard- and screen-reader-operable, and an HTML fallback renders when WebGL is missing.
+ *
+ * Selecting a node zooms the camera into it (focusOn) and the painted sky, a CSS layer
+ * behind the canvas, zooms with it (syncBackdrop); resetView zooms back out.
  */
 
 import { CHAPTERS_DATA } from '../data/chaptersData.js';
@@ -398,8 +401,13 @@ export class ThreeUniverse {
     this.layoutTable = WIDE_LAYOUT;
     this.pan = { x: 0, y: 0, zoom: 1 };
     this.panTarget = { x: 0, y: 0, zoom: 1 };
+    this.panSlackY = 10;           // extra vertical pan room (world units) beyond the zoomed frame
     this.pointer = { x: 0, y: 0 };
     this.effects = [];
+    this.backdropEl = null;        // painted sky behind the canvas; zooms with the islands
+    this.backdropFrame = null;     // where the canvas sits inside that layer
+    this.lastBackdropTransform = '';
+    this.lastFrameTime = 0;
     this.reducedMotion = typeof window !== 'undefined' && window.matchMedia
       ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
       : false;
@@ -438,6 +446,7 @@ export class ThreeUniverse {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, width < 600 ? 1.5 : 2));
     this.renderer.setSize(width, height);
     this.mountCanvas();
+    this.findBackdrop();
 
     this.textures = {
       glow: radialGlowTexture('rgba(255,250,230,1)', 'rgba(255,196,84,0.35)'),
@@ -908,8 +917,8 @@ export class ThreeUniverse {
         if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
         if (moved) {
           const unitsPerPx = VIEW_HEIGHT / rect.height / this.pan.zoom;
-          this.panTarget.x = this.clampPanX(this.panTarget.x - e.movementX * unitsPerPx);
-          this.panTarget.y = this.clampPanY(this.panTarget.y + e.movementY * unitsPerPx);
+          this.panTarget.x = this.clampPanX(this.panTarget.x - e.movementX * unitsPerPx, this.panTarget.zoom);
+          this.panTarget.y = this.clampPanY(this.panTarget.y + e.movementY * unitsPerPx, this.panTarget.zoom);
         }
         return;
       }
@@ -935,13 +944,17 @@ export class ThreeUniverse {
     return (object.parent && object.parent.type !== 'Scene' ? object.parent.renderOrder : object.renderOrder) || 0;
   }
 
-  clampPanX(x) {
-    const limit = VIEW_HEIGHT * this.aspect * 0.12;
+  /** Pan limits grow with zoom so any island can be brought to the centre. */
+  clampPanX(x, zoom = 1) {
+    const half = (VIEW_HEIGHT * this.aspect) / 2;
+    const limit = half * (1 - 1 / zoom) + half * 0.24;
     return Math.max(-limit, Math.min(limit, x));
   }
 
-  clampPanY(y) {
-    return Math.max(-10, Math.min(10, y));
+  clampPanY(y, zoom = 1) {
+    const half = VIEW_HEIGHT / 2;
+    const limit = half * (1 - 1 / zoom) + this.panSlackY;
+    return Math.max(-limit, Math.min(limit, y));
   }
 
   setHovered(id) {
@@ -962,10 +975,8 @@ export class ThreeUniverse {
     const target = this.islandMeshes.find(m => m.userData.id === raw.id) || this.orbSprites.find(s => s.userData.id === raw.id);
     if (target && this.scene) {
       this.spawnHalo(target.userData.baseX, target.userData.baseY, target.userData.size);
-      // Ease the view a little toward the selection without losing the composition.
-      this.panTarget.x = this.clampPanX(target.userData.baseX * 0.18);
-      this.panTarget.y = this.clampPanY(target.userData.baseY * 0.12);
-      this.panTarget.zoom = 1.06;
+      this.focusOn(target);
+      this.setFocusState(true);
     }
 
     if (this.onNodeSelect) {
@@ -976,11 +987,127 @@ export class ThreeUniverse {
   /** Return to the full composition (called when the details panel closes). */
   resetView() {
     this.selectedId = null;
+    this.panSlackY = 10;
     this.panTarget = { x: 0, y: 0, zoom: 1 };
+    this.setFocusState(false);
     this.labelElements.forEach(pill => {
       pill.classList.remove('active');
       pill.setAttribute('aria-pressed', 'false');
     });
+  }
+
+  /* ---------------- Focus zoom ---------------- */
+
+  /** Zoom toward a node so it fills the view; animate() eases the camera there. */
+  focusOn(target) {
+    const d = target.userData;
+    const { width, height } = this.containerSize();
+    const ppu = height / VIEW_HEIGHT;
+    // On the phone map the details sheet covers the lower part of the screen, so
+    // the island is framed in the band that stays visible above it.
+    const band = this.compactFocusBand();
+    const labelRoom = 56; // space for the name label drawn above the island
+    let cx = d.baseX;
+    let cy = d.baseY;
+    let artPx = band ? Math.min(height * 0.28, band - labelRoom - 8) : height * 0.46;
+    let zoom = band ? 1.9 : 2.2;
+    if (this.islandMeshes.includes(target)) {
+      // Centre on the painted island, not its transparent square.
+      const b = d.bounds || DEFAULT_ISLAND_BOUNDS;
+      const mirror = d.chNum % 2 === 0 ? -1 : 1;
+      cx += ((b.left + b.right) / 2 - 0.5) * d.size * mirror;
+      cy += (0.5 - (b.top + b.bottom) / 2) * d.size;
+      zoom = artPx / ((b.bottom - b.top) * d.size * ppu);
+    } else {
+      artPx = d.size * ppu * zoom;
+    }
+    zoom = Math.max(band ? 1 : 1.5, Math.min(band ? 2.4 : 2.8, zoom));
+    // The phone frames islands near the top of the map, so low islands need more room.
+    this.panSlackY = band ? VIEW_HEIGHT : 10;
+    // Desktop: a little below centre so the name label stays in view.
+    // Phone: just under the label room at the top of the visible band.
+    const screenX = width * 0.5;
+    const screenY = band ? labelRoom + Math.min(artPx, band - labelRoom) / 2 : height * 0.56;
+    this.panTarget = {
+      x: this.clampPanX(cx - (screenX - width / 2) / (zoom * ppu), zoom),
+      y: this.clampPanY(cy + (screenY - height / 2) / (zoom * ppu), zoom),
+      zoom
+    };
+  }
+
+  /**
+   * Phone map only: how many pixels of the map stay visible above the details
+   * sheet once the map box is scrolled under the header (null on desktop).
+   * Reads the real sheet and scroll-margin sizes so CSS changes carry over.
+   */
+  compactFocusBand() {
+    const host = this.container && this.container.closest('.mob-3d-view-box');
+    if (!host || typeof window === 'undefined') return null;
+    const sheet = document.getElementById('mob-three-node-drawer');
+    const sheetStyle = sheet ? getComputedStyle(sheet) : null;
+    const sheetHeight = sheetStyle ? parseFloat(sheetStyle.maxHeight) : NaN;
+    const sheetBottom = sheetStyle ? parseFloat(sheetStyle.bottom) : NaN;
+    const sheetTop = Number.isFinite(sheetHeight) && Number.isFinite(sheetBottom)
+      ? window.innerHeight - sheetBottom - sheetHeight
+      : window.innerHeight * 0.5;
+    const boxTop = parseFloat(getComputedStyle(host).scrollMarginTop) || 0;
+    const offsetInBox = this.container.getBoundingClientRect().top - host.getBoundingClientRect().top;
+    const { height } = this.containerSize();
+    return Math.max(120, Math.min(height, sheetTop - boxTop - offsetInBox));
+  }
+
+  /** Fade the decorative layers and other labels while one node is in focus. */
+  setFocusState(on) {
+    const host = this.container && this.container.closest('.celestial-hero-stage, .mob-3d-view-box');
+    if (host) host.classList.toggle('map-focused', on);
+    if (this.labelsOverlay) this.labelsOverlay.classList.toggle('has-focus', on);
+  }
+
+  /** The painted sky behind the canvas (desktop stage or mobile map box). */
+  findBackdrop() {
+    if (this.backdropEl) this.backdropEl.style.transform = '';
+    const host = this.container && this.container.closest('.celestial-hero-stage, .mob-3d-view-box');
+    this.backdropEl = host ? host.querySelector('[data-map-backdrop]') : null;
+    this.lastBackdropTransform = '';
+    this.measureBackdrop();
+  }
+
+  /** Where the canvas sits inside the sky layer, so both zoom about the same point. */
+  measureBackdrop() {
+    const el = this.backdropEl;
+    if (!el || !el.parentElement || !this.container) {
+      this.backdropFrame = null;
+      return;
+    }
+    const host = el.parentElement.getBoundingClientRect();
+    const view = this.container.getBoundingClientRect();
+    if (!host.width || !view.width) {
+      this.backdropFrame = null;
+      return;
+    }
+    const originX = view.left - host.left + view.width / 2;
+    const originY = view.top - host.top + view.height / 2;
+    this.backdropFrame = { originX, originY, width: host.width, height: host.height };
+    el.style.transformOrigin = `${originX.toFixed(1)}px ${originY.toFixed(1)}px`;
+  }
+
+  /** Move the sky with the camera's pan and zoom (the pointer parallax stays islands-only). */
+  syncBackdrop() {
+    const el = this.backdropEl;
+    const f = this.backdropFrame;
+    if (!el || !f) return;
+    const z = this.pan.zoom;
+    const ppu = this.containerSize().height / VIEW_HEIGHT;
+    // Never uncover the layer's edges: near the limits the distant sky pans a little
+    // less than the islands, which reads as depth.
+    const tx = Math.max(-(z - 1) * (f.width - f.originX), Math.min((z - 1) * f.originX, -this.pan.x * z * ppu));
+    const ty = Math.max(-(z - 1) * (f.height - f.originY), Math.min((z - 1) * f.originY, this.pan.y * z * ppu));
+    const idle = z < 1.0005 && Math.abs(tx) < 0.05 && Math.abs(ty) < 0.05;
+    const transform = idle ? '' : `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0) scale(${z.toFixed(4)})`;
+    if (transform !== this.lastBackdropTransform) {
+      el.style.transform = transform;
+      this.lastBackdropTransform = transform;
+    }
   }
 
   /** Screen position of a node, in CSS pixels relative to the container (or null). */
@@ -1064,7 +1191,8 @@ export class ThreeUniverse {
     // Islands stay visible; they dim when another category is in focus.
     const dim = category !== 'chapter' && category !== 'all';
     this.islandMeshes.forEach(mesh => {
-      if (mesh.material) mesh.material.opacity = dim ? 0.45 : 1;
+      mesh.userData.baseOpacity = dim ? 0.45 : 1;
+      if (mesh.material) mesh.material.opacity = mesh.userData.baseOpacity;
     });
     if (this.pathMaterial) this.pathMaterial.opacity = dim ? 0.3 : (this.theme === 'light' ? 0.85 : 0.9);
     if (this.travelingLight) this.travelingLight.visible = !dim;
@@ -1137,6 +1265,7 @@ export class ThreeUniverse {
     if (this.labelsOverlay) this.labelsOverlay.classList.toggle('narrow', w < 560);
     this.applyLayout();
     this.updateCamera();
+    this.measureBackdrop();
     this.updateLabelsPositions();
   }
 
@@ -1150,6 +1279,7 @@ export class ThreeUniverse {
     this.container = newContainer;
     if (this.renderer) {
       this.mountCanvas();
+      this.findBackdrop();
       if (this.onPointerDown) {
         this.container.addEventListener('pointerdown', this.onPointerDown);
         this.container.addEventListener('pointermove', this.onPointerMove);
@@ -1182,6 +1312,8 @@ export class ThreeUniverse {
 
     const now = performance.now();
     const t = now / 1000;
+    const dt = this.lastFrameTime ? Math.min(0.25, (now - this.lastFrameTime) / 1000) : 1 / 60;
+    this.lastFrameTime = now;
     const still = this.reducedMotion;
 
     this.islandMeshes.forEach(mesh => {
@@ -1193,6 +1325,12 @@ export class ThreeUniverse {
       const s = current + (lift - current) * 0.2;
       mesh.scale.set(d.size * s * mirror, d.size * s, 1);
       mesh.position.set(d.baseX, d.baseY + bob, 0);
+      if (mesh.material) {
+        // While one island is in focus, the others step back.
+        const base = d.baseOpacity == null ? 1 : d.baseOpacity;
+        const target = this.selectedId && this.selectedId !== d.id ? base * 0.5 : base;
+        mesh.material.opacity += (target - mesh.material.opacity) * Math.min(1, dt * 6);
+      }
       if (this.theme === 'dark' && d.lantern) {
         d.lantern.material.opacity = 0.75 + Math.sin(t * 2.3 + d.phase) * 0.15;
       }
@@ -1217,10 +1355,13 @@ export class ThreeUniverse {
     this.updateTrail();
     this.updateIslandGlints(t);
 
-    this.pan.x += (this.panTarget.x - this.pan.x) * 0.08;
-    this.pan.y += (this.panTarget.y - this.pan.y) * 0.08;
-    this.pan.zoom += (this.panTarget.zoom - this.pan.zoom) * 0.08;
+    // Time-based easing (same feel at any frame rate); a cut instead of a glide for reduced motion.
+    const ease = still ? 1 : 1 - Math.pow(1 - 0.075, dt * 60);
+    this.pan.x += (this.panTarget.x - this.pan.x) * ease;
+    this.pan.y += (this.panTarget.y - this.pan.y) * ease;
+    this.pan.zoom += (this.panTarget.zoom - this.pan.zoom) * ease;
     this.updateCamera();
+    this.syncBackdrop();
     this.updateEffects(now);
 
     this.renderer.render(this.scene, this.camera);

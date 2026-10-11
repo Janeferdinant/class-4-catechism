@@ -1,0 +1,703 @@
+/* ==========================================================================
+   GLASS SYSTEM
+   Soft light glass in the light theme, dark glass in the night theme.
+
+   Four tiers, applied selectively:
+     nav      header, mobile header, bottom navigation, map filter bar
+     float    panels and cards floating over the map artwork
+     modal    details drawer, settings popup, console sheet, dialogs, toasts
+     content  reading cards (lessons, slides, exams, quiz, mobile cards)
+   plus controls (pills, tabs, answer rows) with a soft fill, an edge light,
+   and a cursor-following highlight.
+
+   Blur is only used where artwork or scrolling content sits behind a surface.
+   Content cards rest on a soft ambient background, so a tint and an edge light
+   are enough there (and much cheaper than stacking blurs). Loaded after
+   main.css and mobile.css so these rules win at equal specificity.
+   ========================================================================== */
+
+@property --glass-hl {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+:root {
+  --glass-blur-nav: 18px;
+  --glass-blur-float: 22px;
+  --glass-blur-modal: 26px;
+  --glass-saturate: 165%;
+  --glass-radius-control: 999px;
+  --ease-glass: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-glass: 220ms;
+}
+
+/* Soft light glass */
+[data-theme="light"] {
+  --gl-nav: rgba(255, 255, 255, 0.66);
+  --gl-float: rgba(255, 255, 255, 0.58);
+  --gl-modal: rgba(255, 255, 255, 0.78);
+  --gl-content: rgba(255, 255, 255, 0.64);
+  --gl-inset: rgba(255, 255, 255, 0.55);
+  --gl-control: rgba(255, 255, 255, 0.62);
+  --gl-control-hover: rgba(255, 255, 255, 0.92);
+  --gl-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.14) 38%, rgba(255, 255, 255, 0) 62%);
+  --gl-stroke: rgba(30, 47, 85, 0.09);
+  --gl-stroke-strong: rgba(30, 47, 85, 0.16);
+  --gl-stroke-accent: rgba(214, 146, 38, 0.55);
+  --gl-edge: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  --gl-shadow-1: 0 1px 2px rgba(30, 47, 85, 0.06), 0 4px 12px -4px rgba(30, 47, 85, 0.12);
+  --gl-shadow-2: 0 2px 6px rgba(30, 47, 85, 0.05), 0 16px 40px -14px rgba(30, 47, 85, 0.22);
+  --gl-shadow-3: 0 4px 12px rgba(30, 47, 85, 0.06), 0 30px 70px -20px rgba(30, 47, 85, 0.32);
+  --gl-highlight: 255, 255, 255;
+  --gl-highlight-strength: 0.75;
+  --gl-text: #1e2f55;
+  --gl-text-muted: #4f6280;
+  --gl-gold-text: #8f5b06;
+  --gl-scrim: rgba(30, 47, 85, 0.22);
+  --gl-ambient:
+    radial-gradient(60vmax 45vmax at 6% -4%, rgba(255, 206, 132, 0.6), transparent 62%),
+    radial-gradient(55vmax 45vmax at 102% 16%, rgba(150, 200, 255, 0.58), transparent 62%),
+    radial-gradient(55vmax 42vmax at 38% 104%, rgba(255, 232, 196, 0.6), transparent 66%);
+}
+
+/* Dark glass */
+[data-theme="dark"] {
+  --gl-nav: rgba(8, 21, 46, 0.62);
+  --gl-float: rgba(13, 31, 64, 0.5);
+  --gl-modal: rgba(9, 23, 50, 0.8);
+  --gl-content: rgba(15, 35, 72, 0.6);
+  --gl-inset: rgba(255, 255, 255, 0.045);
+  --gl-control: rgba(255, 255, 255, 0.06);
+  --gl-control-hover: rgba(255, 255, 255, 0.12);
+  --gl-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 38%, rgba(255, 255, 255, 0) 62%);
+  --gl-stroke: rgba(160, 190, 240, 0.14);
+  --gl-stroke-strong: rgba(160, 190, 240, 0.26);
+  --gl-stroke-accent: rgba(232, 199, 120, 0.55);
+  --gl-edge: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+  --gl-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 14px -6px rgba(0, 0, 0, 0.45);
+  --gl-shadow-2: 0 2px 8px rgba(0, 0, 0, 0.28), 0 20px 44px -16px rgba(0, 0, 0, 0.6);
+  --gl-shadow-3: 0 6px 16px rgba(0, 0, 0, 0.32), 0 34px 80px -24px rgba(0, 0, 0, 0.72);
+  --gl-highlight: 190, 215, 255;
+  --gl-highlight-strength: 0.16;
+  --gl-text: #f2f6ff;
+  --gl-text-muted: #b3c4dd;
+  --gl-gold-text: #f2c66d;
+  --gl-scrim: rgba(2, 6, 16, 0.5);
+  --gl-ambient:
+    radial-gradient(60vmax 45vmax at -2% -6%, rgba(42, 96, 186, 0.36), transparent 62%),
+    radial-gradient(50vmax 40vmax at 104% 24%, rgba(232, 199, 120, 0.12), transparent 60%),
+    radial-gradient(62vmax 46vmax at 50% 108%, rgba(28, 62, 140, 0.42), transparent 66%);
+}
+
+/* Smaller blur radii on phones: cheaper to composite, and surfaces are smaller */
+@media (max-width: 768px) {
+  :root {
+    --glass-blur-nav: 14px;
+    --glass-blur-float: 16px;
+    --glass-blur-modal: 20px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Ambient light behind every view, so translucent surfaces have something
+   soft to pick up. Static (no animation) and behind all content.
+   -------------------------------------------------------------------------- */
+body {
+  isolation: isolate; /* keeps the ambient layer above the page background in every layout */
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gl-ambient);
+}
+
+/* Thin scrollbars that follow the theme (scrollbar-color is inherited) */
+:root {
+  scrollbar-color: var(--gl-stroke-strong) transparent;
+}
+
+.sheet-card.settings-popup-card,
+.classroom-sidebar,
+.three-node-drawer,
+.mob-three-node-drawer,
+.mob-agent-sheet {
+  scrollbar-width: thin;
+}
+
+/* --------------------------------------------------------------------------
+   Tier: navigation
+   -------------------------------------------------------------------------- */
+[data-theme] .app-header,
+[data-theme] .mobile-app-header,
+[data-theme] .mob-bottom-nav,
+[data-theme] .universe-filter-bar {
+  background: var(--gl-sheen), var(--gl-nav);
+  backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturate));
+  border: 1px solid var(--gl-stroke);
+  box-shadow: var(--gl-edge), var(--gl-shadow-2);
+}
+
+/* Full-width bars only need the edge that faces the content */
+[data-theme] .mobile-app-header {
+  border-width: 0 0 1px;
+  box-shadow: inset 0 -1px 0 rgba(var(--gl-highlight), 0.08), var(--gl-shadow-1);
+}
+
+[data-theme] .mob-bottom-nav {
+  border-width: 1px 0 0;
+  box-shadow: inset 0 1px 0 rgba(var(--gl-highlight), 0.12), 0 -8px 24px -12px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme] .universe-filter-bar {
+  box-shadow: var(--gl-edge), var(--gl-shadow-1);
+}
+
+/* Light theme mobile bars: navy text and a crimson title, as in the light mockup */
+[data-theme="light"] .mob-title,
+[data-theme="light"] .mob-title-serif {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--brand-title);
+}
+
+[data-theme="light"] .mob-action-btn {
+  background: var(--gl-control);
+  border-color: var(--gl-stroke-strong);
+  color: var(--gl-text);
+  box-shadow: var(--gl-edge);
+}
+
+[data-theme="light"] .mob-star-badge {
+  background: rgba(233, 162, 59, 0.14);
+  border-color: rgba(214, 146, 38, 0.45);
+  color: var(--gl-gold-text);
+}
+
+[data-theme="light"] .mob-nav-btn {
+  color: var(--gl-text-muted);
+}
+
+[data-theme="light"] .mob-nav-btn.active {
+  color: var(--gl-gold-text);
+}
+
+/* Active tab sits in a small glass capsule */
+.mob-nav-btn {
+  position: relative;
+  isolation: isolate;
+}
+
+.mob-nav-btn.active::before {
+  content: '';
+  position: absolute;
+  inset: 4px 10px;
+  z-index: -1;
+  border-radius: 14px;
+  background: rgba(233, 162, 59, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(233, 162, 59, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   Tier: float (over the map artwork)
+   The Explore card, console and live stream keep their own layered recipe
+   (main.css); the feature cards under the map join the same material.
+   -------------------------------------------------------------------------- */
+[data-theme] .hero-nav-card {
+  background: var(--gl-sheen), var(--gl-float);
+  backdrop-filter: blur(var(--glass-blur-float)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-float)) saturate(var(--glass-saturate));
+  border: 1px solid var(--gl-stroke);
+  box-shadow: var(--gl-edge), var(--gl-shadow-2);
+}
+
+[data-theme] .hero-nav-card.active-card {
+  border-color: var(--gl-stroke-accent);
+  box-shadow: var(--gl-edge), var(--gl-shadow-2), 0 0 0 1px var(--gl-stroke-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Tier: modal (drawers, sheets, dialogs, toasts)
+   -------------------------------------------------------------------------- */
+[data-theme] .three-node-drawer,
+[data-theme] .mob-agent-sheet,
+[data-theme] .gemini-modal-card,
+[data-theme] .app-toast-pill {
+  background: var(--gl-sheen), var(--gl-modal);
+  backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate));
+  border: 1px solid var(--gl-stroke);
+  box-shadow: var(--gl-edge), var(--gl-shadow-3);
+}
+
+/* Mobile details sheet: half height, so the island the map zoomed into stays in
+   view above it. mobile.css styles it with !important, so these must too. */
+[data-theme] .mob-three-node-drawer {
+  background: var(--gl-sheen), var(--gl-modal) !important;
+  backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate)) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate)) !important;
+  border: 1px solid var(--gl-stroke) !important;
+  border-top: 1px solid var(--gl-stroke-accent) !important;
+  border-bottom: 0 !important;
+  box-shadow: var(--gl-edge), 0 -18px 40px -14px rgba(0, 0, 0, 0.35) !important;
+  max-height: min(50vh, calc(100vh - 132px)) !important;
+}
+
+/* Short phones: a slightly shorter sheet keeps the larger islands in view */
+@media (max-height: 720px) {
+  [data-theme] .mob-three-node-drawer {
+    max-height: min(42vh, calc(100vh - 132px)) !important;
+  }
+}
+
+[data-theme] .mob-agent-backdrop,
+[data-theme] .gemini-modal-backdrop {
+  background: var(--gl-scrim);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Settings popup. mobile.css styles it with !important, so these must too. */
+[data-theme] .sheet-backdrop {
+  background: var(--gl-scrim) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+[data-theme] .sheet-card.settings-popup-card,
+[data-theme] .popup-caret {
+  background: var(--gl-sheen), var(--gl-modal) !important;
+  backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate)) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-modal)) saturate(var(--glass-saturate)) !important;
+  border: 1px solid var(--gl-stroke-strong) !important;
+}
+
+[data-theme] .sheet-card.settings-popup-card {
+  box-shadow: var(--gl-edge), var(--gl-shadow-3) !important;
+}
+
+/* The popup used to be navy in both themes; in the light theme its contents
+   now sit on light glass, so they need light-theme colors. */
+[data-theme="light"] .settings-popup-card {
+  color: var(--gl-text);
+}
+
+[data-theme="light"] .settings-popup-card .sheet-header .sheet-title-serif {
+  color: var(--brand-title) !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-icon-cross,
+[data-theme="light"] .settings-popup-card .sheet-section-title,
+[data-theme="light"] .settings-popup-card .credit-title,
+[data-theme="light"] .settings-popup-card #sheet-speed-value {
+  color: var(--gl-gold-text) !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-sublabel,
+[data-theme="light"] .settings-popup-card .sheet-speed-end,
+[data-theme="light"] .settings-popup-card .sheet-row,
+[data-theme="light"] .settings-popup-card .credit-dept,
+[data-theme="light"] .settings-popup-card .credit-sub {
+  color: var(--gl-text-muted) !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-header h3,
+[data-theme="light"] .settings-popup-card .sheet-stars-info,
+[data-theme="light"] .settings-popup-card .credit-name {
+  color: var(--gl-text) !important;
+}
+
+[data-theme="light"] .settings-popup-card .btn-close-sheet,
+[data-theme="light"] .settings-popup-card .sheet-pill-btn,
+[data-theme="light"] .settings-popup-card .sheet-toggle-switch,
+[data-theme="light"] .settings-popup-card .sheet-dest-btn {
+  background: var(--gl-control) !important;
+  border: 1px solid var(--gl-stroke-strong) !important;
+  color: var(--gl-text) !important;
+  box-shadow: var(--gl-edge);
+}
+
+[data-theme="light"] .settings-popup-card .sheet-dest-btn:hover,
+[data-theme="light"] .settings-popup-card .sheet-dest-btn.active,
+[data-theme="light"] .settings-popup-card .sheet-pill-btn.active {
+  background: rgba(233, 162, 59, 0.16) !important;
+  border-color: var(--gl-stroke-accent) !important;
+  color: var(--gl-gold-text) !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-toggle-switch.active {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border-color: rgba(5, 150, 105, 0.55) !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-btn-secondary {
+  color: #b42318 !important;
+}
+
+[data-theme="light"] .settings-popup-card .sheet-section,
+[data-theme="light"] .settings-popup-card .sheet-header {
+  border-color: var(--gl-stroke) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Tier: content (reading surfaces). No blur: they rest on the ambient light.
+   Higher opacity than the floating tiers so long text stays easy to read.
+   -------------------------------------------------------------------------- */
+[data-theme] .classroom-sidebar,
+[data-theme] .story-lesson-card,
+[data-theme] .slide-presentation-card,
+[data-theme] .solver-filter-bar,
+[data-theme] .solver-split-card,
+[data-theme] .quiz-stage-card,
+[data-theme] .mob-ch-card,
+[data-theme] .mob-compact-mentor-under-hero,
+[data-theme] .mob-slide-card,
+[data-theme] .mob-paper-meta-card,
+[data-theme] .mob-q-details,
+[data-theme] .mob-quiz-card,
+[data-theme] .mob-story-lesson-card {
+  background: var(--gl-sheen), var(--gl-content);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--gl-stroke);
+  box-shadow: var(--gl-edge), var(--gl-shadow-2);
+}
+
+/* Glass inside glass reads as clutter: the quiz view's outer wrapper becomes
+   plain layout and only the question card is a glass surface. */
+[data-theme] #mob-quiz-card-container {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Bars and panels nested inside a content card: a quieter inset surface */
+[data-theme] .shared-audio-bar {
+  background: var(--gl-inset);
+  border: 1px solid var(--gl-stroke);
+  box-shadow: var(--gl-edge);
+}
+
+/* --------------------------------------------------------------------------
+   Controls: soft fill for neutral (non-selected) states only, so active,
+   correct and wrong states keep their colours.
+   -------------------------------------------------------------------------- */
+[data-theme] .quiz-option-row:not(.option-state-correct):not(.option-state-incorrect),
+[data-theme] .mob-quiz-option-btn:not(.correct-choice):not(.wrong-choice),
+[data-theme] .story-tab-pill:not(.active),
+[data-theme] .btn-audio-pill:not(.active):not(.btn-audio-stop),
+[data-theme] .btn-voice-read-aloud,
+[data-theme] .paper-tile-btn:not(.active),
+[data-theme] .mob-paper-pill:not(.active),
+[data-theme] .btn-audio-mini:not(.btn-audio-mini-stop) {
+  background: var(--gl-control);
+  border-color: var(--gl-stroke-strong);
+  box-shadow: var(--gl-edge), var(--gl-shadow-1);
+}
+
+[data-theme] .quiz-option-row:not(.option-state-correct):not(.option-state-incorrect):hover:not(:disabled),
+[data-theme] .story-tab-pill:not(.active):hover,
+[data-theme] .btn-audio-pill:not(.active):not(.btn-audio-stop):hover,
+[data-theme] .btn-voice-read-aloud:hover,
+[data-theme] .paper-tile-btn:not(.active):hover,
+[data-theme] .btn-audio-mini:not(.btn-audio-mini-stop):hover {
+  background: var(--gl-control-hover);
+  border-color: var(--gl-stroke-accent);
+}
+
+/* Micro-interactions: lift on hover, settle on press */
+.quiz-option-row,
+.mob-quiz-option-btn,
+.story-tab-pill,
+.btn-audio-pill,
+.btn-voice-read-aloud,
+.btn-clue-pill,
+.paper-tile-btn,
+.mob-paper-pill,
+.btn-audio-mini,
+.filter-chip,
+.slide-thumb-pill,
+.mob-btn-audio-pill,
+.mob-btn-open-lesson,
+.mob-action-btn,
+.hero-nav-card,
+.btn-award-star-pill,
+.btn-next-question,
+.btn-start-exploring {
+  transition:
+    transform var(--dur-glass) var(--ease-glass),
+    background-color var(--dur-glass) var(--ease-glass),
+    border-color var(--dur-glass) var(--ease-glass),
+    box-shadow var(--dur-glass) var(--ease-glass),
+    color var(--dur-glass) var(--ease-glass),
+    --glass-hl 260ms var(--ease-glass);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .quiz-option-row:hover:not(:disabled),
+  .story-tab-pill:hover,
+  .btn-audio-pill:hover,
+  .btn-voice-read-aloud:hover,
+  .btn-clue-pill:hover,
+  .paper-tile-btn:hover,
+  .btn-audio-mini:hover,
+  .filter-chip:hover,
+  .slide-thumb-pill:hover,
+  .btn-award-star-pill:hover:not(:disabled),
+  .btn-next-question:hover:not(:disabled),
+  .btn-start-exploring:hover {
+    transform: translateY(-1px);
+  }
+
+  .hero-nav-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--gl-edge), var(--gl-shadow-3);
+  }
+}
+
+.quiz-option-row:active:not(:disabled),
+.mob-quiz-option-btn:active:not(:disabled),
+.story-tab-pill:active,
+.btn-audio-pill:active,
+.btn-voice-read-aloud:active,
+.btn-clue-pill:active,
+.paper-tile-btn:active,
+.mob-paper-pill:active,
+.btn-audio-mini:active,
+.filter-chip:active,
+.slide-thumb-pill:active,
+.mob-btn-audio-pill:active,
+.mob-btn-open-lesson:active,
+.mob-action-btn:active,
+.hero-nav-card:active,
+.btn-award-star-pill:active:not(:disabled),
+.btn-next-question:active:not(:disabled),
+.btn-start-exploring:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 90ms;
+}
+
+/* Liquid highlight: a soft light that follows the pointer across a control.
+   It sits between the control's fill and its label (z-index -1 inside an
+   isolated control), so text contrast is never reduced. GlassEffects.js sets
+   --mx / --my; --glass-hl fades it in and out. */
+.quiz-option-row,
+.story-tab-pill,
+.btn-audio-pill,
+.btn-voice-read-aloud,
+.paper-tile-btn,
+.btn-audio-mini,
+.hero-nav-card,
+.mob-quiz-option-btn,
+.mob-paper-pill {
+  position: relative;
+  isolation: isolate;
+}
+
+.quiz-option-row::after,
+.story-tab-pill::after,
+.btn-audio-pill::after,
+.btn-voice-read-aloud::after,
+.paper-tile-btn::after,
+.btn-audio-mini::after,
+.hero-nav-card::after,
+.mob-quiz-option-btn::after,
+.mob-paper-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(var(--gl-highlight), calc(var(--gl-highlight-strength) * var(--glass-hl))) 0%,
+    transparent 70%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .quiz-option-row:hover:not(:disabled),
+  .story-tab-pill:hover,
+  .btn-audio-pill:hover,
+  .btn-voice-read-aloud:hover,
+  .paper-tile-btn:hover,
+  .btn-audio-mini:hover,
+  .hero-nav-card:hover {
+    --glass-hl: 1;
+  }
+}
+
+/* Consistent, visible keyboard focus on glass */
+.quiz-option-row:focus-visible,
+.mob-quiz-option-btn:focus-visible,
+.story-tab-pill:focus-visible,
+.btn-audio-pill:focus-visible,
+.btn-voice-read-aloud:focus-visible,
+.btn-clue-pill:focus-visible,
+.paper-tile-btn:focus-visible,
+.mob-paper-pill:focus-visible,
+.btn-audio-mini:focus-visible,
+.slide-thumb-pill:focus-visible,
+.mob-btn-audio-pill:focus-visible,
+.mob-btn-open-lesson:focus-visible,
+.mob-nav-btn:focus-visible,
+.sheet-dest-btn:focus-visible,
+.sheet-pill-btn:focus-visible,
+.tab-btn:focus-visible,
+.hero-nav-card:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility and fallbacks
+   -------------------------------------------------------------------------- */
+
+/* No backdrop-filter support: near-opaque surfaces instead of see-through ones */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-theme="light"] {
+    --gl-nav: rgba(255, 255, 255, 0.96);
+    --gl-float: rgba(255, 255, 255, 0.94);
+    --gl-modal: rgba(255, 255, 255, 0.98);
+  }
+
+  [data-theme="dark"] {
+    --gl-nav: rgba(8, 21, 46, 0.96);
+    --gl-float: rgba(13, 31, 64, 0.94);
+    --gl-modal: rgba(9, 23, 50, 0.98);
+  }
+}
+
+/* Visitors who ask for less transparency get solid surfaces and no blur */
+@media (prefers-reduced-transparency: reduce) {
+  [data-theme="light"] {
+    --gl-nav: #ffffff;
+    --gl-float: #ffffff;
+    --gl-modal: #ffffff;
+    --gl-content: #ffffff;
+    --gl-control: #f4f7fb;
+    --gl-ambient: none;
+  }
+
+  [data-theme="dark"] {
+    --gl-nav: #0b1b38;
+    --gl-float: #0d1f40;
+    --gl-modal: #0b1b38;
+    --gl-content: #10244a;
+    --gl-control: #16305c;
+    --gl-ambient: none;
+  }
+
+  [data-theme] .app-header,
+  [data-theme] .mobile-app-header,
+  [data-theme] .mob-bottom-nav,
+  [data-theme] .universe-filter-bar,
+  [data-theme] .hero-nav-card,
+  [data-theme] .three-node-drawer,
+  [data-theme] .mob-agent-sheet,
+  [data-theme] .gemini-modal-card,
+  [data-theme] .app-toast-pill,
+  [data-theme] .hero-floating-card,
+  [data-theme] .explore-reopen-pill,
+  [data-theme] .agent-console-panel,
+  [data-theme] .live-stream-box {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  [data-theme="light"] .hero-floating-card,
+  [data-theme="light"] .explore-reopen-pill,
+  [data-theme="light"] .agent-console-panel,
+  [data-theme="light"] .live-stream-box {
+    background: #ffffff;
+  }
+
+  [data-theme="dark"] .hero-floating-card,
+  [data-theme="dark"] .explore-reopen-pill,
+  [data-theme="dark"] .agent-console-panel,
+  [data-theme="dark"] .live-stream-box {
+    background: #0d1f40;
+  }
+
+  [data-theme] .sheet-card.settings-popup-card,
+  [data-theme] .popup-caret,
+  [data-theme] .mob-three-node-drawer {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Higher contrast: firmer edges and nearly opaque surfaces */
+@media (prefers-contrast: more) {
+  [data-theme="light"] {
+    --gl-stroke: rgba(30, 47, 85, 0.35);
+    --gl-stroke-strong: rgba(30, 47, 85, 0.5);
+    --gl-content: rgba(255, 255, 255, 0.96);
+    --gl-control: rgba(255, 255, 255, 0.96);
+  }
+
+  [data-theme="dark"] {
+    --gl-stroke: rgba(200, 220, 255, 0.4);
+    --gl-stroke-strong: rgba(200, 220, 255, 0.55);
+    --gl-content: rgba(12, 28, 58, 0.96);
+    --gl-control: rgba(255, 255, 255, 0.14);
+  }
+}
+
+/* Windows high contrast: let the system colours draw every edge */
+@media (forced-colors: active) {
+  [data-theme] .app-header,
+  [data-theme] .mobile-app-header,
+  [data-theme] .mob-bottom-nav,
+  [data-theme] .hero-nav-card,
+  [data-theme] .classroom-sidebar,
+  [data-theme] .story-lesson-card,
+  [data-theme] .quiz-stage-card,
+  [data-theme] .solver-split-card,
+  [data-theme] .sheet-card.settings-popup-card {
+    border: 1px solid CanvasText !important;
+  }
+
+  .quiz-option-row::after,
+  .story-tab-pill::after,
+  .btn-audio-pill::after,
+  .btn-voice-read-aloud::after,
+  .paper-tile-btn::after,
+  .btn-audio-mini::after,
+  .hero-nav-card::after,
+  .mob-quiz-option-btn::after,
+  .mob-paper-pill::after,
+  .mob-nav-btn.active::before {
+    display: none;
+  }
+}
+
+/* Reduced motion: keep the glass, drop the movement */
+@media (prefers-reduced-motion: reduce) {
+  .quiz-option-row,
+  .mob-quiz-option-btn,
+  .story-tab-pill,
+  .btn-audio-pill,
+  .btn-voice-read-aloud,
+  .btn-clue-pill,
+  .paper-tile-btn,
+  .mob-paper-pill,
+  .btn-audio-mini,
+  .filter-chip,
+  .slide-thumb-pill,
+  .mob-btn-audio-pill,
+  .mob-btn-open-lesson,
+  .mob-action-btn,
+  .hero-nav-card,
+  .btn-award-star-pill,
+  .btn-next-question,
+  .btn-start-exploring {
+    transform: none !important;
+    transition-property: background-color, border-color, box-shadow, color;
+  }
+}
