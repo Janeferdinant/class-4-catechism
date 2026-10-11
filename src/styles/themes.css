@@ -38,6 +38,22 @@
   --console-panel-bg: linear-gradient(180deg, #13254a 0%, #0b1a36 100%);
   --console-border: rgba(232, 199, 120, 0.35);
   --console-header-gold: #f2c66d;
+
+  /* Aliases for token names used by older component styles. Without these,
+     every declaration that referenced them was silently dropped. */
+  --font-family-mal: var(--font-family-malayalam);
+  --font-brand: var(--font-family-serif);
+  --surface-color: var(--bg-surface);
+  --brand-title-color: var(--brand-title);
+  --brand-gradient: var(--gold-gradient);
+  --color-amber: var(--accent-gold);
+  --color-gold: var(--accent-gold);
+  --color-blue: var(--accent-primary);
+  --border-color: var(--border-medium);
+  --correct-bg: var(--status-correct-bg);
+  --correct-border: var(--status-correct-border);
+  --accent-green: #4caf50;
+  --accent-rose: #e5484d;
 }
 
 /* ==========================================================================

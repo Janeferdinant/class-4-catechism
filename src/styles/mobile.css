@@ -43,16 +43,17 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 /* Mobile App Header (Fixed 54px - Always Visible on Scroll) */
+/* Navy in both themes, per the mobile mockups */
 .mobile-app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 54px;
-  background: rgba(13, 17, 27, 0.96);
+  height: 56px;
+  background: rgba(9, 27, 54, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-accent);
+  border-bottom: 1px solid rgba(237, 198, 111, 0.35);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -91,28 +92,39 @@ body.mobile-preview-active .mob-bottom-nav {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(242, 198, 109, 0.14);
+  border: 1px solid rgba(242, 198, 109, 0.45);
   border-radius: 999px;
   padding: 4px 10px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--color-amber);
+  color: #f2c66d;
 }
 
 .mob-action-btn {
-  background: var(--glass-bg);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-md);
-  width: 38px;
-  height: 38px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(237, 198, 111, 0.35);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: #f1f6ff;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+.mob-action-btn:focus-visible {
+  outline: 3px solid #8bceff;
+  outline-offset: 2px;
+}
+
+/* The theme button shows the theme it will switch to */
+[data-theme="light"] .mob-icon-sun,
+[data-theme="dark"] .mob-icon-moon {
+  display: none;
 }
 
 /* Mobile Main Workspace (Safe clearance for fixed top header and fixed bottom nav) */
@@ -144,25 +156,117 @@ body.mobile-preview-active .mob-bottom-nav {
   gap: 10px;
 }
 
+/* Welcome hero (mockup 07): title on top, illustration, one full-width call to action */
 .celestial-mob-hero {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
-  padding: 22px 18px;
-  background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.45) 0%, rgba(5, 11, 24, 0.88) 100%), url('../../assets/generated/adventure_map_dark.jpg');
+  border-radius: 22px;
+  padding: 22px 16px 16px;
+  min-height: 400px;
+  background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.6) 0%, rgba(5, 11, 24, 0.05) 42%, rgba(5, 11, 24, 0.55) 100%), url('../../assets/generated/adventure_map_dark.jpg');
   background-size: cover;
-  background-position: center;
-  border: 1px solid rgba(232, 199, 120, 0.35);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(140, 203, 255, 0.15);
+  background-position: 80% 30%;
+  border: 1px solid rgba(237, 198, 111, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  text-align: center;
+  gap: 0;
 }
 
 [data-theme="light"] .celestial-mob-hero {
-  background-image: linear-gradient(180deg, rgba(255, 252, 244, 0.5) 0%, rgba(255, 252, 244, 0.94) 100%), url('../../assets/generated/adventure_map_light.jpg');
-  border: 1px solid rgba(217, 182, 111, 0.4);
-  box-shadow: 0 12px 28px rgba(40, 65, 94, 0.1), 0 0 18px rgba(217, 182, 111, 0.15);
+  background-image: linear-gradient(180deg, rgba(255, 252, 244, 0.7) 0%, rgba(255, 252, 244, 0) 42%, rgba(255, 252, 244, 0.45) 100%), url('../../assets/generated/adventure_map_light.jpg');
+  border: 1px solid rgba(217, 166, 58, 0.45);
+  box-shadow: 0 12px 28px rgba(40, 65, 94, 0.12);
+}
+
+.celestial-mob-hero .mob-hero-content {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Particle canvases in the welcome card and behind the touch map */
+.mob-particle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.celestial-mob-hero .mob-hero-figure,
+.celestial-mob-hero .mob-btn-3d-toggle,
+.mob-3d-view-box .mob-3d-hint,
+.mob-3d-view-box .mob-three-container {
+  position: relative;
+  z-index: 1;
+}
+
+.mob-hero-kicker {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .mob-hero-kicker {
+  color: #18365b;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.9);
+}
+
+.celestial-mob-hero .mob-hero-headline {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #f2c66d;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="light"] .celestial-mob-hero .mob-hero-headline {
+  color: #a3262a;
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.95);
+}
+
+.celestial-mob-hero .mob-hero-subheadline {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #e6edf8;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] .celestial-mob-hero .mob-hero-subheadline {
+  color: #18365b;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95);
+}
+
+.mob-hero-mal {
+  font-family: var(--font-family-malayalam);
+  line-height: 1.6;
+}
+
+.mob-hero-figure {
+  width: 86%;
+  max-width: 320px;
+  margin: 4px auto -4px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+
+.mob-hero-figure.feather-edges {
+  -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 70%, transparent 100%);
+}
+
+[data-theme="dark"] .mob-hero-figure {
+  filter: brightness(0.92) saturate(0.95);
 }
 
 .mob-hero-content {
@@ -212,13 +316,15 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 .mob-btn-3d-toggle {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
-  border: 1px solid #fbbf24;
+  position: relative;
+  width: 100%;
+  background: var(--gold-gradient);
+  border: none;
   border-radius: 999px;
-  padding: 10px 22px;
-  font-size: 0.92rem;
+  padding: 12px 22px;
+  font-size: 0.98rem;
   font-weight: 700;
-  color: #050b18;
+  color: #0b2d58;
   cursor: pointer;
   min-height: 46px;
   display: inline-flex;
@@ -233,6 +339,7 @@ body.mobile-preview-active .mob-bottom-nav {
   box-shadow: 0 6px 18px rgba(245, 158, 11, 0.55);
 }
 
+/* Touch map box: the same painted sky as the desktop map sits behind the islands */
 .mob-3d-view-box {
   position: relative;
   overflow: hidden;
@@ -241,19 +348,42 @@ body.mobile-preview-active .mob-bottom-nav {
   border-radius: var(--radius-lg);
 }
 
-.mob-3d-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 6px;
+.mob-3d-view-box.glass-panel {
+  background-size: cover;
+  background-position: 72% 40%;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
+[data-theme="light"] .mob-3d-view-box.glass-panel {
+  background-image: linear-gradient(180deg, rgba(234, 245, 255, 0.35), rgba(255, 252, 244, 0.1)), url('../../assets/generated/adventure_map_light.jpg');
+}
+
+[data-theme="dark"] .mob-3d-view-box.glass-panel {
+  background-image: linear-gradient(180deg, rgba(5, 11, 24, 0.5), rgba(5, 11, 24, 0.2)), url('../../assets/generated/adventure_map_dark.jpg');
+}
+
+.mob-3d-hint {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(9, 27, 54, 0.78);
+  color: #f1f6ff;
+}
+
+/* Portrait map: tall enough for the vertical island layout; vertical swipes still scroll the page */
 .mob-three-container {
+  position: relative;
   width: 100%;
-  height: 280px;
+  height: 560px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .mob-three-node-drawer {
@@ -269,7 +399,7 @@ body.mobile-preview-active .mob-bottom-nav {
   box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.85) !important;
   padding: 16px 16px 20px 16px !important;
   z-index: 100000 !important;
-  max-height: 80vh !important;
+  max-height: calc(100vh - 56px - 60px - 16px) !important;
   overflow-y: auto !important;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
@@ -1895,10 +2025,14 @@ body.mobile-preview-active .mob-bottom-nav {
   white-space: nowrap;
 }
 
+body:not(.audio-playing) .mob-header-audio-chip {
+  display: none !important;
+}
+
 .mob-header-audio-chip {
-  background: rgba(245, 158, 11, 0.2) !important;
-  border: 1px solid rgba(242, 198, 109, 0.4) !important;
-  color: var(--color-gold, #F2C66D) !important;
+  background: #d64545 !important;
+  border: 1px solid #d64545 !important;
+  color: #ffffff !important;
   font-size: 0.78rem !important;
   font-weight: 700 !important;
   width: auto !important;
@@ -1953,15 +2087,18 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 .mob-btn-console-toggle {
-  background: rgba(255, 255, 255, 0.08);
+  width: 100%;
+  margin-bottom: 14px;
+  background: rgba(9, 27, 54, 0.85);
   border: 1px solid rgba(232, 199, 120, 0.4);
   border-radius: 999px;
   padding: 10px 18px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--color-gold, #F2C66D);
+  color: #f2c66d;
   cursor: pointer;
   min-height: 46px;
+  gap: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2339,10 +2476,12 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-agent-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(5, 11, 24, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
+/* Console sheet: frosted glass that follows the theme (same recipe as the desktop console) */
 .mob-agent-sheet {
   position: fixed;
   bottom: 0;
@@ -2350,12 +2489,33 @@ body.mobile-preview-active .mob-bottom-nav {
   right: 0;
   max-height: 88vh;
   overflow-y: auto;
-  background: #0B1A36;
-  border-top: 1px solid rgba(232, 199, 120, 0.4);
   border-radius: 24px 24px 0 0;
   padding: 18px 16px 28px 16px;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-theme="light"] .mob-agent-sheet {
+  --panel-text: #13305a;
+  --panel-muted: #4f6684;
+  --panel-rule: rgba(19, 48, 90, 0.1);
+  --panel-row: rgba(255, 255, 255, 0.62);
+  --panel-accent: #93620c;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 247, 255, 0.62) 100%);
+  border-top: 1px solid rgba(217, 166, 58, 0.45);
+  box-shadow: 0 -12px 32px rgba(44, 84, 124, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="dark"] .mob-agent-sheet {
+  --panel-text: #f1f6ff;
+  --panel-muted: #b3c4dd;
+  --panel-rule: rgba(255, 255, 255, 0.1);
+  --panel-row: rgba(255, 255, 255, 0.05);
+  --panel-accent: #f2c66d;
+  background: linear-gradient(170deg, rgba(26, 50, 98, 0.7) 0%, rgba(8, 20, 44, 0.6) 100%);
+  border-top: 1px solid rgba(237, 198, 111, 0.4);
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .mob-agent-header {
@@ -2374,16 +2534,16 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-agent-headline {
   font-family: var(--font-brand, 'Playfair Display', serif);
   font-size: 1.15rem;
-  color: var(--color-gold, #F2C66D);
+  color: var(--panel-text);
   margin: 0;
 }
 
 .mob-btn-close-agent {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  width: 32px;
-  height: 32px;
+  background: transparent;
+  border: 1px solid var(--panel-rule);
+  color: var(--panel-text);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -2404,8 +2564,8 @@ body.mobile-preview-active .mob-bottom-nav {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(232, 199, 120, 0.15);
+  background: var(--panel-row);
+  border: 1px solid var(--panel-rule);
   border-radius: 14px;
 }
 
@@ -2426,7 +2586,7 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-agent-name {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--panel-text);
   margin: 0 0 2px 0;
   white-space: nowrap;
   overflow: hidden;
@@ -2435,7 +2595,7 @@ body.mobile-preview-active .mob-bottom-nav {
 
 .mob-agent-role {
   font-size: 0.74rem;
-  color: #A9B7D0;
+  color: var(--panel-muted);
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -2464,8 +2624,8 @@ body.mobile-preview-active .mob-bottom-nav {
 }
 
 .mob-agent-stream-panel {
-  background: rgba(5, 11, 24, 0.75);
-  border: 1px solid rgba(232, 199, 120, 0.25);
+  background: var(--panel-row);
+  border: 1px solid var(--panel-rule);
   border-radius: 14px;
   padding: 12px 14px;
 }
@@ -2473,7 +2633,7 @@ body.mobile-preview-active .mob-bottom-nav {
 .mob-agent-stream-title {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-gold, #F2C66D);
+  color: var(--panel-accent);
   margin: 0 0 8px 0;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2481,8 +2641,7 @@ body.mobile-preview-active .mob-bottom-nav {
 
 .mob-agent-stream-content .stream-line {
   font-size: 0.78rem;
-  font-family: monospace;
-  color: #E2E8F0;
+  color: var(--panel-muted);
   margin: 4px 0;
   white-space: nowrap;
   overflow: hidden;

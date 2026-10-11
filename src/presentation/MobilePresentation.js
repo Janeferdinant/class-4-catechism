@@ -92,7 +92,8 @@ export class MobilePresentation {
       toggle3dBtn.addEventListener('click', () => {
         this.is3dOpen = !this.is3dOpen;
         box3d.style.display = this.is3dOpen ? 'block' : 'none';
-        toggle3dBtn.textContent = this.is3dOpen ? '❌ Close 3D Map' : '🌐 Open 3D Map View';
+        toggle3dBtn.innerHTML = this.is3dOpen ? 'Hide the Map <span aria-hidden="true">✕</span>' : 'Explore the Map <span aria-hidden="true">→</span>';
+        toggle3dBtn.setAttribute('aria-expanded', String(this.is3dOpen));
         if (this.is3dOpen && this.app?.threeUniverse) {
           const container = document.getElementById('mob-three-container');
           if (container && this.app.threeUniverse.renderer) {

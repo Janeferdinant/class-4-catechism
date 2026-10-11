@@ -69,6 +69,7 @@ class AppController {
     this.setupGeminiKeyUI();
     this.initMotionCanvas();
     this.initThreeUniverse();
+    this.restoreExploreCard();
     this.initSlidesView();
     this.initClassroomView();
     this.initSolverView();
@@ -101,7 +102,9 @@ class AppController {
 
   updateHeaderStars() {
     const starEl = document.getElementById('header-star-count');
-    if (starEl) starEl.textContent = `${this.starsCount} Stars`;
+    if (starEl) starEl.textContent = `${this.starsCount}`;
+    const badge = document.getElementById('header-star-badge');
+    if (badge) badge.setAttribute('aria-label', `${this.starsCount} stars collected`);
     if (this.mobilePres) this.mobilePres.updateStars(this.starsCount);
   }
 
@@ -170,8 +173,9 @@ class AppController {
       jesusCutout.style.display = theme === 'light' ? 'block' : 'none';
     }
 
-    if (this.heroAtmosphere) {
-      this.heroAtmosphere.setTheme(theme);
+    (this.atmospheres || []).forEach(a => a && a.setTheme(theme));
+    if (this.threeUniverse) {
+      this.threeUniverse.setTheme(theme);
     }
     const scriptureText = document.querySelector('.scripture-quote-text');
     const scriptureRef = document.querySelector('.scripture-ref-tag');
@@ -552,12 +556,14 @@ class AppController {
       this.motionCanvas.start();
 
       this.voiceover.onStartSpeaking = () => {
+        document.body.classList.add('audio-playing');
         this.motionCanvas.setAudioActive(true);
         const statusEl = document.getElementById('audio-indicator');
         if (statusEl) statusEl.textContent = '🔊 Leo is Speaking...';
       };
 
       this.voiceover.onEndSpeaking = () => {
+        document.body.classList.remove('audio-playing');
         this.motionCanvas.setAudioActive(false);
         const statusEl = document.getElementById('audio-indicator');
         if (statusEl) statusEl.textContent = '🔇 Audio Ready';
@@ -567,9 +573,26 @@ class AppController {
 
   /* ---------------- 3D Universe & Side-Drawer ---------------- */
   initThreeUniverse() {
-    const heroCanvas = document.getElementById('hero-particle-canvas');
-    if (heroCanvas && this.motionGraphics) {
-      this.heroAtmosphere = this.motionGraphics.attachAtmosphericSystem(heroCanvas, this.currentTheme);
+    // Particle atmospheres: desktop map (sky + foreground layers), mobile welcome card,
+    // mobile touch map. Hidden ones skip drawing automatically (zero size).
+    this.atmospheres = [];
+    if (this.motionGraphics) {
+      const heroCanvas = document.getElementById('hero-particle-canvas');
+      if (heroCanvas) {
+        this.heroAtmosphere = this.motionGraphics.attachAtmosphericSystem(heroCanvas, this.currentTheme, {
+          foreground: document.getElementById('hero-foreground-canvas'),
+          sun: { x: 0.68, y: 0.2 }
+        });
+        this.atmospheres.push(this.heroAtmosphere);
+      }
+      const mobHero = document.getElementById('mob-hero-particle-canvas');
+      if (mobHero) {
+        this.atmospheres.push(this.motionGraphics.attachAtmosphericSystem(mobHero, this.currentTheme, { density: 1.4, sun: { x: 0.62, y: 0.12 } }));
+      }
+      const mobMap = document.getElementById('mob-map-particle-canvas');
+      if (mobMap) {
+        this.atmospheres.push(this.motionGraphics.attachAtmosphericSystem(mobMap, this.currentTheme, { density: 1.2, sun: { x: 0.7, y: 0.1 } }));
+      }
     }
 
     const container = document.getElementById('three-canvas-container');
@@ -585,7 +608,8 @@ class AppController {
     if (!drawerData) return;
     this.sfx.playPop();
     if (this.heroAtmosphere) {
-      this.heroAtmosphere.spawnBurst();
+      const at = this.threeUniverse && this.threeUniverse.screenPositionOf(drawerData.nodeId);
+      this.heroAtmosphere.spawnBurst(at ? at.x : undefined, at ? at.y : undefined, 22);
     }
 
     const drawer = document.getElementById('three-node-drawer');
@@ -702,7 +726,7 @@ class AppController {
       mobDrawer.classList.remove('open');
       mobDrawer.style.display = 'none';
     }
-    if (this.threeUniverse) this.threeUniverse.isRotating = true;
+    if (this.threeUniverse) this.threeUniverse.resetView();
   }
 
   exploreChapterOne() {
@@ -713,12 +737,42 @@ class AppController {
     }
   }
 
+  /* Explore card: can be closed; a small pill brings it back. The choice is remembered. */
+  setExploreCardVisible(visible, { moveFocus = false } = {}) {
+    const card = document.getElementById('explore-card');
+    const pill = document.getElementById('btn-reopen-explore-card');
+    if (!card || !pill) return;
+    card.classList.toggle('is-dismissed', !visible);
+    card.setAttribute('aria-hidden', String(!visible));
+    pill.hidden = visible;
+    try { localStorage.setItem('explore-card-dismissed', visible ? '0' : '1'); } catch (_) {}
+    if (moveFocus) {
+      (visible ? document.getElementById('btn-start-exploring') : pill)?.focus();
+    }
+  }
+
+  dismissExploreCard() {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.setExploreCardVisible(false, { moveFocus: true });
+  }
+
+  reopenExploreCard() {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    this.setExploreCardVisible(true, { moveFocus: true });
+  }
+
+  restoreExploreCard() {
+    let dismissed = false;
+    try { dismissed = localStorage.getItem('explore-card-dismissed') === '1'; } catch (_) {}
+    if (dismissed) this.setExploreCardVisible(false);
+  }
+
   jumpFromDrawerToSlides(chNum) {
     this.sfx.playSparkle();
     this.closeUniverseDrawer();
     this.switchView('slides');
     if (this.slideDeck) {
-      this.slideDeck.currentIdx = (chNum - 1);
+      this.slideDeck.currentIndex = (chNum - 1);
       this.renderCurrentSlide();
     }
   }
@@ -747,7 +801,10 @@ class AppController {
       const box3d = document.getElementById('mob-3d-view-box');
       if (box3d) box3d.style.display = 'none';
       const toggle3dBtn = document.getElementById('mob-btn-toggle-3d');
-      if (toggle3dBtn) toggle3dBtn.textContent = '🌐 Open 3D Map View';
+      if (toggle3dBtn) {
+        toggle3dBtn.innerHTML = 'Explore the Map <span aria-hidden="true">→</span>';
+        toggle3dBtn.setAttribute('aria-expanded', 'false');
+      }
       this.mobilePres.jumpToChapterLesson(chNum);
     }
     this.switchView('classroom');
@@ -764,10 +821,13 @@ class AppController {
       const box3d = document.getElementById('mob-3d-view-box');
       if (box3d) box3d.style.display = 'none';
       const toggle3dBtn = document.getElementById('mob-btn-toggle-3d');
-      if (toggle3dBtn) toggle3dBtn.textContent = '🌐 Open 3D Map View';
+      if (toggle3dBtn) {
+        toggle3dBtn.innerHTML = 'Explore the Map <span aria-hidden="true">→</span>';
+        toggle3dBtn.setAttribute('aria-expanded', 'false');
+      }
       this.mobilePres.switchMobileView('solver');
       this.mobilePres.activePaperId = paperId;
-      this.mobilePres.renderExamSolver();
+      this.mobilePres.renderExamSolverView();
     }
     this.switchView('solver');
     this.renderPaperTabs();
@@ -1020,13 +1080,6 @@ class AppController {
     document.querySelectorAll('.audio-lang-pills .btn-audio-pill').forEach(b => b.classList.remove('active'));
   }
 
-  stopVoice() {
-    this.voiceover.stop();
-    this.resetAudioPlayerUI();
-    if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
-    this.showToast('🔇 Audio Stopped', '🛑');
-  }
-
   /* ---------------- Exam Solver View ---------------- */
   initSolverView() {
     this.renderPaperTabs();
@@ -1178,6 +1231,7 @@ class AppController {
   stopVoice() {
     this.sfx.playPop();
     this.voiceover.stop();
+    document.body.classList.remove('audio-playing');
     if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
     const indicator = document.getElementById('audio-indicator');
     if (indicator) indicator.textContent = '🔇 Audio Stopped';
@@ -1246,24 +1300,28 @@ class AppController {
 
   /* ---------------- Galileo Tracing Feed ---------------- */
   setupOrchestratorFeed() {
-    const feed = document.getElementById('agent-trace-feed');
-    if (!feed) return;
+    // Desktop console and mobile console panel show the same real events.
+    const feeds = ['agent-trace-feed', 'mob-agent-stream-lines']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+    if (!feeds.length) return;
+    feeds.forEach(feed => { feed.innerHTML = ''; });
 
+    // One short line per real orchestrator event; the newest three stay visible.
     this.orchestrator.onEvent((event) => {
       if (event.type === 'TRACE') {
         const trace = event.trace;
-        const card = document.createElement('div');
-        card.className = 'trace-card animate-slide-fade';
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between;">
-            <span class="agent-tag">${trace.agent}</span>
-            <span class="time">${trace.timestamp}</span>
-          </div>
-          <div class="action">${trace.action}</div>
-          <div class="details text-muted">${trace.details}</div>
-        `;
-        feed.prepend(card);
-        while (feed.children.length > 25) feed.removeChild(feed.lastChild);
+        feeds.forEach(feed => {
+          const line = document.createElement('div');
+          line.className = 'stream-line animate-slide-fade';
+          line.title = `${trace.timestamp} · ${trace.agent}: ${trace.action}. ${trace.details}`;
+          const speaker = document.createElement('span');
+          speaker.className = 'stream-speaker';
+          speaker.textContent = `${trace.agent}:`;
+          line.append(speaker, ` ${trace.action} — ${trace.details}`);
+          feed.prepend(line);
+          while (feed.children.length > 3) feed.removeChild(feed.lastChild);
+        });
       }
     });
   }

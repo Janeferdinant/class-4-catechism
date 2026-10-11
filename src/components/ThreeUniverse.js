@@ -1,60 +1,155 @@
 /**
  * ThreeUniverse Component
- * Real-time 3D WebGL Visualization using Three.js for Class 4 Catechism.
- * Renders 15 floating chapter islands along a glowing golden winding S-curve path,
- * receding towards a heavenly celestial cathedral in the clouds.
- * Features HTML projected label pills, gentle bobbing animation, golden traveling light,
- * camera orbit/pan with pointer events, and node drawer integration.
+ * Adventure Map renderer for Class 4 Catechism (Three.js r128).
+ *
+ * A 2.5D storybook world: the 15 chapter islands are laid out from a screen-space
+ * layout table (so the composition matches the mockup at any size), joined by a soft
+ * golden light path that recedes toward the heavenly cathedral. Other knowledge-graph
+ * nodes (agents, sacraments, exams, clusters) appear as glowing orbs linked by the real
+ * graph edges. Every node has a real HTML label button projected over it, so the map is
+ * keyboard- and screen-reader-operable, and an HTML fallback renders when WebGL is missing.
  */
 
 import { CHAPTERS_DATA } from '../data/chaptersData.js';
 import { EXAM_PAPERS_DATA } from '../data/examPapersData.js';
 
-// Smooth S-curve 3D path coordinates for the 15 chapters receding from foreground to cathedral
-export const CHAPTER_PATH = [
-  { x:   0, y:  -6, z:   95 }, // Ch 1: Center foreground (Jesus, The Source of Life)
-  { x: -60, y: -18, z:   75 }, // Ch 2: Left lower (Jesus Gives Life Through the Church)
-  { x:  14, y: -26, z:   60 }, // Ch 3: Bottom center (Sacraments)
-  { x:  68, y: -12, z:   42 }, // Ch 4: Right lower (Baptism)
-  { x:  80, y:   5, z:   18 }, // Ch 5: Right middle (Confirmation)
-  { x:  52, y:  16, z:  -15 }, // Ch 6: Right upper
-  { x:  16, y:  20, z:  -42 }, // Ch 7: Center-right mid
-  { x: -32, y:  23, z:  -68 }, // Ch 8: Left mid
-  { x: -60, y:  26, z:  -95 }, // Ch 9: Left upper
-  { x: -34, y:  30, z: -120 }, // Ch 10: Curving right
-  { x:   6, y:  33, z: -145 }, // Ch 11: Rising center
-  { x:  42, y:  37, z: -168 }, // Ch 12: Rising right
-  { x:  55, y:  40, z: -188 }, // Ch 13: Approaching cathedral
-  { x:  28, y:  43, z: -205 }, // Ch 14: Cathedral terrace
-  { x:   0, y:  46, z: -220 }, // Ch 15: Cathedral summit gate
+/* --------------------------------------------------------------------------
+   Layout tables
+   u = 0..1 across the canvas, v = 0..1 down the canvas,
+   s = island width as a fraction of canvas height.
+   Chapter 1 sits large in the foreground; the path winds back and up
+   toward the cathedral (upper right of the backdrop).
+   -------------------------------------------------------------------------- */
+export const WIDE_LAYOUT = [
+  { u: 0.52, v: 0.57, s: 0.44 },  // 1  Jesus, the Source of Life
+  { u: 0.40, v: 0.82, s: 0.30 },  // 2
+  { u: 0.62, v: 0.87, s: 0.30 },  // 3
+  { u: 0.82, v: 0.79, s: 0.28 },  // 4
+  { u: 0.93, v: 0.50, s: 0.22 },  // 5
+  { u: 0.84, v: 0.33, s: 0.18 },  // 6
+  { u: 0.72, v: 0.40, s: 0.16 },  // 7
+  { u: 0.66, v: 0.24, s: 0.14 },  // 8
+  { u: 0.54, v: 0.22, s: 0.13 },  // 9
+  { u: 0.43, v: 0.17, s: 0.12 },  // 10
+  { u: 0.52, v: 0.08, s: 0.11 },  // 11
+  { u: 0.62, v: 0.11, s: 0.11 },  // 12
+  { u: 0.74, v: 0.13, s: 0.105 }, // 13
+  { u: 0.83, v: 0.08, s: 0.10 },  // 14
+  { u: 0.93, v: 0.17, s: 0.14 },  // 15 near the cathedral
 ];
 
-export function calculate3DNodePositions(nodes = []) {
-  return nodes.map((node, index) => {
-    if (node.category === 'chapter') {
-      const chNum = parseInt(node.id.replace('ch_', ''), 10) || (index + 1);
-      const pt = CHAPTER_PATH[(chNum - 1) % 15] || CHAPTER_PATH[0];
-      return { ...node, x: pt.x, y: pt.y, z: pt.z, chapterNumber: chNum };
-    } else if (node.id === 'concept_jesus_life') {
-      return { ...node, x: -6, y: -18, z: 86 };
-    } else if (node.category === 'sacrament') {
-      const sacIdx = ['sac_baptism', 'sac_confirmation', 'sac_eucharist', 'sac_reconciliation', 'sac_anointing', 'sac_orders', 'sac_matrimony'].indexOf(node.id);
-      const pairedChapters = [4, 5, 6, 10, 11, 12, 13];
-      const chNum = sacIdx >= 0 ? pairedChapters[sacIdx] : 3;
-      const pt = CHAPTER_PATH[(chNum - 1) % 15] || CHAPTER_PATH[0];
-      return { ...node, x: pt.x + 12, y: pt.y + 7, z: pt.z };
-    } else if (node.category === 'exam') {
-      const angle = (index / 5) * Math.PI * 2;
-      return { ...node, x: Math.cos(angle) * 75, y: -32 + (index * 2), z: 25 + Math.sin(angle) * 45 };
-    } else if (node.category === 'agent') {
-      return { ...node, x: -75 + (index * 30), y: 52 + Math.sin(index) * 6, z: -90 + (index * 12) };
-    } else if (node.category === 'cluster') {
-      return { ...node, x: -45 + (index * 45), y: 35, z: -70 };
-    }
+export const TALL_LAYOUT = [
+  { u: 0.50, v: 0.86, s: 0.28 },  // 1
+  { u: 0.21, v: 0.73, s: 0.20 },  // 2
+  { u: 0.79, v: 0.69, s: 0.20 },  // 3
+  { u: 0.31, v: 0.59, s: 0.17 },  // 4
+  { u: 0.73, v: 0.54, s: 0.17 },  // 5
+  { u: 0.22, v: 0.45, s: 0.15 },  // 6
+  { u: 0.70, v: 0.41, s: 0.15 },  // 7
+  { u: 0.36, v: 0.34, s: 0.14 },  // 8
+  { u: 0.82, v: 0.29, s: 0.14 },  // 9
+  { u: 0.16, v: 0.25, s: 0.13 },  // 10
+  { u: 0.56, v: 0.22, s: 0.13 },  // 11
+  { u: 0.28, v: 0.14, s: 0.12 },  // 12
+  { u: 0.80, v: 0.13, s: 0.12 },  // 13
+  { u: 0.52, v: 0.08, s: 0.11 },  // 14
+  { u: 0.17, v: 0.05, s: 0.12 },  // 15
+];
 
-    const radius = 95;
-    const angle = (index / Math.max(nodes.length, 1)) * Math.PI * 2;
-    return { ...node, x: Math.cos(angle) * radius, y: 10, z: Math.sin(angle) * radius };
+// Chapters that always show their full title; the rest show a number badge
+// that expands on hover, focus, or selection (keeps distant labels from colliding).
+const FULL_LABEL_CHAPTERS = [1, 2, 3, 4, 5, 15];
+
+const SACRAMENT_CHAPTER = {
+  sac_baptism: 4, sac_confirmation: 5, sac_eucharist: 6, sac_reconciliation: 10,
+  sac_anointing: 11, sac_orders: 12, sac_matrimony: 13
+};
+const CLUSTER_CHAPTER = { cluster_initiation: 4, cluster_healing: 10, cluster_service: 12 };
+
+const ORB_COLORS = {
+  agent: '#6fd3a8',
+  sacrament: '#8ccbff',
+  exam: '#f3a17b',
+  cluster: '#c9b6ff',
+  concept: '#ffd36b'
+};
+
+const VIEW_HEIGHT = 100; // world units spanning the canvas height
+
+function chapterNumberOf(node, fallback = 1) {
+  return parseInt(String(node.id).replace('ch_', ''), 10) || fallback;
+}
+
+/** Place every graph node in normalized (u, v) canvas space for the given layout. */
+function layoutNodes(nodes, table) {
+  const placed = new Map();
+  const others = { agent: [], exam: [] };
+
+  nodes.forEach((node, index) => {
+    if (node.category === 'chapter') {
+      const chNum = chapterNumberOf(node, index + 1);
+      const slot = table[(chNum - 1) % table.length];
+      placed.set(node.id, { u: slot.u, v: slot.v, s: slot.s, chapterNumber: chNum });
+    } else if (node.category === 'agent' || node.category === 'exam') {
+      others[node.category].push(node);
+    }
+  });
+
+  const chapterSlot = (chNum) => table[(chNum - 1) % table.length];
+
+  nodes.forEach(node => {
+    if (node.category === 'sacrament') {
+      const slot = chapterSlot(SACRAMENT_CHAPTER[node.id] || 3);
+      placed.set(node.id, { u: slot.u + 0.045, v: slot.v - slot.s * 0.42, s: 0.05 });
+    } else if (node.category === 'cluster') {
+      const slot = chapterSlot(CLUSTER_CHAPTER[node.id] || 3);
+      placed.set(node.id, { u: slot.u - 0.05, v: slot.v - slot.s * 0.38, s: 0.05 });
+    } else if (node.category === 'concept') {
+      const slot = chapterSlot(1);
+      placed.set(node.id, { u: slot.u - 0.09, v: slot.v - slot.s * 0.30, s: 0.06 });
+    }
+  });
+
+  // Agents float in a gentle arc across the upper sky; exams along the lower-left sky.
+  const tall = table === TALL_LAYOUT;
+  others.agent.forEach((node, i, arr) => {
+    const t = arr.length > 1 ? i / (arr.length - 1) : 0.5;
+    placed.set(node.id, tall
+      ? { u: 0.12 + t * 0.76, v: 0.30 + Math.sin(t * Math.PI) * -0.06, s: 0.05 }
+      : { u: 0.38 + t * 0.56, v: 0.47 + Math.sin(t * Math.PI) * -0.10, s: 0.05 });
+  });
+  others.exam.forEach((node, i, arr) => {
+    const t = arr.length > 1 ? i / (arr.length - 1) : 0.5;
+    placed.set(node.id, tall
+      ? { u: 0.14 + t * 0.72, v: 0.60 + Math.sin(t * Math.PI) * 0.05, s: 0.05 }
+      : { u: 0.40 + t * 0.52, v: 0.66 + Math.sin(t * Math.PI) * 0.06, s: 0.05 });
+  });
+
+  return placed;
+}
+
+/** Convert a normalized placement to world coordinates for a canvas of the given aspect. */
+function toWorld(slot, aspect) {
+  const viewWidth = VIEW_HEIGHT * aspect;
+  return {
+    x: (slot.u - 0.5) * viewWidth,
+    y: (0.5 - slot.v) * VIEW_HEIGHT,
+    z: Math.round(slot.s * 100) // larger (closer) islands draw in front
+  };
+}
+
+/**
+ * Compute world positions for every node (16:9 reference canvas).
+ * Exported for tests and for any caller that needs node coordinates.
+ */
+export function calculate3DNodePositions(nodes = [], aspect = 16 / 9) {
+  const table = aspect < 1.1 ? TALL_LAYOUT : WIDE_LAYOUT;
+  const placed = layoutNodes(nodes, table);
+  return nodes.map((node, index) => {
+    const slot = placed.get(node.id) || { u: 0.5, v: 0.5, s: 0.05 };
+    const world = toWorld(slot, aspect);
+    const extra = node.category === 'chapter' ? { chapterNumber: chapterNumberOf(node, index + 1) } : {};
+    return { ...node, ...world, ...extra };
   });
 }
 
@@ -78,7 +173,7 @@ export function buildNodeDrawerContent(node) {
   }
 
   if (node.category === 'chapter') {
-    const chNum = parseInt(node.id.replace('ch_', ''), 10) || 1;
+    const chNum = chapterNumberOf(node);
     const ch = CHAPTERS_DATA.find(c => c.number === chNum) || CHAPTERS_DATA[0];
     return {
       nodeId: node.id,
@@ -177,6 +272,108 @@ export function buildNodeDrawerContent(node) {
   };
 }
 
+/* --------------------------------------------------------------------------
+   Procedural textures (soft glows drawn once on a canvas)
+   -------------------------------------------------------------------------- */
+function makeCanvasTexture(size, draw) {
+  const THREE = window.THREE;
+  const canvas = document.createElement('canvas');
+  canvas.width = size.w;
+  canvas.height = size.h;
+  draw(canvas.getContext('2d'), size.w, size.h);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function radialGlowTexture(inner, outer) {
+  return makeCanvasTexture({ w: 128, h: 128 }, (ctx, w, h) => {
+    const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    g.addColorStop(0, inner);
+    g.addColorStop(0.25, inner);
+    g.addColorStop(0.55, outer);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+  });
+}
+
+function ringTexture() {
+  return makeCanvasTexture({ w: 128, h: 128 }, (ctx, w, h) => {
+    const g = ctx.createRadialGradient(w / 2, h / 2, w * 0.30, w / 2, h / 2, w / 2);
+    g.addColorStop(0, 'rgba(255,232,168,0)');
+    g.addColorStop(0.55, 'rgba(255,232,168,0.95)');
+    g.addColorStop(1, 'rgba(255,232,168,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+  });
+}
+
+function glintTexture() {
+  // Four-point sparkle used for the glints that pop on the islands.
+  return makeCanvasTexture({ w: 128, h: 128 }, (ctx, w, h) => {
+    ctx.globalCompositeOperation = 'lighter';
+    for (const [rw, rh] of [[w / 2, h * 0.05], [w * 0.05, h / 2]]) {
+      const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+      g.addColorStop(0, 'rgba(255,248,220,1)');
+      g.addColorStop(1, 'rgba(255,248,220,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(w / 2, h / 2, rw, rh, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const core = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.14);
+    core.addColorStop(0, 'rgba(255,255,255,1)');
+    core.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = core;
+    ctx.fillRect(0, 0, w, h);
+  });
+}
+
+function pathRibbonTexture() {
+  // Gradient across the ribbon's width: transparent edge -> gold -> warm white core.
+  return makeCanvasTexture({ w: 4, h: 64 }, (ctx, w, h) => {
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, 'rgba(255,200,90,0)');
+    g.addColorStop(0.28, 'rgba(255,200,90,0.45)');
+    g.addColorStop(0.5, 'rgba(255,246,214,1)');
+    g.addColorStop(0.72, 'rgba(255,200,90,0.45)');
+    g.addColorStop(1, 'rgba(255,200,90,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+  });
+}
+
+/** Measure the opaque bounds of a loaded texture image (normalized 0..1). */
+function measureAlphaBounds(image) {
+  try {
+    const n = 64;
+    const canvas = document.createElement('canvas');
+    canvas.width = n;
+    canvas.height = n;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, n, n);
+    const data = ctx.getImageData(0, 0, n, n).data;
+    let minX = n, minY = n, maxX = -1, maxY = -1;
+    for (let y = 0; y < n; y++) {
+      for (let x = 0; x < n; x++) {
+        if (data[(y * n + x) * 4 + 3] > 40) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < 0) return null;
+    return { left: minX / n, top: minY / n, right: (maxX + 1) / n, bottom: (maxY + 1) / n };
+  } catch (e) {
+    return null;
+  }
+}
+
+const DEFAULT_ISLAND_BOUNDS = { left: 0.12, top: 0.15, right: 0.85, bottom: 0.95 };
+
 export class ThreeUniverse {
   constructor(containerElement, onNodeSelect) {
     this.container = containerElement;
@@ -184,533 +381,886 @@ export class ThreeUniverse {
     this.scene = null;
     this.camera = null;
     this.renderer = null;
-    this.nodeMeshes = [];
-    this.islandMeshes = [];
-    this.pathMesh = null;
-    this.travelingLight = null;
-    this.pathCurve = null;
+    this.nodes = [];
+    this.edges = [];
+    this.nodeMeshes = [];      // raycast targets (island hit planes + orbs)
+    this.islandMeshes = [];    // island sprite planes
+    this.orbSprites = [];
     this.labelsOverlay = null;
     this.labelElements = new Map();
     this.animationFrameId = null;
     this.isRotating = false;
-    this.selectedMesh = null;
+    this.selectedId = null;
+    this.hoveredId = null;
     this.currentFilter = 'chapter';
-    this.cameraTarget = {
-      pos: { x: 0, y: 36, z: 220 },
-      lookAt: { x: 0, y: 18, z: -45 }
-    };
-    this.currentLookAt = { x: 0, y: 18, z: -45 };
-    this.isDragging = false;
-    this.pointerX = 0;
-    this.pointerY = 0;
+    this.theme = (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme')) || 'dark';
+    this.aspect = 16 / 9;
+    this.layoutTable = WIDE_LAYOUT;
+    this.pan = { x: 0, y: 0, zoom: 1 };
+    this.panTarget = { x: 0, y: 0, zoom: 1 };
+    this.pointer = { x: 0, y: 0 };
+    this.effects = [];
+    this.reducedMotion = typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
   }
 
   init(nodes = [], edges = []) {
     if (!this.container) return;
+    this.nodes = nodes;
+    this.edges = edges;
+    this.setupLabelsOverlay();
+
     if (typeof window === 'undefined' || !window.THREE) {
-      console.warn('Three.js not loaded, skipping WebGL init.');
+      console.warn('Three.js not loaded; rendering the HTML island fallback.');
+      this.renderHtmlFallback();
       return;
     }
 
     const THREE = window.THREE;
-    const width = this.container.clientWidth || 800;
-    const height = this.container.clientHeight || 500;
-
-    // Scene & Perspective Camera
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(48, width / height, 0.1, 1000);
-    this.camera.position.set(this.cameraTarget.pos.x, this.cameraTarget.pos.y, this.cameraTarget.pos.z);
-    this.camera.lookAt(this.currentLookAt.x, this.currentLookAt.y, this.currentLookAt.z);
-
-    // High performance transparent WebGL Renderer
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance'
-    });
-    this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    this.container.innerHTML = '';
-    this.container.appendChild(this.renderer.domElement);
-
-    // Warm heavenly lighting
-    const ambientLight = new THREE.AmbientLight(0xfff6e6, 1.2);
-    this.scene.add(ambientLight);
-
-    const sunLight = new THREE.DirectionalLight(0xfffaed, 1.4);
-    sunLight.position.set(40, 90, 60);
-    this.scene.add(sunLight);
-
-    const goldenGlowLight = new THREE.PointLight(0xffc107, 2.0, 450);
-    goldenGlowLight.position.set(0, 40, -180);
-    this.scene.add(goldenGlowLight);
-
-    // Soft celestial background dust particles
-    const dustCount = 350;
-    const dustGeom = new THREE.BufferGeometry();
-    const dustCoords = new Float32Array(dustCount * 3);
-    for (let i = 0; i < dustCount * 3; i += 3) {
-      dustCoords[i] = (Math.random() - 0.5) * 450;
-      dustCoords[i + 1] = Math.random() * 120 - 30;
-      dustCoords[i + 2] = (Math.random() - 0.5) * 450 - 50;
+    try {
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    } catch (err) {
+      console.warn('WebGL unavailable; rendering the HTML island fallback.', err);
+      this.renderHtmlFallback();
+      return;
     }
-    dustGeom.setAttribute('position', new THREE.BufferAttribute(dustCoords, 3));
-    const dustMat = new THREE.PointsMaterial({
-      color: 0xffe599,
-      size: 1.8,
-      transparent: true,
-      opacity: 0.65
+
+    const { width, height } = this.containerSize();
+    this.aspect = width / height;
+    this.layoutTable = this.aspect < 1.1 ? TALL_LAYOUT : WIDE_LAYOUT;
+
+    this.scene = new THREE.Scene();
+    const halfW = (VIEW_HEIGHT * this.aspect) / 2;
+    this.camera = new THREE.OrthographicCamera(-halfW, halfW, VIEW_HEIGHT / 2, -VIEW_HEIGHT / 2, -1000, 1000);
+    this.camera.position.set(0, 0, 500);
+
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, width < 600 ? 1.5 : 2));
+    this.renderer.setSize(width, height);
+    this.mountCanvas();
+
+    this.textures = {
+      glow: radialGlowTexture('rgba(255,250,230,1)', 'rgba(255,196,84,0.35)'),
+      lantern: radialGlowTexture('rgba(255,236,170,1)', 'rgba(255,170,60,0.4)'),
+      ring: ringTexture(),
+      glint: glintTexture(),
+      ribbon: pathRibbonTexture(),
+      orbs: {}
+    };
+    Object.entries(ORB_COLORS).forEach(([cat, color]) => {
+      this.textures.orbs[cat] = radialGlowTexture('rgba(255,255,255,1)', this.hexToRgba(color, 0.55));
     });
-    this.dustParticles = new THREE.Points(dustGeom, dustMat);
-    this.scene.add(this.dustParticles);
 
-    // Position all nodes
-    const positionedNodes = calculate3DNodePositions(nodes);
-    this.nodePositionMap = new Map();
-    positionedNodes.forEach(n => this.nodePositionMap.set(n.id, n));
-
-    // Build the 15 Floating Chapter Islands and Golden Winding Path
-    this.buildChapterIslandsAndPath(positionedNodes);
-
-    // Build non-chapter node markers (sacraments, exams, agents, concepts)
-    this.buildAuxiliaryNodes(positionedNodes);
-
-    // Setup HTML Label Overlay
-    this.setupLabelsOverlay(positionedNodes);
-
-    // Setup pointer events and raycasting
+    this.buildIslands();
+    this.buildIslandGlints();
+    this.buildOrbs();
+    this.buildPath();
+    this.buildEdges();
+    this.applyLayout();
+    this.setTheme(this.theme);
     this.setupInteractions();
-
-    // Set initial filter to chapters
+    this.observeResize();
     this.filterCategory('chapter');
-
-    // Start render loop
     this.animate();
   }
 
-  buildChapterIslandsAndPath(positionedNodes) {
-    const THREE = window.THREE;
-    const textureLoader = new THREE.TextureLoader();
+  /* ---------------- Construction ---------------- */
 
-    // Extract sorted chapter nodes 1..15
-    const chapterNodes = positionedNodes
+  hexToRgba(hex, alpha) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  }
+
+  containerSize() {
+    const width = (this.container && this.container.clientWidth) || 800;
+    const height = (this.container && this.container.clientHeight) || 500;
+    return { width, height };
+  }
+
+  mountCanvas() {
+    const canvas = this.renderer.domElement;
+    canvas.classList.add('three-universe-canvas');
+    if (canvas.parentElement !== this.container) {
+      this.container.appendChild(canvas);
+    }
+    if (this.labelsOverlay && this.labelsOverlay.parentElement !== this.container) {
+      this.container.appendChild(this.labelsOverlay);
+    }
+  }
+
+  chapterNodes() {
+    return this.nodes
       .filter(n => n.category === 'chapter')
-      .sort((a, b) => {
-        const numA = parseInt(a.id.replace('ch_', ''), 10) || 0;
-        const numB = parseInt(b.id.replace('ch_', ''), 10) || 0;
-        return numA - numB;
-      });
-
-    // 1. Build Golden Winding Ribbon Path
-    if (chapterNodes.length > 1) {
-      const pathPoints = chapterNodes.map(node => new THREE.Vector3(node.x, node.y - 1.2, node.z));
-      this.pathCurve = new THREE.CatmullRomCurve3(pathPoints);
-      this.pathCurve.curveType = 'centripetal';
-      this.pathCurve.tension = 0.5;
-
-      const tubeGeom = new THREE.TubeGeometry(this.pathCurve, 140, 1.4, 8, false);
-      const tubeMat = new THREE.MeshStandardMaterial({
-        color: 0xffd54f,
-        emissive: 0xf59e0b,
-        emissiveIntensity: 0.95,
-        roughness: 0.25,
-        metalness: 0.65
-      });
-      this.pathMesh = new THREE.Mesh(tubeGeom, tubeMat);
-      this.pathMesh.renderOrder = 1;
-      this.scene.add(this.pathMesh);
-
-      // Traveling light particle along the path
-      const lightGeom = new THREE.SphereGeometry(2.6, 14, 14);
-      const lightMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0xfff3a8,
-        emissiveIntensity: 1.8,
-        roughness: 0.1
-      });
-      this.travelingLight = new THREE.Mesh(lightGeom, lightMat);
-      this.scene.add(this.travelingLight);
-    }
-
-    // 2. Build 15 Floating Chapter Islands
-    chapterNodes.forEach((node, idx) => {
-      const chNum = parseInt(node.id.replace('ch_', ''), 10) || (idx + 1);
-      const numStr = String(chNum).padStart(2, '0');
-      const texturePath = `assets/generated/islands/island-ch${numStr}.webp`;
-
-      // Scale islands smoothly: Chapter 1 is largest in foreground, Ch 15 smaller in depth
-      const depthFactor = Math.max(0, Math.min(1, (node.z + 215) / 300));
-      const width = 26 + (depthFactor * 26); // 26 to 52
-      const height = width * 0.85;
-
-      const texture = textureLoader.load(texturePath);
-      const islandMat = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        alphaTest: 0.03,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
-
-      const islandGeom = new THREE.PlaneGeometry(width, height);
-      const islandMesh = new THREE.Mesh(islandGeom, islandMat);
-      islandMesh.position.set(node.x, node.y, node.z);
-      islandMesh.userData = {
-        ...node,
-        baseY: node.y,
-        width,
-        height,
-        chNum
-      };
-      islandMesh.renderOrder = Math.round(300 - node.z);
-
-      // Glowing golden shrine/beacon at top of island
-      const beaconGeom = new THREE.SphereGeometry(1.6 * (0.6 + 0.4 * depthFactor), 12, 12);
-      const beaconMat = new THREE.MeshStandardMaterial({
-        color: 0xfff176,
-        emissive: 0xffb300,
-        emissiveIntensity: 1.4,
-        roughness: 0.2
-      });
-      const beacon = new THREE.Mesh(beaconGeom, beaconMat);
-      beacon.position.set(0, height * 0.38, 0.8);
-      islandMesh.add(beacon);
-
-      this.scene.add(islandMesh);
-      this.nodeMeshes.push(islandMesh);
-      this.islandMeshes.push(islandMesh);
-    });
+      .sort((a, b) => chapterNumberOf(a) - chapterNumberOf(b));
   }
 
-  buildAuxiliaryNodes(positionedNodes) {
+  buildIslands() {
     const THREE = window.THREE;
-    const auxNodes = positionedNodes.filter(n => n.category !== 'chapter');
+    const loader = new THREE.TextureLoader();
 
-    auxNodes.forEach(node => {
-      let radius = 6;
-      let col = 0x38bdf8;
-      let emissiveCol = 0x0284c7;
+    this.chapterNodes().forEach((node) => {
+      const chNum = chapterNumberOf(node);
+      const numStr = String(chNum).padStart(2, '0');
 
-      if (node.id === 'concept_jesus_life') {
-        radius = 9;
-        col = 0xffb703;
-        emissiveCol = 0xf59e0b;
-      } else if (node.category === 'sacrament') {
-        radius = 5.5;
-        col = 0x60a5fa;
-        emissiveCol = 0x2563eb;
-      } else if (node.category === 'exam') {
-        radius = 5;
-        col = 0xf43f5e;
-        emissiveCol = 0xbe123c;
-      } else if (node.category === 'agent') {
-        radius = 5.5;
-        col = 0x10b981;
-        emissiveCol = 0x059669;
-      }
+      const material = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, depthTest: false });
+      const sprite = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+      sprite.userData = { ...node, chNum, bounds: { ...DEFAULT_ISLAND_BOUNDS }, phase: chNum * 0.83 };
+      // Stay hidden until the artwork has loaded, so a missing file never shows a blank square.
+      sprite.visible = false;
 
-      const geom = new THREE.SphereGeometry(radius, 16, 16);
-      const mat = new THREE.MeshStandardMaterial({
-        color: col,
-        emissive: emissiveCol,
-        emissiveIntensity: 0.7,
-        roughness: 0.3,
-        metalness: 0.4
+      loader.load(`assets/generated/islands/island-ch${numStr}.webp`, (texture) => {
+        material.map = texture;
+        material.needsUpdate = true;
+        sprite.visible = true;
+        const bounds = measureAlphaBounds(texture.image);
+        if (bounds) {
+          sprite.userData.bounds = bounds;
+          this.applyLayout();
+        }
+      }, undefined, () => {
+        console.warn(`Island artwork for chapter ${chNum} could not be loaded; its label still works.`);
       });
-      const mesh = new THREE.Mesh(geom, mat);
-      mesh.position.set(node.x, node.y, node.z);
-      mesh.userData = { ...node, baseY: node.y };
-      mesh.visible = false; // Hidden when filter is 'chapter'
-      this.scene.add(mesh);
-      this.nodeMeshes.push(mesh);
+
+      // Night lantern: a small warm glow near the island's top edge.
+      const lantern = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: this.textures.lantern, transparent: true, depthWrite: false, depthTest: false,
+        blending: THREE.AdditiveBlending, opacity: 0
+      }));
+      sprite.add(lantern);
+      sprite.userData.lantern = lantern;
+
+      // Invisible hit plane matching the visible island (not the transparent square).
+      const hit = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ visible: false }));
+      hit.userData = sprite.userData;
+      sprite.add(hit);
+      sprite.userData.hit = hit;
+
+      this.scene.add(sprite);
+      this.islandMeshes.push(sprite);
+      this.nodeMeshes.push(hit);
     });
   }
 
-  setupLabelsOverlay(positionedNodes) {
-    if (!this.container) return;
-    let overlay = document.getElementById('three-labels-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'three-labels-overlay';
-      overlay.className = 'three-labels-overlay';
-      this.container.appendChild(overlay);
+  /** Pool of sparkle sprites that pop at random spots on the islands. */
+  buildIslandGlints() {
+    const THREE = window.THREE;
+    this.glintsEnabled = true;
+    this.glints = Array.from({ length: 7 }, () => {
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: this.textures.glint, transparent: true, depthWrite: false, depthTest: false,
+        blending: THREE.AdditiveBlending, opacity: 0
+      }));
+      sprite.renderOrder = 70;
+      sprite.visible = false;
+      this.scene.add(sprite);
+      return { sprite, start: performance.now() / 1000 + Math.random() * 3, life: 1.5, island: null, ox: 0, oy: 0 };
+    });
+  }
+
+  updateIslandGlints(t) {
+    if (!this.glints) return;
+    this.glints.forEach(g => {
+      const k = (t - g.start) / g.life;
+      if (k > 1 || !g.island) {
+        // Respawn on a random island, somewhere on its upper (visible) surface.
+        const island = this.islandMeshes[Math.floor(Math.random() * this.islandMeshes.length)];
+        const b = island.userData.bounds || DEFAULT_ISLAND_BOUNDS;
+        g.island = island;
+        g.ox = (b.left + 0.15 * (b.right - b.left)) + Math.random() * 0.7 * (b.right - b.left) - 0.5;
+        g.oy = 0.5 - (b.top + (0.05 + Math.random() * 0.35) * (b.bottom - b.top));
+        g.start = t + 0.2 + Math.random() * 2;
+        g.life = 1.1 + Math.random() * 0.8;
+        g.sprite.visible = false;
+        return;
+      }
+      if (k < 0 || !this.glintsEnabled || this.reducedMotion) {
+        g.sprite.visible = false;
+        return;
+      }
+      const d = g.island.userData;
+      const pulse = Math.sin(k * Math.PI);
+      const mirror = d.chNum % 2 === 0 ? -1 : 1;
+      const size = Math.max(1.5, d.size * 0.17) * pulse;
+      g.sprite.visible = true;
+      g.sprite.position.set(g.island.position.x + g.ox * mirror * d.size, g.island.position.y + g.oy * d.size, 0);
+      g.sprite.scale.set(size, size, 1);
+      g.sprite.material.rotation = k * 0.9;
+      g.sprite.material.opacity = pulse;
+    });
+  }
+
+  buildOrbs() {
+    const THREE = window.THREE;
+    this.nodes.filter(n => n.category !== 'chapter').forEach(node => {
+      const map = this.textures.orbs[node.category] || this.textures.orbs.concept;
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map, transparent: true, depthWrite: false, depthTest: false, opacity: 0.95
+      }));
+      sprite.userData = { ...node, phase: Math.random() * Math.PI * 2 };
+      sprite.visible = false;
+      this.scene.add(sprite);
+      this.orbSprites.push(sprite);
+      this.nodeMeshes.push(sprite);
+    });
+  }
+
+  buildPath() {
+    const THREE = window.THREE;
+    this.pathMaterial = new THREE.MeshBasicMaterial({
+      map: this.textures.ribbon, transparent: true, depthWrite: false, depthTest: false,
+      color: 0xffffff, opacity: 0.9
+    });
+    this.pathMesh = new THREE.Mesh(new THREE.BufferGeometry(), this.pathMaterial);
+    this.pathMesh.renderOrder = 1;
+    this.scene.add(this.pathMesh);
+
+    this.travelingLight = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: this.textures.glow, transparent: true, depthWrite: false, depthTest: false,
+      blending: THREE.AdditiveBlending
+    }));
+    this.travelingLight.renderOrder = 2;
+    this.scene.add(this.travelingLight);
+
+    // Comet tail that follows the traveling light along the path
+    this.trailHistory = [];
+    this.trail = Array.from({ length: 18 }, () => {
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: this.textures.glow, transparent: true, depthWrite: false, depthTest: false,
+        blending: THREE.AdditiveBlending, opacity: 0
+      }));
+      sprite.renderOrder = 2;
+      sprite.visible = false;
+      this.scene.add(sprite);
+      return sprite;
+    });
+  }
+
+  updateTrail() {
+    if (!this.trail) return;
+    const active = this.travelingLight && this.travelingLight.visible && !this.reducedMotion;
+    if (active) {
+      this.trailHistory.unshift(this.travelingLight.position.clone());
+      if (this.trailHistory.length > this.trail.length * 2) this.trailHistory.pop();
     }
-    overlay.innerHTML = '';
+    this.trail.forEach((sprite, i) => {
+      const point = this.trailHistory[i * 2];
+      if (!active || !point) {
+        sprite.visible = false;
+        return;
+      }
+      const f = 1 - i / this.trail.length;
+      sprite.visible = true;
+      sprite.position.copy(point);
+      sprite.scale.set(3.4 * (0.35 + 0.65 * f), 3.4 * (0.35 + 0.65 * f), 1);
+      sprite.material.opacity = Math.pow(f, 1.6) * 0.75;
+    });
+  }
+
+  buildEdges() {
+    const THREE = window.THREE;
+    this.edgeMaterial = new THREE.LineBasicMaterial({ color: 0xf2c66d, transparent: true, opacity: 0.35, depthTest: false });
+    this.edgeLines = new THREE.LineSegments(new THREE.BufferGeometry(), this.edgeMaterial);
+    this.edgeLines.renderOrder = 1;
+    this.scene.add(this.edgeLines);
+  }
+
+  /** Rebuild the golden ribbon through the island positions (front to back). */
+  rebuildPathGeometry() {
+    const THREE = window.THREE;
+    const islands = [...this.islandMeshes].sort((a, b) => a.userData.chNum - b.userData.chNum);
+    if (islands.length < 2) return;
+
+    const points = islands.map(m => new THREE.Vector3(
+      m.userData.baseX,
+      m.userData.baseY - m.userData.size * 0.12,
+      0
+    ));
+    const widths = islands.map(m => m.userData.size * 0.085);
+    this.pathCurve = new THREE.CatmullRomCurve3(points, false, 'centripetal');
+
+    const samples = 220;
+    const positions = new Float32Array((samples + 1) * 2 * 3);
+    const uvs = new Float32Array((samples + 1) * 2 * 2);
+    const indices = [];
+    for (let i = 0; i <= samples; i++) {
+      const t = i / samples;
+      const p = this.pathCurve.getPointAt(t);
+      const tan = this.pathCurve.getTangentAt(t);
+      const nx = -tan.y, ny = tan.x;
+      const seg = t * (widths.length - 1);
+      const k = Math.min(widths.length - 2, Math.floor(seg));
+      const w = widths[k] + (widths[k + 1] - widths[k]) * (seg - k);
+      const o = i * 6;
+      positions[o] = p.x + nx * w; positions[o + 1] = p.y + ny * w; positions[o + 2] = 0;
+      positions[o + 3] = p.x - nx * w; positions[o + 4] = p.y - ny * w; positions[o + 5] = 0;
+      const uo = i * 4;
+      uvs[uo] = t; uvs[uo + 1] = 0; uvs[uo + 2] = t; uvs[uo + 3] = 1;
+      if (i < samples) {
+        const a = i * 2;
+        indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      }
+    }
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geom.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+    geom.setIndex(indices);
+    this.pathMesh.geometry.dispose();
+    this.pathMesh.geometry = geom;
+  }
+
+  rebuildEdgeGeometry() {
+    const THREE = window.THREE;
+    const pos = new Map();
+    this.islandMeshes.forEach(m => pos.set(m.userData.id, { x: m.userData.baseX, y: m.userData.baseY }));
+    this.orbSprites.forEach(s => pos.set(s.userData.id, { x: s.userData.baseX, y: s.userData.baseY, visible: s.visible }));
+
+    const coords = [];
+    this.edges.forEach(e => {
+      const a = pos.get(e.source);
+      const b = pos.get(e.target);
+      if (!a || !b) return;
+      const aOrb = this.orbSprites.find(s => s.userData.id === e.source);
+      const bOrb = this.orbSprites.find(s => s.userData.id === e.target);
+      // Draw only edges that touch a visible orb; chapter-to-chapter links are the golden path.
+      if (!((aOrb && aOrb.visible) || (bOrb && bOrb.visible))) return;
+      if ((aOrb && !aOrb.visible) || (bOrb && !bOrb.visible)) return;
+      coords.push(a.x, a.y, 0, b.x, b.y, 0);
+    });
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(coords), 3));
+    this.edgeLines.geometry.dispose();
+    this.edgeLines.geometry = geom;
+  }
+
+  /** Position every island, orb, and hit area for the current canvas aspect. */
+  applyLayout() {
+    if (!this.scene) return;
+    const placed = layoutNodes(this.nodes, this.layoutTable);
+
+    this.islandMeshes.forEach(mesh => {
+      const slot = placed.get(mesh.userData.id);
+      if (!slot) return;
+      const world = toWorld(slot, this.aspect);
+      const size = slot.s * VIEW_HEIGHT;
+      const b = mesh.userData.bounds || DEFAULT_ISLAND_BOUNDS;
+      Object.assign(mesh.userData, { baseX: world.x, baseY: world.y, size });
+
+      // Alternate mirroring keeps a repeated sprite from reading as a copy.
+      const mirror = mesh.userData.chNum % 2 === 0 ? -1 : 1;
+      mesh.scale.set(size * mirror, size, 1);
+      mesh.position.set(world.x, world.y, 0);
+      mesh.renderOrder = 10 + world.z;
+
+      const hit = mesh.userData.hit;
+      hit.scale.set((b.right - b.left) * 0.9, (b.bottom - b.top) * 0.75, 1);
+      hit.position.set(((b.left + b.right) / 2 - 0.5), 0.5 - (b.top + (b.bottom - b.top) * 0.42), 0);
+
+      const lantern = mesh.userData.lantern;
+      lantern.position.set(0.12, 0.5 - b.top - 0.06, 0);
+      lantern.scale.set(0.22, 0.22, 1);
+    });
+
+    this.orbSprites.forEach(sprite => {
+      const slot = placed.get(sprite.userData.id);
+      if (!slot) return;
+      const world = toWorld(slot, this.aspect);
+      const size = slot.s * VIEW_HEIGHT;
+      Object.assign(sprite.userData, { baseX: world.x, baseY: world.y, size });
+      sprite.scale.set(size, size, 1);
+      sprite.position.set(world.x, world.y, 0);
+      sprite.renderOrder = 60;
+    });
+
+    this.rebuildPathGeometry();
+    this.rebuildEdgeGeometry();
+  }
+
+  /* ---------------- Labels ---------------- */
+
+  setupLabelsOverlay() {
+    // The overlay lives inside the container so it follows the canvas between
+    // the desktop stage and the mobile map box.
+    const legacy = document.getElementById('three-labels-overlay');
+    if (legacy && legacy.parentElement !== this.container) legacy.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'three-labels-overlay';
+    overlay.className = 'three-labels-overlay';
+    overlay.setAttribute('role', 'group');
+    overlay.setAttribute('aria-label', 'Adventure Map destinations');
+    this.container.appendChild(overlay);
     this.labelsOverlay = overlay;
     this.labelElements.clear();
 
-    const chapterNodes = positionedNodes.filter(n => n.category === 'chapter');
-    chapterNodes.forEach((node) => {
-      const chNum = parseInt(node.id.replace('ch_', ''), 10) || 1;
+    this.chapterNodes().forEach(node => {
+      const chNum = chapterNumberOf(node);
       const chData = CHAPTERS_DATA.find(c => c.number === chNum);
       const titleEng = chData ? chData.titleEng : node.label;
-
-      const isLandmark = [1, 2, 3, 4, 5, 15].includes(chNum);
+      const full = FULL_LABEL_CHAPTERS.includes(chNum);
       const pill = document.createElement('button');
-      pill.className = `island-label-pill${isLandmark ? '' : ' compact'}`;
+      pill.type = 'button';
+      pill.className = `island-label-pill${full ? '' : ' compact'}`;
       pill.id = `island-label-${chNum}`;
-      pill.setAttribute('data-id', node.id);
-      pill.setAttribute('type', 'button');
-      pill.setAttribute('tabindex', '0');
+      pill.dataset.id = node.id;
+      pill.setAttribute('aria-label', `Chapter ${chNum}: ${titleEng}`);
+      pill.innerHTML = `<span class="pill-number">${chNum}.</span><span class="pill-title">${titleEng}</span>`;
+      this.bindLabel(pill, node);
+      overlay.appendChild(pill);
+      this.labelElements.set(node.id, pill);
+    });
 
-      pill.innerHTML = `
-        <span class="pill-number">${chNum}${isLandmark ? '.' : ''}</span>
-        <span class="pill-title">${titleEng}</span>
-      `;
-
-      pill.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.selectNode(node);
-      });
-
+    this.nodes.filter(n => n.category !== 'chapter').forEach(node => {
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = `orb-label-pill orb-${node.category}`;
+      pill.dataset.id = node.id;
+      pill.textContent = node.label.replace(/\s*\(.*\)$/, '');
+      pill.setAttribute('aria-label', node.label);
+      pill.style.display = 'none';
+      this.bindLabel(pill, node);
       overlay.appendChild(pill);
       this.labelElements.set(node.id, pill);
     });
   }
 
-  setupInteractions() {
-    if (!this.container) return;
-    const THREE = window.THREE;
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    // Click handler for 3D islands
-    this.container.addEventListener('click', (event) => {
-      const rect = this.container.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, this.camera);
-      const visibleMeshes = this.nodeMeshes.filter(m => m.visible);
-      const intersects = raycaster.intersectObjects(visibleMeshes);
-
-      if (intersects.length > 0) {
-        const selected = intersects[0].object.userData;
-        this.selectNode(selected);
-      }
+  bindLabel(pill, node) {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.selectNode(node);
     });
-
-    // Touch and mouse pointer drag interactions
-    let prevX = 0;
-    let prevY = 0;
-
-    this.container.addEventListener('pointerdown', (e) => {
-      this.isDragging = true;
-      prevX = e.clientX;
-      prevY = e.clientY;
-    });
-
-    window.addEventListener('pointerup', () => { this.isDragging = false; });
-    window.addEventListener('pointercancel', () => { this.isDragging = false; });
-
-    this.container.addEventListener('pointermove', (e) => {
-      if (this.isDragging && this.camera) {
-        const deltaX = e.clientX - prevX;
-        const deltaY = e.clientY - prevY;
-
-        this.cameraTarget.pos.x -= deltaX * 0.12;
-        this.cameraTarget.pos.y += deltaY * 0.10;
-        // Clamp bounds so scene stays centered
-        this.cameraTarget.pos.x = Math.max(-80, Math.min(80, this.cameraTarget.pos.x));
-        this.cameraTarget.pos.y = Math.max(10, Math.min(75, this.cameraTarget.pos.y));
-
-        prevX = e.clientX;
-        prevY = e.clientY;
-      }
-    });
-
-    // Subtle pointer parallax when not dragging
-    this.container.addEventListener('mousemove', (e) => {
-      if (!this.isDragging) {
-        const rect = this.container.getBoundingClientRect();
-        const normX = (e.clientX - rect.left) / rect.width - 0.5;
-        const normY = (e.clientY - rect.top) / rect.height - 0.5;
-        this.pointerX = normX * 12;
-        this.pointerY = normY * 8;
-      }
-    });
-  }
-
-  selectNode(node) {
-    if (!node) return;
-    const rawNode = this.nodePositionMap.get(node.id) || node;
-    const mesh = this.nodeMeshes.find(m => m.userData.id === node.id);
-
-    // Update active state on label pills
-    this.labelElements.forEach((pill, id) => {
-      pill.classList.toggle('active', id === node.id);
-    });
-
-    if (mesh) {
-      this.selectedMesh = mesh;
-      // Fly camera gently toward the selected island
-      this.cameraTarget.pos.x = mesh.position.x * 0.5;
-      this.cameraTarget.pos.y = Math.max(20, mesh.position.y + 16);
-      this.cameraTarget.pos.z = Math.min(200, mesh.position.z + 85);
-
-      this.cameraTarget.lookAt.x = mesh.position.x;
-      this.cameraTarget.lookAt.y = mesh.position.y;
-      this.cameraTarget.lookAt.z = mesh.position.z;
-    }
-
-    const drawerData = buildNodeDrawerContent(rawNode);
-    if (this.onNodeSelect) {
-      this.onNodeSelect(drawerData, rawNode);
-    }
-  }
-
-  focusChapter(chapterNum = 1) {
-    const chId = `ch_${chapterNum}`;
-    const targetNode = this.nodePositionMap.get(chId);
-    if (targetNode) {
-      this.selectNode(targetNode);
-    }
-  }
-
-  filterCategory(category = 'chapter') {
-    this.currentFilter = category;
-
-    // Toggle node visibility
-    this.nodeMeshes.forEach(mesh => {
-      if (category === 'all') {
-        mesh.visible = true;
-      } else if (category === 'chapter') {
-        mesh.visible = mesh.userData.category === 'chapter';
-      } else {
-        mesh.visible = mesh.userData.category === category || mesh.userData.id === 'concept_jesus_life';
-      }
-    });
-
-    // Path visibility
-    if (this.pathMesh) {
-      this.pathMesh.visible = category === 'chapter' || category === 'all';
-    }
-    if (this.travelingLight) {
-      this.travelingLight.visible = category === 'chapter' || category === 'all';
-    }
-
-    // Label visibility
-    this.labelElements.forEach((pill, id) => {
-      const node = this.nodePositionMap.get(id);
-      if (category === 'all' || category === 'chapter') {
-        pill.style.display = 'flex';
-      } else {
-        pill.style.display = (node && node.category === category) ? 'flex' : 'none';
-      }
-    });
+    pill.addEventListener('mouseenter', () => this.setHovered(node.id));
+    pill.addEventListener('mouseleave', () => this.setHovered(null));
+    pill.addEventListener('focus', () => this.setHovered(node.id));
+    pill.addEventListener('blur', () => this.setHovered(null));
   }
 
   updateLabelsPositions() {
     if (!this.labelsOverlay || !this.camera || !this.container) return;
     const THREE = window.THREE;
-    const width = this.container.clientWidth;
-    const height = this.container.clientHeight;
-    if (width === 0 || height === 0) return;
+    const { width, height } = this.containerSize();
+    if (!width || !height) return;
+    const v = new THREE.Vector3();
 
-    const tempVec = new THREE.Vector3();
+    const place = (pill, x, y) => {
+      v.set(x, y, 0).project(this.camera);
+      const px = (v.x * 0.5 + 0.5) * width;
+      const py = (-v.y * 0.5 + 0.5) * height;
+      pill.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) translate(-50%, -100%)`;
+    };
 
     this.islandMeshes.forEach(mesh => {
       const pill = this.labelElements.get(mesh.userData.id);
       if (!pill || pill.style.display === 'none') return;
+      const b = mesh.userData.bounds || DEFAULT_ISLAND_BOUNDS;
+      const top = mesh.position.y + (0.5 - b.top) * mesh.scale.y;
+      place(pill, mesh.position.x, top + 0.6);
+    });
 
-      // Position pill hovering directly above the island's top
-      const topOffset = (mesh.userData.height || 30) * 0.44 + 4.0;
-      tempVec.set(mesh.position.x, mesh.position.y + topOffset, mesh.position.z);
-      tempVec.project(this.camera);
+    this.orbSprites.forEach(sprite => {
+      const pill = this.labelElements.get(sprite.userData.id);
+      if (!pill || !sprite.visible) return;
+      place(pill, sprite.position.x, sprite.position.y + sprite.userData.size * 0.42);
+    });
+  }
 
-      // Check if behind camera
-      if (tempVec.z > 1.0) {
-        pill.style.opacity = '0';
-        pill.style.pointerEvents = 'none';
+  /* ---------------- Interaction ---------------- */
+
+  setupInteractions() {
+    const THREE = window.THREE;
+    const raycaster = new THREE.Raycaster();
+    const ndc = new THREE.Vector2();
+    let downX = 0, downY = 0, dragging = false, moved = false;
+
+    const pick = (clientX, clientY) => {
+      const rect = this.container.getBoundingClientRect();
+      ndc.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      ndc.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(ndc, this.camera);
+      // Raycasting ignores .visible, so filter hidden orbs out first (island hit planes are always live).
+      const targets = this.nodeMeshes.filter(m => m.userData.category === 'chapter' || m.visible);
+      const hits = raycaster.intersectObjects(targets, false);
+      if (!hits.length) return null;
+      // Prefer the front-most island (largest renderOrder).
+      hits.sort((a, b) => this.orderOf(b.object) - this.orderOf(a.object));
+      return hits[0].object.userData;
+    };
+
+    this.onPointerDown = (e) => {
+      dragging = true;
+      moved = false;
+      downX = e.clientX;
+      downY = e.clientY;
+    };
+    this.onPointerUp = (e) => {
+      if (dragging && !moved && e.target && this.container.contains(e.target) && !e.target.closest('button')) {
+        const node = pick(e.clientX, e.clientY);
+        if (node) this.selectNode(node);
+      }
+      dragging = false;
+    };
+    this.onPointerMove = (e) => {
+      const rect = this.container.getBoundingClientRect();
+      this.pointer.x = ((e.clientX - rect.left) / rect.width - 0.5);
+      this.pointer.y = ((e.clientY - rect.top) / rect.height - 0.5);
+      if (dragging) {
+        const dx = e.clientX - downX;
+        const dy = e.clientY - downY;
+        if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+        if (moved) {
+          const unitsPerPx = VIEW_HEIGHT / rect.height / this.pan.zoom;
+          this.panTarget.x = this.clampPanX(this.panTarget.x - e.movementX * unitsPerPx);
+          this.panTarget.y = this.clampPanY(this.panTarget.y + e.movementY * unitsPerPx);
+        }
         return;
       }
+      if (e.pointerType === 'mouse') {
+        const node = pick(e.clientX, e.clientY);
+        this.setHovered(node ? node.id : null);
+        this.container.style.cursor = node ? 'pointer' : 'grab';
+      }
+    };
 
-      const px = (tempVec.x * 0.5 + 0.5) * width;
-      const py = (-tempVec.y * 0.5 + 0.5) * height;
-
-      // Distance scale
-      const dist = this.camera.position.distanceTo(mesh.position);
-      const scale = Math.max(0.72, Math.min(1.05, 140 / dist));
-
-      pill.style.transform = `translate3d(${px}px, ${py}px, 0) translate(-50%, -100%) scale(${scale.toFixed(3)})`;
-      pill.style.opacity = '1';
-      pill.style.pointerEvents = 'auto';
+    this.container.addEventListener('pointerdown', this.onPointerDown);
+    this.container.addEventListener('pointermove', this.onPointerMove);
+    window.addEventListener('pointerup', this.onPointerUp);
+    window.addEventListener('pointercancel', this.onPointerUp);
+    this.container.addEventListener('mouseleave', () => {
+      this.pointer.x = 0;
+      this.pointer.y = 0;
+      this.setHovered(null);
     });
+  }
+
+  orderOf(object) {
+    return (object.parent && object.parent.type !== 'Scene' ? object.parent.renderOrder : object.renderOrder) || 0;
+  }
+
+  clampPanX(x) {
+    const limit = VIEW_HEIGHT * this.aspect * 0.12;
+    return Math.max(-limit, Math.min(limit, x));
+  }
+
+  clampPanY(y) {
+    return Math.max(-10, Math.min(10, y));
+  }
+
+  setHovered(id) {
+    if (this.hoveredId === id) return;
+    this.hoveredId = id;
+    this.labelElements.forEach((pill, pid) => pill.classList.toggle('hovered', pid === id));
+  }
+
+  selectNode(node) {
+    if (!node) return;
+    const raw = this.nodes.find(n => n.id === node.id) || node;
+    this.selectedId = raw.id;
+    this.labelElements.forEach((pill, id) => {
+      pill.classList.toggle('active', id === raw.id);
+      pill.setAttribute('aria-pressed', String(id === raw.id));
+    });
+
+    const target = this.islandMeshes.find(m => m.userData.id === raw.id) || this.orbSprites.find(s => s.userData.id === raw.id);
+    if (target && this.scene) {
+      this.spawnHalo(target.userData.baseX, target.userData.baseY, target.userData.size);
+      // Ease the view a little toward the selection without losing the composition.
+      this.panTarget.x = this.clampPanX(target.userData.baseX * 0.18);
+      this.panTarget.y = this.clampPanY(target.userData.baseY * 0.12);
+      this.panTarget.zoom = 1.06;
+    }
+
+    if (this.onNodeSelect) {
+      this.onNodeSelect(buildNodeDrawerContent(raw), raw);
+    }
+  }
+
+  /** Return to the full composition (called when the details panel closes). */
+  resetView() {
+    this.selectedId = null;
+    this.panTarget = { x: 0, y: 0, zoom: 1 };
+    this.labelElements.forEach(pill => {
+      pill.classList.remove('active');
+      pill.setAttribute('aria-pressed', 'false');
+    });
+  }
+
+  /** Screen position of a node, in CSS pixels relative to the container (or null). */
+  screenPositionOf(id) {
+    if (!this.camera || !window.THREE) return null;
+    const target = this.islandMeshes.find(m => m.userData.id === id) || this.orbSprites.find(s => s.userData.id === id);
+    if (!target) return null;
+    const { width, height } = this.containerSize();
+    const v = new window.THREE.Vector3(target.position.x, target.position.y, 0).project(this.camera);
+    return { x: (v.x * 0.5 + 0.5) * width, y: (-v.y * 0.5 + 0.5) * height };
+  }
+
+  focusChapter(chapterNum = 1) {
+    const node = this.nodes.find(n => n.id === `ch_${chapterNum}`);
+    if (node) this.selectNode(node);
+  }
+
+  spawnHalo(x, y, size) {
+    if (!this.scene || this.reducedMotion) return;
+    const THREE = window.THREE;
+    const ring = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: this.textures.ring, transparent: true, depthWrite: false, depthTest: false,
+      blending: THREE.AdditiveBlending
+    }));
+    ring.position.set(x, y, 0);
+    ring.renderOrder = 80;
+    this.scene.add(ring);
+    this.effects.push({ type: 'halo', sprite: ring, start: performance.now(), duration: 520, size: size * 0.9 });
+
+    for (let i = 0; i < 12; i++) {
+      const spark = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: this.textures.glow, transparent: true, depthWrite: false, depthTest: false,
+        blending: THREE.AdditiveBlending
+      }));
+      const angle = (i / 12) * Math.PI * 2 + Math.random() * 0.4;
+      spark.position.set(x, y, 0);
+      spark.renderOrder = 81;
+      this.scene.add(spark);
+      this.effects.push({
+        type: 'spark', sprite: spark, start: performance.now(), duration: 650 + Math.random() * 250,
+        vx: Math.cos(angle) * size * 0.55, vy: Math.sin(angle) * size * 0.45, x, y
+      });
+    }
+  }
+
+  updateEffects(now) {
+    this.effects = this.effects.filter(fx => {
+      const t = (now - fx.start) / fx.duration;
+      if (t >= 1) {
+        this.scene.remove(fx.sprite);
+        fx.sprite.material.dispose();
+        return false;
+      }
+      const ease = 1 - Math.pow(1 - t, 3);
+      if (fx.type === 'halo') {
+        const s = fx.size * (0.5 + ease * 0.9);
+        fx.sprite.scale.set(s, s, 1);
+        fx.sprite.material.opacity = 1 - t;
+      } else {
+        fx.sprite.position.set(fx.x + fx.vx * ease, fx.y + fx.vy * ease, 0);
+        const s = 2.2 * (1 - t * 0.6);
+        fx.sprite.scale.set(s, s, 1);
+        fx.sprite.material.opacity = 1 - t;
+      }
+      return true;
+    });
+  }
+
+  /* ---------------- Filters & theme ---------------- */
+
+  filterCategory(category = 'chapter') {
+    this.currentFilter = category;
+    const showOrb = (cat) => category === 'all' || category === cat ||
+      (category === 'sacrament' && cat === 'cluster');
+
+    this.orbSprites.forEach(sprite => {
+      const cat = sprite.userData.category;
+      sprite.visible = cat === 'concept' ? category !== 'chapter' : showOrb(cat);
+    });
+
+    // Islands stay visible; they dim when another category is in focus.
+    const dim = category !== 'chapter' && category !== 'all';
+    this.islandMeshes.forEach(mesh => {
+      if (mesh.material) mesh.material.opacity = dim ? 0.45 : 1;
+    });
+    if (this.pathMaterial) this.pathMaterial.opacity = dim ? 0.3 : (this.theme === 'light' ? 0.85 : 0.9);
+    if (this.travelingLight) this.travelingLight.visible = !dim;
+    this.glintsEnabled = !dim;
+
+    this.labelElements.forEach((pill, id) => {
+      const node = this.nodes.find(n => n.id === id);
+      if (!node) return;
+      if (node.category === 'chapter') {
+        pill.style.display = 'inline-flex';
+        pill.classList.toggle('dimmed', dim);
+      } else {
+        const sprite = this.orbSprites.find(s => s.userData.id === id);
+        pill.style.display = sprite && sprite.visible ? 'inline-flex' : 'none';
+        pill.classList.toggle('quiet', category === 'all');
+      }
+    });
+
+    if (this.scene) this.rebuildEdgeGeometry();
+    if (!this.scene) this.renderHtmlFallback();
+  }
+
+  setTheme(theme) {
+    this.theme = theme === 'light' ? 'light' : 'dark';
+    if (!this.scene) return;
+    const THREE = window.THREE;
+    const night = this.theme === 'dark';
+    this.islandMeshes.forEach(mesh => {
+      // Islands take on a cool moonlit tint at night; lanterns glow.
+      mesh.material.color.set(night ? 0xc8d3f2 : 0xffffff);
+      mesh.userData.lantern.material.opacity = night ? 0.9 : 0;
+    });
+    this.pathMaterial.blending = night ? THREE.AdditiveBlending : THREE.NormalBlending;
+    this.pathMaterial.color.set(night ? 0xffd27a : 0xffc04d);
+    this.pathMaterial.needsUpdate = true;
+    this.edgeMaterial.color.set(night ? 0xf2c66d : 0xc98a1e);
+    (this.trail || []).forEach(sprite => {
+      sprite.material.blending = night ? THREE.AdditiveBlending : THREE.NormalBlending;
+      sprite.material.color.set(night ? 0xffffff : 0xffc75a);
+      sprite.material.needsUpdate = true;
+    });
+    (this.glints || []).forEach(g => {
+      g.sprite.material.color.set(night ? 0xfff2cf : 0xffffff);
+    });
+    this.filterCategory(this.currentFilter);
+  }
+
+  /* ---------------- Sizing & lifecycle ---------------- */
+
+  observeResize() {
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', () => this.resize());
+      return;
+    }
+    this.resizeObserver = new ResizeObserver(() => this.resize());
+    this.resizeObserver.observe(this.container);
   }
 
   resize(width, height) {
     if (!this.renderer || !this.camera) return;
-    const w = width || (this.container ? this.container.clientWidth : 800) || 800;
-    const h = height || (this.container ? this.container.clientHeight : 500) || 500;
-    this.camera.aspect = w / h;
-    this.camera.updateProjectionMatrix();
+    const size = this.containerSize();
+    const w = width || size.width;
+    const h = height || size.height;
+    if (!w || !h) return;
+    this.aspect = w / h;
+    const table = this.aspect < 1.1 ? TALL_LAYOUT : WIDE_LAYOUT;
+    this.layoutTable = table;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, w < 600 ? 1.5 : 2));
     this.renderer.setSize(w, h);
+    if (this.labelsOverlay) this.labelsOverlay.classList.toggle('narrow', w < 560);
+    this.applyLayout();
+    this.updateCamera();
     this.updateLabelsPositions();
   }
 
   attachToContainer(newContainer) {
     if (!newContainer) return;
-    this.container = newContainer;
-    if (this.renderer && this.renderer.domElement) {
-      if (this.renderer.domElement.parentElement !== newContainer) {
-        newContainer.innerHTML = '';
-        newContainer.appendChild(this.renderer.domElement);
-      }
-      this.resize(newContainer.clientWidth, newContainer.clientHeight);
+    if (this.resizeObserver && this.container) this.resizeObserver.unobserve(this.container);
+    if (this.container && this.onPointerDown) {
+      this.container.removeEventListener('pointerdown', this.onPointerDown);
+      this.container.removeEventListener('pointermove', this.onPointerMove);
     }
+    this.container = newContainer;
+    if (this.renderer) {
+      this.mountCanvas();
+      if (this.onPointerDown) {
+        this.container.addEventListener('pointerdown', this.onPointerDown);
+        this.container.addEventListener('pointermove', this.onPointerMove);
+      }
+      if (this.resizeObserver) this.resizeObserver.observe(this.container);
+      this.resize(newContainer.clientWidth, newContainer.clientHeight);
+    } else if (this.labelsOverlay) {
+      this.container.appendChild(this.labelsOverlay);
+      this.renderHtmlFallback();
+    }
+  }
+
+  updateCamera() {
+    const halfW = (VIEW_HEIGHT * this.aspect) / 2 / this.pan.zoom;
+    const halfH = VIEW_HEIGHT / 2 / this.pan.zoom;
+    const px = this.pan.x + (this.reducedMotion ? 0 : this.pointer.x * 1.6);
+    const py = this.pan.y - (this.reducedMotion ? 0 : this.pointer.y * 1.0);
+    this.camera.left = -halfW + px;
+    this.camera.right = halfW + px;
+    this.camera.top = halfH + py;
+    this.camera.bottom = -halfH + py;
+    this.camera.updateProjectionMatrix();
   }
 
   animate() {
     this.animationFrameId = requestAnimationFrame(() => this.animate());
+    if (!this.renderer || !this.container) return;
+    // Skip work while the map is hidden (another view, or the tab is in the background).
+    if (document.hidden || this.container.clientWidth === 0 || this.container.clientHeight === 0) return;
 
-    const time = Date.now() * 0.0016;
+    const now = performance.now();
+    const t = now / 1000;
+    const still = this.reducedMotion;
 
-    // Gentle island bobbing animation (2-3px offset per §8)
-    this.islandMeshes.forEach((mesh, idx) => {
-      const bob = Math.sin(time + (idx * 0.75)) * 1.6;
-      mesh.position.y = mesh.userData.baseY + bob;
+    this.islandMeshes.forEach(mesh => {
+      const d = mesh.userData;
+      const bob = still ? 0 : Math.sin(t * 0.9 + d.phase) * 0.55;
+      const lift = (this.hoveredId === d.id || this.selectedId === d.id) ? 1.06 : 1;
+      const mirror = d.chNum % 2 === 0 ? -1 : 1;
+      const current = Math.abs(mesh.scale.y) / d.size;
+      const s = current + (lift - current) * 0.2;
+      mesh.scale.set(d.size * s * mirror, d.size * s, 1);
+      mesh.position.set(d.baseX, d.baseY + bob, 0);
+      if (this.theme === 'dark' && d.lantern) {
+        d.lantern.material.opacity = 0.75 + Math.sin(t * 2.3 + d.phase) * 0.15;
+      }
     });
 
-    // Traveling light on the golden path
+    this.orbSprites.forEach(sprite => {
+      if (!sprite.visible) return;
+      const d = sprite.userData;
+      const bob = still ? 0 : Math.sin(t * 1.2 + d.phase) * 0.4;
+      const pulse = (this.hoveredId === d.id || this.selectedId === d.id) ? 1.25 : 1;
+      sprite.position.set(d.baseX, d.baseY + bob, 0);
+      sprite.scale.set(d.size * pulse, d.size * pulse, 1);
+    });
+
     if (this.travelingLight && this.pathCurve && this.travelingLight.visible) {
-      const t = (Date.now() * 0.00012) % 1.0;
-      const pos = this.pathCurve.getPointAt(t);
-      if (pos) this.travelingLight.position.copy(pos);
+      const p = this.pathCurve.getPointAt(still ? 0 : (t * 0.035) % 1);
+      this.travelingLight.position.set(p.x, p.y, 0);
+      const s = 4.2 + Math.sin(t * 3) * 0.6;
+      this.travelingLight.scale.set(s, s, 1);
     }
 
-    // Smooth camera easing towards target
-    if (this.camera) {
-      const targetX = this.cameraTarget.pos.x + this.pointerX;
-      const targetY = this.cameraTarget.pos.y + this.pointerY;
-      const targetZ = this.cameraTarget.pos.z;
+    this.updateTrail();
+    this.updateIslandGlints(t);
 
-      this.camera.position.x += (targetX - this.camera.position.x) * 0.04;
-      this.camera.position.y += (targetY - this.camera.position.y) * 0.04;
-      this.camera.position.z += (targetZ - this.camera.position.z) * 0.04;
+    this.pan.x += (this.panTarget.x - this.pan.x) * 0.08;
+    this.pan.y += (this.panTarget.y - this.pan.y) * 0.08;
+    this.pan.zoom += (this.panTarget.zoom - this.pan.zoom) * 0.08;
+    this.updateCamera();
+    this.updateEffects(now);
 
-      this.currentLookAt.x += (this.cameraTarget.lookAt.x - this.currentLookAt.x) * 0.04;
-      this.currentLookAt.y += (this.cameraTarget.lookAt.y - this.currentLookAt.y) * 0.04;
-      this.currentLookAt.z += (this.cameraTarget.lookAt.z - this.currentLookAt.z) * 0.04;
-
-      this.camera.lookAt(this.currentLookAt.x, this.currentLookAt.y, this.currentLookAt.z);
-    }
-
-    // Render WebGL frame
-    if (this.renderer && this.scene && this.camera) {
-      this.renderer.render(this.scene, this.camera);
-    }
-
-    // Update projected HTML label positions
+    this.renderer.render(this.scene, this.camera);
     this.updateLabelsPositions();
+  }
+
+  /** HTML fallback when WebGL is unavailable: the same islands as positioned buttons. */
+  renderHtmlFallback() {
+    if (!this.labelsOverlay) return;
+    this.labelsOverlay.classList.add('html-fallback');
+    const { width, height } = this.containerSize();
+    const table = width / height < 1.1 ? TALL_LAYOUT : WIDE_LAYOUT;
+    const placed = layoutNodes(this.nodes, table);
+    this.labelElements.forEach((pill, id) => {
+      const slot = placed.get(id);
+      if (!slot || pill.style.display === 'none') return;
+      pill.style.left = `${slot.u * 100}%`;
+      pill.style.top = `${(slot.v - slot.s * 0.3) * 100}%`;
+      pill.style.transform = 'translate(-50%, -100%)';
+    });
   }
 
   destroy() {
     if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
-    if (this.renderer && this.renderer.domElement) {
-      this.renderer.domElement.remove();
+    if (this.resizeObserver) this.resizeObserver.disconnect();
+    window.removeEventListener('pointerup', this.onPointerUp);
+    window.removeEventListener('pointercancel', this.onPointerUp);
+    if (this.scene) {
+      this.scene.traverse(obj => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (obj.material.map) obj.material.map.dispose();
+          obj.material.dispose();
+        }
+      });
     }
-    if (this.labelsOverlay) {
-      this.labelsOverlay.remove();
+    if (this.renderer) {
+      this.renderer.dispose();
+      if (this.renderer.domElement) this.renderer.domElement.remove();
     }
+    if (this.labelsOverlay) this.labelsOverlay.remove();
   }
 }
