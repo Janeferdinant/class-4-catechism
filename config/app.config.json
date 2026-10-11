@@ -44,11 +44,12 @@
     ]
   },
   "audio": {
-    "ttsProvider": "msedge-neural",
-    "malayalamVoice": "ml-IN-SobhanaNeural",
-    "englishVoice": "en-US-JennyNeural",
-    "preGeneratedPath": "assets/audio/",
-    "enableFallbackWebSpeech": true
+    "ttsProvider": "omnivoice",
+    "model": "k2-fsa/OmniVoice",
+    "modelLicense": "CC-BY-NC-4.0 (non-commercial use)",
+    "preGeneratedPath": "assets/audio/narration/",
+    "manifest": "src/data/narrationManifest.js",
+    "enableFallbackWebSpeech": false
   },
   "visuals": {
     "pixarAssetsPath": "assets/pixar/",

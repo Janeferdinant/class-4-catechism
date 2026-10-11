@@ -32,3 +32,6 @@ assets/generated/incoming/
 
 # Any local env file (Vercel CLI writes .env.local with an access token)
 .env*
+
+# Python bytecode
+__pycache__/

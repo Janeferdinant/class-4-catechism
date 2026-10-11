@@ -664,17 +664,19 @@
             </div>
           </div>
           <div class="sheet-row">
-            <span class="sheet-sublabel">Voice Language:</span>
-            <div class="sheet-pill-group">
-              <button id="sheet-lang-mal" data-lang="mal" class="sheet-pill-btn active">മലയാളം</button>
-              <button id="sheet-lang-eng" data-lang="eng" class="sheet-pill-btn">English</button>
+            <span class="sheet-sublabel" id="sheet-lang-label">Voice Language:</span>
+            <div class="sheet-pill-group" role="group" aria-labelledby="sheet-lang-label">
+              <button type="button" id="sheet-lang-mal" data-lang="mal" class="sheet-pill-btn active" aria-pressed="true">മലയാളം</button>
+              <button type="button" id="sheet-lang-eng" data-lang="eng" class="sheet-pill-btn" aria-pressed="false">English</button>
             </div>
           </div>
-          <div class="sheet-row">
-            <span class="sheet-sublabel">Speech Pace:</span>
-            <div class="sheet-pill-group">
-              <button id="sheet-speed-btn" data-speed="0.85" class="sheet-pill-btn active">0.85x Child Pace</button>
-              <button id="sheet-speed-normal" data-speed="1.0" class="sheet-pill-btn">1.0x Normal</button>
+          <div class="sheet-row sheet-speed-row">
+            <label class="sheet-sublabel" for="sheet-speed-slider">Speech Pace:</label>
+            <div class="sheet-speed-control">
+              <span class="sheet-speed-end" aria-hidden="true">Slower</span>
+              <input type="range" id="sheet-speed-slider" data-speed min="0.5" max="1.5" step="0.05" value="1" aria-valuetext="1.00 times normal speed">
+              <span class="sheet-speed-end" aria-hidden="true">Faster</span>
+              <output id="sheet-speed-value" for="sheet-speed-slider">1.00×</output>
             </div>
           </div>
           <div class="sheet-row">

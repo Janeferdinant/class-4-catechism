@@ -34,12 +34,6 @@ test('GeminiAIService key management and prompt construction', async () => {
   assert.ok(artPrompt.includes('3D Pixar'));
   assert.ok(artPrompt.includes('Sacred Heart of Jesus'));
   assert.ok(artPrompt.includes('4K'));
-
-  // Test VoiceoverManager integration
-  const { VoiceoverManager } = await import('../src/components/VoiceoverManager.js');
-  const vm = new VoiceoverManager();
-  assert.equal(typeof vm.setGeminiService, 'function');
-  vm.setGeminiService(service);
-  assert.equal(vm.geminiService, service);
+  // Narration no longer goes through Gemini: every clip is pre-rendered with OmniVoice.
 });
 

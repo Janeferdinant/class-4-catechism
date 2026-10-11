@@ -41,8 +41,9 @@ export class StoryClassroomManager {
     return this.activeTab || 'story';
   }
 
-  renderLessonCard(lesson, currentTab = null) {
+  renderLessonCard(lesson, currentTab = null, { starCollected = false } = {}) {
     const tab = currentTab || this.activeTab || 'story';
+    const tabName = { story: 'story', moral: 'moral lesson', concepts: 'key concepts', scripture: 'scripture' }[tab] || 'story';
 
     return `
       <div class="story-lesson-card glass-panel animate-slide-fade" data-chapter="${lesson.number}">
@@ -90,10 +91,10 @@ export class StoryClassroomManager {
         <!-- Bottom Pinned Shared Audio Bar (Matching Mockup 04) -->
         <div class="story-bottom-audio-bar shared-audio-bar" data-chapter="${lesson.number}">
           <div class="audio-lang-pills">
-            <button class="btn-audio-pill btn-audio-mal" onclick="window.app && (window.app.speakStoryMal ? window.app.speakStoryMal(${lesson.number}) : window.app.playChapterAudio(${lesson.number}, 'mal'))" title="Listen to story in Malayalam">
+            <button class="btn-audio-pill btn-audio-mal" onclick="window.app && window.app.speakStoryMal && window.app.speakStoryMal(${lesson.number})" title="Listen to the ${tabName} in Malayalam">
               🔊 Malayalam
             </button>
-            <button class="btn-audio-pill btn-audio-eng" onclick="window.app && window.app.playChapterAudio && window.app.playChapterAudio(${lesson.number}, 'eng')" title="Listen to story in English">
+            <button class="btn-audio-pill btn-audio-eng" onclick="window.app && window.app.speakStoryEng && window.app.speakStoryEng(${lesson.number})" title="Listen to the ${tabName} in English">
               🔊 English
             </button>
             <button class="btn-audio-pill btn-audio-stop" onclick="window.app && window.app.stopVoice && window.app.stopVoice()" title="Stop narration">
@@ -108,12 +109,12 @@ export class StoryClassroomManager {
             <div class="audio-progress-wrap" onclick="window.app && window.app.seekAudio && window.app.seekAudio(event)">
               <div class="audio-progress-fill" style="width: 0%;"></div>
             </div>
-            <span class="audio-time-display">0:00 / 0:38</span>
+            <span class="audio-time-display">0:00</span>
           </div>
 
           <div class="story-star-action">
-            <button class="btn-award-star-pill" onclick="window.app && window.app.awardStar && window.app.awardStar(${lesson.number})">
-              ⭐ Collect Chapter Star
+            <button class="btn-award-star-pill${starCollected ? ' collected' : ''}" data-chapter="${lesson.number}" ${starCollected ? 'disabled' : ''} onclick="window.app && window.app.awardStar && window.app.awardStar(${lesson.number})">
+              ${starCollected ? '⭐ Star collected' : '⭐ Collect Chapter Star'}
             </button>
           </div>
         </div>

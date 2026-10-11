@@ -13,7 +13,7 @@ The main objectives of this project are:
 
 ## Features
 - **Multi-Agent Autonomous Orchestration**: An intelligent coordinator delegates user goals across specialized agents for pedagogical storytelling, exam solution retrieval, 3D visualization, and gamification.
-- **Natural Neural Bilingual Audio Narration**: 30 pre-generated, broadcast-quality audio tracks using Microsoft Edge Neural voices (`ml-IN-SobhanaNeural` for Malayalam and `en-US-JennyNeural` for English) with instantaneous playback and global stop controls.
+- **Natural Bilingual Narration (OmniVoice)**: every read-aloud item - stories, moral lessons, scripture, key concepts, exam questions and answers, quiz questions and clues, and map details - is pre-rendered in Malayalam and English with [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice), one consistent narrator voice per language. The settings panel switches narration language (even mid-playback) and has a speech-pace slider; no robotic browser speech is used.
 - **3D WebGL Knowledge Universe & Slide-out Drawer**: Interactive Three.js particle cosmos mapping relationships between chapters, sacraments, and historical exam questions. Clicking any node smoothly focuses the camera and slides out a contextual details drawer.
 - **3D Pixar Motion Graphics with Ken Burns Animation**: Pixar-styled 3D diorama storybook art for all 15 chapters featuring dynamic mouse-tilt parallax, particle simulation, and a toggle to switch between 3D art and original textbook scans.
 - **5 Solved Examination Papers with Exact Citations**: Complete solutions for First and Second Semester exams (2023–2025), categorized with difficulty ratings, marking schemes, and reference citations.
@@ -63,8 +63,8 @@ Class 4 Catechism/
 | `data/` | Input source documents (textbook & exam PDFs) and generated data |
 | `docs/` | Detailed technical documentation, architecture specs, and implementation plans |
 | `tests/` | Automated test suites (25 unit & integration tests) |
-| `scripts/` | Utility scripts for neural TTS audio generation and data normalization |
-| `assets/` | Static multimedia assets (30 pre-generated MP3s, 3D Pixar art, textbook scans) |
+| `scripts/` | Narration export and OmniVoice audio generation, artwork processing, utilities |
+| `assets/` | Static multimedia assets (OmniVoice narration MP3s, 3D art, textbook scans) |
 | `requirements.txt` | Python dependencies for document processing and utility scripts |
 | `package.json` | Node.js manifest, dependencies, and script definitions |
 | `CHANGELOG.md` | Detailed project version release history |
@@ -121,6 +121,32 @@ pip install -r requirements.txt
 ### 4. Configure the Application
 Copy or review configuration parameters in `config/app.config.json`. All static audio and visual assets are pre-generated and bundled locally, so no external API keys or cloud service accounts are required to run the classroom out of the box.
 
+## Regenerating Narration Audio
+
+All narration is pre-rendered, so the site needs no API keys or speech service at runtime.
+The text comes from `src/data/narration.js`, the same module the site uses, so audio always
+matches what is on screen.
+
+1. Export the narration scripts after changing any lesson, exam or quiz text:
+   ```bash
+   npm run audio:scripts        # writes assets/audio/narration/scripts.json
+   ```
+2. Render with OmniVoice (needs an NVIDIA GPU, Python 3.10+, ffmpeg). Use a separate virtual
+   environment with `torch` (CUDA build), `omnivoice` and `soundfile` installed:
+   ```bash
+   python scripts/generate_omnivoice_audio.py   # only new or changed text is rendered
+   ```
+   Useful options: `--only ch3-` (one chapter), `--lang mal`, `--force`, `--redesign-voices`.
+   The narrator voices are designed once and stored in `assets/audio/narration/voices/`.
+3. Optionally spot-check with speech recognition (`pip install faster-whisper`):
+   ```bash
+   python scripts/verify_narration.py --sample 20 --lang eng
+   ```
+
+The script writes the MP3s to `assets/audio/narration/<lang>/` and updates
+`src/data/narrationManifest.js`. Note: the OmniVoice model weights are licensed
+**CC-BY-NC** (non-commercial use only).
+
 ## Configuration
 
 Configuration files are located in:
@@ -133,9 +159,8 @@ Configuration files are located in:
 | `ui.defaultTheme` | Default user interface theme (`dark` or `light`) | Yes | `dark` |
 | `ui.defaultLanguage` | Default narration and story language (`malayalam` or `english`) | Yes | `malayalam` |
 | `ui.soundEffectsEnabled` | Enable Web Audio synthesizer sound effects | No | `true` |
-| `audio.ttsProvider` | Primary voiceover provider | Yes | `msedge-neural` |
-| `audio.malayalamVoice` | Neural Malayalam voice model identifier | Yes | `ml-IN-SobhanaNeural` |
-| `audio.englishVoice` | Neural English voice model identifier | Yes | `en-US-JennyNeural` |
+| `audio.ttsProvider` | Narration engine used to pre-render audio | Yes | `omnivoice` |
+| `audio.preGeneratedPath` | Folder holding the rendered narration clips | Yes | `assets/audio/narration/` |
 | `visuals.defaultView` | Default picture slide display (`pixar` or `textbook`) | Yes | `pixar` |
 
 ### Environment Variables
@@ -219,7 +244,7 @@ This project integrates with the following systems:
 | System | Purpose | Interface |
 | :--- | :--- | :--- |
 | Three.js WebGL Engine | 3D knowledge graph universe rendering & camera orbit | Browser ES6 Module / CDN |
-| Microsoft Edge Neural TTS | Offline generation of natural Malayalam (`SobhanaNeural`) audio | Node.js script (`scripts/generateNeuralMalayalamAudio.js`) |
+| OmniVoice (k2-fsa) | Offline rendering of all Malayalam and English narration | Python script (`scripts/generate_omnivoice_audio.py`) |
 | Google Gemini AI API | Optional dynamic agent explanations and personalized Q&A | REST API via `GeminiAIService.js` |
 | Web Audio API | Sound effects generation (chimes, clicks, celebratory fanfares) | Native Browser AudioContext |
 
@@ -298,7 +323,8 @@ pytest
 ### Test Requirements
 1. All 15 chapters must contain complete English and Malayalam text and moral lessons.
 2. All 5 exam papers must have solutions verified against chapter citations.
-3. Pre-generated audio files (`ch1_mal.mp3` through `ch15_mal.mp3` and `ch1_eng.mp3` through `ch15_eng.mp3`) must exist and have non-zero size.
+3. Every narration script in `src/data/narration.js` must have a rendered clip in `src/data/narrationManifest.js`, and each file under `assets/audio/narration/` must exist and be non-empty.
+4. Each visitor starts with 0 stars; a chapter star or quiz star can be earned only once per browser.
 
 ## Logging
 Logs are stored in:
@@ -329,7 +355,8 @@ Common errors and solutions are documented below.
 
 ## Known Issues / Limitations
 1. On very low-end mobile devices, 3D WebGL particle counts may cause minor frame drops.
-2. Web Speech API synthesis quality depends on OS language packages if offline MP3s are disabled.
+2. Narration is pre-rendered. Text that changes needs the audio regenerated (see "Regenerating Narration Audio"); until then that button says the audio is not available yet.
+3. Clues, simple explanations and some Adventure Map details have English text only, so they are read in English.
 
 ## Troubleshooting
 
@@ -377,7 +404,7 @@ Important documents:
 ## Known Dependencies
 | Dependency | Version | Purpose |
 | :--- | :--- | :--- |
-| `msedge-tts` | `^2.0.9` | Broadcast-grade natural neural text-to-speech audio synthesis |
+| OmniVoice (`omnivoice` Python package, dev only) | `0.2.1` | Renders the Malayalam and English narration clips offline; model weights are CC-BY-NC |
 | Three.js | `r128` | 3D WebGL interactive universe and particle node graph |
 | Canvas-Confetti | `1.9.4` | Gamified celebratory particle explosions for quizzes |
 

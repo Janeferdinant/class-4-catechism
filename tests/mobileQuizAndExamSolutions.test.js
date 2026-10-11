@@ -91,11 +91,17 @@ test('Mobile Quiz: allows progression to next question after right or wrong answ
   };
   globalThis.document = fakeDoc;
 
-  let addedStars = 0;
+  // Stars are awarded once per question id
+  const awarded = new Set();
   const mockApp = {
     sfx: { playPop: () => {}, playChime: () => {}, playFanfare: () => {}, playCheer: () => {} },
-    starsCount: 3,
-    addStar: (n = 1) => { addedStars += n; }
+    starsCount: 0,
+    awardQuizStar: (id) => {
+      if (awarded.has(id)) return false;
+      awarded.add(id);
+      mockApp.starsCount = awarded.size;
+      return true;
+    }
   };
 
   const pres = new MobilePresentation(mockApp);
@@ -124,7 +130,8 @@ test('Mobile Quiz: allows progression to next question after right or wrong answ
   // Test Correct Answer: awards star and gives next button
   const nextQ = KID_QUIZ_QUESTIONS[pres.currentQuizIndex % KID_QUIZ_QUESTIONS.length];
   pres.handleQuizAnswer(nextQ.correctIndex, nextQ.correctIndex);
-  assert.ok(addedStars > 0, 'Correct answer must award star');
+  assert.equal(awarded.size, 1, 'Correct answer must award star');
+  assert.ok(awarded.has(nextQ.id), 'Star is recorded against the question id');
   assert.ok(
     feedback.innerHTML.includes('nextQuizQuestion'),
     'Feedback after correct answer MUST contain next question button'

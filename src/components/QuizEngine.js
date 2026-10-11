@@ -138,8 +138,9 @@ export class QuizEngine {
           <div class="celebration-badge-hero">🎉 🏆 ✨</div>
           <h2 class="quiz-celebration-title">You Did It, Star Champion!</h2>
           <p class="quiz-final-score">
-            You earned <strong class="gold-text">${this.stars} Golden Stars</strong> and <strong>${this.score} Points</strong>!
+            You answered <strong class="gold-text">${this.stars} of ${totalQ}</strong> questions correctly and scored <strong>${this.score} Points</strong>!
           </p>
+          <p class="quiz-star-rule">Each question gives you a star the first time you get it right.</p>
           <div class="celebration-angel-frame">
             <img src="assets/generated/angel-cherub-cutout.webp" alt="Angel Cherub" class="celebration-angel-cutout" />
           </div>

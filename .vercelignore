@@ -17,3 +17,8 @@ ref-data/
 .serena/
 .playwright-mcp/
 .scratch-review/
+
+# Narration generator inputs (the site only needs the mp3 clips)
+assets/audio/narration/voices/
+assets/audio/narration/cache.json
+assets/audio/narration/scripts.json

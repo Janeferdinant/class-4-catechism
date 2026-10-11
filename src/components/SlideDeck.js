@@ -133,7 +133,7 @@ export class SlideDeckManager {
             <div class="audio-progress-wrap" id="slide-audio-progress-wrap" onclick="window.app && window.app.seekAudio && window.app.seekAudio(event)">
               <div class="audio-progress-fill" id="slide-audio-progress-fill" style="width: 0%;"></div>
             </div>
-            <span class="audio-time-display" id="slide-audio-time-display">0:00 / 0:38</span>
+            <span class="audio-time-display" id="slide-audio-time-display">0:00</span>
           </div>
 
           <div class="slide-actions-right">

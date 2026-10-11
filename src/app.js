@@ -1,7 +1,7 @@
 /**
  * Application Master Controller
  * Magical Learning Adventure for 6-Year-Old Children
- * Integrates SoundEffects (Web Audio), Voiceover (Web Speech),
+ * Integrates SoundEffects (Web Audio), narration (pre-rendered OmniVoice clips),
  * 3D Interactive Side-Drawer, Quiz Engine, Slides, Classroom, and Exam Solver.
  */
 
@@ -23,6 +23,8 @@ import { MotionGraphicsEngine } from './components/MotionGraphicsEngine.js';
 import { LayoutSelector } from './presentation/LayoutSelector.js';
 import { MobilePresentation } from './presentation/MobilePresentation.js';
 import { DesktopPresentation } from './presentation/DesktopPresentation.js';
+import { ProgressStore } from './components/ProgressStore.js';
+import { clipIds, nodeClipSequence } from './data/narration.js';
 
 class AppController {
   constructor() {
@@ -30,7 +32,6 @@ class AppController {
     this.voiceover = new VoiceoverManager();
     this.sfx = new SoundEffects();
     this.geminiService = new GeminiAIService();
-    this.voiceover.setGeminiService(this.geminiService);
     this.motionGraphics = new MotionGraphicsEngine();
     this.slideDeck = new SlideDeckManager(CHAPTERS_DATA);
     this.classroom = new StoryClassroomManager();
@@ -88,16 +89,27 @@ class AppController {
   }
 
   loadSavedStars() {
-    const saved = localStorage.getItem('adventure-stars');
-    this.starsCount = saved ? parseInt(saved, 10) : 3;
+    // Progress is kept only in this browser; every new visitor starts at 0.
+    this.progress = new ProgressStore({
+      chapterNumbers: CHAPTERS_DATA.map(c => c.number),
+      quizIds: KID_QUIZ_QUESTIONS.map(q => q.id)
+    });
+    this.starsCount = this.progress.stars;
   }
 
-  addStar(amount = 1) {
-    this.starsCount += amount;
-    localStorage.setItem('adventure-stars', this.starsCount);
+  /** Re-read the star count from saved progress (stars can't be added directly). */
+  refreshStars(celebrate = false) {
+    this.starsCount = this.progress.stars;
     this.updateHeaderStars();
     if (this.mobilePres) this.mobilePres.updateStars(this.starsCount);
-    this.sfx.playSparkle();
+    if (celebrate && this.sfx && this.sfx.playSparkle) this.sfx.playSparkle();
+  }
+
+  /** Star for answering a quiz question correctly, once per question. */
+  awardQuizStar(questionId) {
+    const isNew = this.progress.awardQuizStar(questionId);
+    if (isNew) this.refreshStars(true);
+    return isNew;
   }
 
   updateHeaderStars() {
@@ -357,19 +369,10 @@ class AppController {
       }
     };
 
-    const handleMenuClick = (e) => {
-      if (e) e.stopPropagation();
-      this.toggleSettingsPopup();
-    };
-
-    if (menuBtn) {
-      menuBtn.addEventListener('click', handleMenuClick);
-      menuBtn.onclick = handleMenuClick;
-    }
-    if (mobMenuBtn) {
-      mobMenuBtn.addEventListener('click', handleMenuClick);
-      mobMenuBtn.onclick = handleMenuClick;
-    }
+    // Exactly one click handler per button: DesktopPresentation binds the desktop
+    // gear and MobilePresentation binds the mobile menu, both calling
+    // toggleSettingsPopup(). Binding it here too made one click open and close
+    // the popup (or open it only by accident, with an odd number of handlers).
     if (closeBtn) {
       closeBtn.addEventListener('click', (e) => {
         if (e) e.stopPropagation();
@@ -382,6 +385,11 @@ class AppController {
         this.toggleSettingsPopup(false);
       });
     }
+
+    // Escape closes the settings popup
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sheet.classList.contains('active')) this.toggleSettingsPopup(false);
+    });
 
     // Dismiss when clicking anywhere outside popup card or gear buttons
     document.addEventListener('click', (e) => {
@@ -428,71 +436,99 @@ class AppController {
     if (resetStarsBtn) {
       resetStarsBtn.addEventListener('click', (e) => {
         if (e) e.stopPropagation();
-        this.starsCount = 0;
+        this.progress.reset();
         try {
-          localStorage.setItem('adventure-stars', '0');
-          localStorage.setItem('class4-collected-stars', '0');
+          localStorage.setItem('adventure-stars', '0'); // legacy key; cleared on next load
         } catch (_) {}
-        this.updateHeaderStars();
+        this.refreshStars();
         if (this.desktopPres) this.desktopPres.updateStars(0);
-        if (this.mobilePres) this.mobilePres.updateStars(0);
+        if (this.currentView === 'classroom') this.renderClassroomLesson(this.activeChapter);
         this.updateSettingsPopupUI();
         if (this.sfx && this.sfx.playPop) this.sfx.playPop();
         this.showToast('⭐ Stars reset to 0', '⭐');
       });
     }
 
-    // Audio Language Pills
-    const langMalBtn = document.getElementById('sheet-lang-mal');
-    const langEngBtn = document.getElementById('sheet-lang-eng');
-    if (langMalBtn && langEngBtn) {
-      langMalBtn.addEventListener('click', () => {
-        langMalBtn.classList.add('active');
-        langEngBtn.classList.remove('active');
-        try { localStorage.setItem('preferred-narration-lang', 'mal'); } catch (_) {}
-        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-        this.showToast('🔊 Malayalam Voice Selected', '🇮🇳');
-      });
-      langEngBtn.addEventListener('click', () => {
-        langEngBtn.classList.add('active');
-        langMalBtn.classList.remove('active');
-        try { localStorage.setItem('preferred-narration-lang', 'eng'); } catch (_) {}
-        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-        this.showToast('🔊 English Voice Selected', '🇬🇧');
+    // Narration language: switches what is playing right now, too
+    document.querySelectorAll('[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => this.setNarrationLanguage(btn.dataset.lang, { announce: true }));
+    });
+
+    // Speech pace slider (applies live to the clip that is playing)
+    const speedSlider = document.getElementById('sheet-speed-slider');
+    if (speedSlider) {
+      speedSlider.addEventListener('input', () => this.setSpeechRate(speedSlider.value));
+      speedSlider.addEventListener('change', () => {
+        try { localStorage.setItem('preferred-speech-rate', String(this.voiceover.rate)); } catch (_) {}
       });
     }
 
-    // Speech Speed Pills
-    const speedChildBtn = document.getElementById('sheet-speed-btn');
-    const speedNormalBtn = document.getElementById('sheet-speed-normal');
-    if (speedChildBtn && speedNormalBtn) {
-      speedChildBtn.addEventListener('click', () => {
-        speedChildBtn.classList.add('active');
-        speedNormalBtn.classList.remove('active');
-        this.speechRate = 0.85;
-        try { localStorage.setItem('preferred-speech-rate', '0.85'); } catch (_) {}
-        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-        this.showToast('🧸 0.85x Child-Pace Voice Enabled', '🧸');
-      });
-      speedNormalBtn.addEventListener('click', () => {
-        speedNormalBtn.classList.add('active');
-        speedChildBtn.classList.remove('active');
-        this.speechRate = 1.0;
-        try { localStorage.setItem('preferred-speech-rate', '1.0'); } catch (_) {}
-        if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-        this.showToast('⚡ 1.0x Normal Pace Enabled', '⚡');
-      });
-    }
-
-    // Sound Effects Toggle
+    // Sound effects on/off
     if (sfxToggleBtn) {
       sfxToggleBtn.addEventListener('click', () => {
-        this.sfxMuted = !this.sfxMuted;
-        sfxToggleBtn.classList.toggle('active', !this.sfxMuted);
-        sfxToggleBtn.textContent = this.sfxMuted ? '🔕 SFX Off' : '🔔 SFX On';
-        if (!this.sfxMuted && this.sfx && this.sfx.playChime) this.sfx.playChime();
-        this.showToast(this.sfxMuted ? '🔕 Sound Effects Muted' : '🔔 Sound Effects Enabled', '🔔');
+        this.setSoundEffects(!this.sfx.enabled);
+        if (this.sfx.enabled && this.sfx.playChime) this.sfx.playChime();
+        this.showToast(this.sfx.enabled ? '🔔 Sound Effects On' : '🔕 Sound Effects Off', '🔔');
       });
+    }
+
+    this.applySavedAudioPreferences();
+  }
+
+  /* ---------------- Narration preferences ---------------- */
+  applySavedAudioPreferences() {
+    let lang = 'mal';
+    let rate = 1;
+    let sfx = true;
+    try {
+      lang = localStorage.getItem('preferred-narration-lang') === 'eng' ? 'eng' : 'mal';
+      const savedRate = parseFloat(localStorage.getItem('preferred-speech-rate'));
+      if (Number.isFinite(savedRate)) rate = savedRate;
+      sfx = localStorage.getItem('sound-effects') !== 'off';
+    } catch (_) {}
+    this.setNarrationLanguage(lang);
+    this.setSpeechRate(rate);
+    this.setSoundEffects(sfx, { save: false });
+  }
+
+  /** Choose the narration language; anything playing switches to it immediately. */
+  setNarrationLanguage(lang, { announce = false } = {}) {
+    const next = lang === 'eng' ? 'eng' : 'mal';
+    this.narrationLang = next;
+    this.voiceover.setLanguage(next);
+    try { localStorage.setItem('preferred-narration-lang', next); } catch (_) {}
+    document.querySelectorAll('[data-lang]').forEach(btn => {
+      const on = btn.dataset.lang === next;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    if (announce) {
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+      this.showToast(next === 'mal' ? '🔊 മലയാളം narration' : '🔊 English narration', '🔊');
+    }
+  }
+
+  setSpeechRate(value) {
+    const rate = this.voiceover.setRate(value);
+    this.speechRate = rate;
+    const slider = document.getElementById('sheet-speed-slider');
+    const label = document.getElementById('sheet-speed-value');
+    if (slider && Number(slider.value) !== rate) slider.value = String(rate);
+    if (slider) slider.setAttribute('aria-valuetext', `${rate.toFixed(2)} times normal speed`);
+    if (label) label.textContent = `${rate.toFixed(2)}×`;
+  }
+
+  setSoundEffects(on, { save = true } = {}) {
+    this.sfx.enabled = Boolean(on);
+    this.sfxMuted = !this.sfx.enabled;
+    const btn = document.getElementById('sheet-sfx-toggle');
+    if (btn) {
+      btn.classList.toggle('active', this.sfx.enabled);
+      btn.setAttribute('aria-pressed', String(this.sfx.enabled));
+      btn.textContent = this.sfx.enabled ? '🔔 SFX On' : '🔕 SFX Off';
+    }
+    if (save) {
+      try { localStorage.setItem('sound-effects', this.sfx.enabled ? 'on' : 'off'); } catch (_) {}
     }
   }
 
@@ -555,20 +591,38 @@ class AppController {
       this.motionCanvas = new MotionCanvas(canvas);
       this.motionCanvas.start();
 
-      this.voiceover.onStartSpeaking = () => {
-        document.body.classList.add('audio-playing');
-        this.motionCanvas.setAudioActive(true);
-        const statusEl = document.getElementById('audio-indicator');
-        if (statusEl) statusEl.textContent = '🔊 Leo is Speaking...';
-      };
-
-      this.voiceover.onEndSpeaking = () => {
-        document.body.classList.remove('audio-playing');
-        this.motionCanvas.setAudioActive(false);
-        const statusEl = document.getElementById('audio-indicator');
-        if (statusEl) statusEl.textContent = '🔇 Audio Ready';
-      };
     }
+    this.setupNarrationHooks();
+  }
+
+  setupNarrationHooks() {
+    this.voiceover.onStartSpeaking = () => {
+      document.body.classList.add('audio-playing');
+      if (this.motionCanvas) this.motionCanvas.setAudioActive(true);
+      const statusEl = document.getElementById('audio-indicator');
+      if (statusEl) statusEl.textContent = '🔊 Narration playing…';
+      document.querySelectorAll('.btn-audio-play-pause').forEach(b => { b.textContent = '⏸'; });
+    };
+    this.voiceover.onEndSpeaking = () => {
+      document.body.classList.remove('audio-playing');
+      if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
+      const statusEl = document.getElementById('audio-indicator');
+      if (statusEl) statusEl.textContent = '🔇 Audio Ready';
+      this.resetAudioPlayerUI();
+    };
+    this.voiceover.onProgress = (time, duration) => this.updateAudioProgressUI(time, duration);
+    this.voiceover.onUnavailable = () => {
+      this.showToast('This narration is not available yet.', '🔇');
+    };
+  }
+
+  /**
+   * Play narration clip(s) by id, in the chosen narration language unless one
+   * is given. Every read-aloud button in the app comes through here.
+   */
+  narrate(ids, lang) {
+    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+    return this.voiceover.playSequence(Array.isArray(ids) ? ids : [ids], lang || this.narrationLang || 'mal');
   }
 
   /* ---------------- 3D Universe & Side-Drawer ---------------- */
@@ -630,6 +684,8 @@ class AppController {
       }
     }
 
+    this.activeDrawerData = drawerData;
+
     // Render drawer HTML
     const drawerHtml = `
       <div class="drawer-header">
@@ -662,9 +718,10 @@ class AppController {
 
         <!-- Shared Audio Bar Row -->
         <div class="drawer-audio-row">
+          ${this.drawerClipIds().some(id => this.voiceover.hasClip(id, 'mal')) ? `
           <button class="btn-drawer-audio btn-drawer-audio-mal" onclick="window.app.speakDrawerContentMal()" title="Listen in Malayalam">
             🔊 Malayalam
-          </button>
+          </button>` : ''}
           <button class="btn-drawer-audio btn-drawer-audio-eng" onclick="window.app.speakDrawerContent()" title="Listen in English">
             🔊 English
           </button>
@@ -693,8 +750,6 @@ class AppController {
         </div>
       </div>
     `;
-
-    this.activeDrawerData = drawerData;
 
     if (drawer) {
       drawer.innerHTML = drawerHtml;
@@ -777,19 +832,17 @@ class AppController {
     }
   }
 
+  drawerClipIds() {
+    const node = this.activeDrawerData && GRAPH_DATA.nodes.find(n => n.id === this.activeDrawerData.nodeId);
+    return nodeClipSequence(node);
+  }
+
   speakDrawerContent() {
-    if (this.activeDrawerData && this.activeDrawerData.audioText) {
-      this.sfx.playPop();
-      this.voiceover.speak(this.activeDrawerData.audioText);
-    }
+    this.narrate(this.drawerClipIds(), 'eng');
   }
 
   speakDrawerContentMal() {
-    if (this.activeDrawerData) {
-      this.sfx.playPop();
-      const text = this.activeDrawerData.audioTextMal || this.activeDrawerData.title || this.activeDrawerData.audioText;
-      this.voiceover.speakMalayalam(text);
-    }
+    this.narrate(this.drawerClipIds(), 'mal');
   }
 
   jumpFromDrawerToClassroom(chNum) {
@@ -973,7 +1026,9 @@ class AppController {
     const container = document.getElementById('classroom-lesson-container');
     if (!container) return;
     const lesson = this.classroom.getLesson(chNum);
-    container.innerHTML = this.classroom.renderLessonCard(lesson, this.classroom.getActiveTab());
+    container.innerHTML = this.classroom.renderLessonCard(lesson, this.classroom.getActiveTab(), {
+      starCollected: this.progress.hasChapterStar(lesson.number)
+    });
 
     // Attach 3D physics tilt and floating particle canvas to lesson banner
     const bannerArt = container.querySelector('.lesson-banner-art');
@@ -983,20 +1038,33 @@ class AppController {
     }
   }
 
+  /** One star per chapter; pressing the button again only says it's already collected. */
   awardStar(chNum) {
-    this.addStar(1);
-    this.showToast(`⭐ Golden Star collected for Chapter ${chNum}!`, '⭐');
+    if (this.progress.awardChapterStar(chNum)) {
+      this.refreshStars(true);
+      this.showToast(`⭐ Golden Star collected for Chapter ${chNum}!`, '⭐');
+    } else {
+      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+      this.showToast(`You already have the star for Chapter ${chNum}.`, '⭐');
+    }
+    document.querySelectorAll(`.btn-award-star-pill[data-chapter="${chNum}"]`).forEach(btn => {
+      btn.disabled = true;
+      btn.classList.add('collected');
+      btn.textContent = '⭐ Star collected';
+    });
   }
 
   /* ---------------- Shared Audio Player Controller ---------------- */
-  playChapterAudio(chNum, lang = 'mal') {
-    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
+  /**
+   * Narrate part of a chapter (story, moral, scripture, concepts) in a language.
+   * The chapter data's audioUrlMal / audioUrlEng point at the same story clips.
+   */
+  playChapterAudio(chNum, lang = 'mal', part = 'story') {
     const ch = CHAPTERS_DATA.find(c => c.number === Number(chNum)) || this.slideDeck.getCurrentSlide();
     if (!ch) return;
-
-    const audioUrl = lang === 'mal' ? ch.audioUrlMal : ch.audioUrlEng;
     this.activeAudioChapter = ch.number;
     this.activeAudioLang = lang;
+    this.activeAudioPart = part;
 
     // Update button states in visible audio bars
     document.querySelectorAll('.shared-audio-bar').forEach(bar => {
@@ -1008,26 +1076,21 @@ class AppController {
       if (playBtn) playBtn.textContent = '⏸';
     });
 
-    if (audioUrl) {
-      const audioEl = this.voiceover.playStaticAudio(audioUrl, () => {
-        this.resetAudioPlayerUI();
-      }, () => {
-        this.resetAudioPlayerUI();
-      });
+    this.narrate(clipIds.chapter(ch.number, part), lang);
+  }
 
-      if (audioEl) {
-        audioEl.ontimeupdate = () => {
-          this.updateAudioProgressUI(audioEl.currentTime, audioEl.duration);
-        };
-      }
-    } else {
-      // Fallback to Web Speech
-      if (lang === 'mal') {
-        this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ''}`);
-      } else {
-        this.speakText(`${ch.titleEng}. ${ch.story5yo}`);
-      }
-    }
+  /** Story Lessons audio buttons read whichever tab is open. */
+  storyTabPart() {
+    const tab = this.classroom.getActiveTab();
+    return ['moral', 'concepts', 'scripture'].includes(tab) ? tab : 'story';
+  }
+
+  speakStoryMal(chNum) {
+    this.playChapterAudio(chNum, 'mal', this.storyTabPart());
+  }
+
+  speakStoryEng(chNum) {
+    this.playChapterAudio(chNum, 'eng', this.storyTabPart());
   }
 
   togglePlayPause(chNum) {
@@ -1041,7 +1104,7 @@ class AppController {
       currentAudio.play().catch(() => {});
       document.querySelectorAll('.btn-audio-play-pause').forEach(b => b.textContent = '⏸');
     } else {
-      this.playChapterAudio(chNum || this.activeChapter || 1, this.activeAudioLang || 'mal');
+      this.playChapterAudio(chNum || this.activeChapter || 1, this.activeAudioLang || this.narrationLang || 'mal', this.activeAudioPart || 'story');
     }
   }
 
@@ -1057,7 +1120,8 @@ class AppController {
   }
 
   updateAudioProgressUI(currentTime, duration) {
-    const dur = (duration && isFinite(duration) && duration > 0) ? duration : 38;
+    if (!duration || !isFinite(duration) || duration <= 0) return;
+    const dur = duration;
     const pct = Math.min(100, (currentTime / dur) * 100);
     const formatTime = (sec) => {
       if (isNaN(sec) || !isFinite(sec) || sec < 0) return '0:00';
@@ -1178,7 +1242,7 @@ class AppController {
 
     if (result.correct) {
       if (this.sfx && this.sfx.playChime) this.sfx.playChime();
-      this.addStar(1);
+      this.awardQuizStar(result.questionId);
       if (this.heroAtmosphere) {
         this.heroAtmosphere.spawnBurst(undefined, undefined, 30);
       }
@@ -1206,26 +1270,23 @@ class AppController {
     if (box && q) {
       box.innerHTML = `<strong>🧸 Clue from Leo:</strong> ${q.eli5Hint || 'Think of Jesus and the 7 Sacraments!'}`;
       box.style.display = 'block';
+      if (q.eli5Hint) this.narrate(clipIds.quizHint(q.id), 'eng'); // clues exist in English only
     }
   }
 
-  speakQuizQuestion() {
+  speakQuizQuestion(lang) {
     const q = this.quiz.getCurrentQuestion();
-    if (q) {
-      if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-      this.voiceover.speak(`${q.questionEng}. Option 1: ${q.options[0]}. Option 2: ${q.options[1]}. Option 3: ${q.options[2]}`);
-    }
+    if (q) this.narrate(clipIds.quiz(q.id), lang);
   }
 
   /* ---------------- Voiceover Helpers ---------------- */
-  speakText(text) {
-    this.sfx.playPop();
-    this.voiceover.speak(text);
+  /** Read an exam question and its answer aloud. */
+  speakExamQuestion(questionId, lang) {
+    this.narrate(clipIds.exam(questionId), lang);
   }
 
-  speakMalayalam(text) {
-    this.sfx.playPop();
-    this.voiceover.speakMalayalam(text);
+  speakExamExplanation(questionId) {
+    this.narrate(clipIds.examSimple(questionId), 'eng');
   }
 
   stopVoice() {
@@ -1238,11 +1299,6 @@ class AppController {
   }
 
   playVoice(lang = 'mal', chNumber = 1) {
-    if (this.sfx && this.sfx.playPop) this.sfx.playPop();
-
-    // Stop any existing playback first to prevent overlapping tracks
-    this.stopVoice();
-
     // Normalize chapter number: could be 1, "1", "ch1"
     let num = 1;
     if (typeof chNumber === 'number') {
@@ -1254,40 +1310,13 @@ class AppController {
     const ch = CHAPTERS_DATA.find(c => c.number === num) || CHAPTERS_DATA[0];
     if (!ch) return;
 
-    const isEng = (lang === 'eng' || lang === 'english');
-    const isLesson = (lang === 'lesson');
-    const audioUrl = isEng ? ch.audioUrlEng : ch.audioUrlMal;
-    const langLabel = isEng ? 'English' : 'മലയാളം';
-
-    const indicator = document.getElementById('audio-indicator');
-    if (indicator) indicator.textContent = `🔊 Playing Ch ${ch.number} (${langLabel})`;
-    if (this.motionCanvas) this.motionCanvas.setAudioActive(true);
-
-    if (isLesson) {
-      const lessonText = `അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. സുവർണ്ണ പാഠം: ${ch.moralLessonMal || ch.moralLesson}.`;
-      this.speakMalayalam(lessonText);
+    // 'lesson' reads the moral lesson in the chosen narration language;
+    // 'mal' / 'eng' read the story (chapter data: audioUrlMal / audioUrlEng).
+    if (lang === 'lesson') {
+      this.playChapterAudio(ch.number, this.narrationLang || 'mal', 'moral');
       return;
     }
-
-    if (audioUrl) {
-      this.voiceover.playStaticAudio(audioUrl, () => {
-        if (this.motionCanvas) this.motionCanvas.setAudioActive(false);
-        if (indicator) indicator.textContent = '🔇 Audio Ready';
-      }, (err) => {
-        console.warn('Audio playback issue, trying speech fallback:', err);
-        if (isEng) {
-          this.speakText(`${ch.titleEng}. ${ch.story5yo} Golden rule: ${ch.moralLesson}`);
-        } else {
-          this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ch.story5yo}`);
-        }
-      });
-    } else {
-      if (isEng) {
-        this.speakText(`${ch.titleEng}. ${ch.story5yo} Golden rule: ${ch.moralLesson}`);
-      } else {
-        this.speakMalayalam(`അദ്ധ്യായം ${ch.number}: ${ch.titleMal}. ${ch.story5yoMal || ch.story5yo}`);
-      }
-    }
+    this.playChapterAudio(ch.number, (lang === 'eng' || lang === 'english') ? 'eng' : 'mal', 'story');
   }
 
   switchMascotVoice(characterName) {
@@ -1441,7 +1470,6 @@ class AppController {
     }
 
     try {
-      await this.voiceover.speakMalayalam('നമസ്കാരം! ഗൂഗിൾ ജെമിനി വോയ്‌സ് ഇപ്പോൾ സജീവമാണ്. നിങ്ങൾക്കെല്ലാവർക്കും സ്വാഗതം!');
       if (feedback) {
         feedback.className = 'modal-feedback-banner modal-feedback-success';
         feedback.textContent = '🎉 Natural Malayalam voice tested successfully!';
@@ -1485,7 +1513,6 @@ class AppController {
       }
       chapter.imageUrl = newImageUrl;
       if (btnEl) btnEl.textContent = '✨ 4K Pixar Generated!';
-      this.addStar(2);
     } catch (e) {
       alert(`Could not generate image: ${e.message}`);
       if (btnEl) btnEl.textContent = '✨ 4K Pixar AI';

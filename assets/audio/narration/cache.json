@@ -1,0 +1,1450 @@
+{
+  "eng/ch1-concepts": {
+    "hash": "83c6b7aba23b",
+    "seconds": 12.64
+  },
+  "eng/ch1-moral": {
+    "hash": "606e8b2c7ddb",
+    "seconds": 5.15
+  },
+  "eng/ch1-scripture": {
+    "hash": "f8ce199a3cf0",
+    "seconds": 7.08
+  },
+  "eng/ch1-story": {
+    "hash": "2eb046ab97b8",
+    "seconds": 26.08
+  },
+  "eng/ch10-concepts": {
+    "hash": "4eea2a5262b1",
+    "seconds": 17.62
+  },
+  "eng/ch10-moral": {
+    "hash": "909a9b9203a8",
+    "seconds": 5.5
+  },
+  "eng/ch10-scripture": {
+    "hash": "c5061ff19baa",
+    "seconds": 5.51
+  },
+  "eng/ch10-story": {
+    "hash": "effd0cdbbb5b",
+    "seconds": 23.36
+  },
+  "eng/ch11-concepts": {
+    "hash": "397e2122f8f8",
+    "seconds": 14.31
+  },
+  "eng/ch11-moral": {
+    "hash": "72a425bd4351",
+    "seconds": 4.04
+  },
+  "eng/ch11-scripture": {
+    "hash": "02ad07989760",
+    "seconds": 9.12
+  },
+  "eng/ch11-story": {
+    "hash": "6ee30459a3fe",
+    "seconds": 24.28
+  },
+  "eng/ch12-concepts": {
+    "hash": "8495e20d7038",
+    "seconds": 17.15
+  },
+  "eng/ch12-moral": {
+    "hash": "e58f3e9831a1",
+    "seconds": 5.44
+  },
+  "eng/ch12-scripture": {
+    "hash": "0749530af0a2",
+    "seconds": 6.08
+  },
+  "eng/ch12-story": {
+    "hash": "fc01646947ae",
+    "seconds": 23.92
+  },
+  "eng/ch13-concepts": {
+    "hash": "c70f808a7c49",
+    "seconds": 14.82
+  },
+  "eng/ch13-moral": {
+    "hash": "7e2bbad414b3",
+    "seconds": 4.24
+  },
+  "eng/ch13-scripture": {
+    "hash": "f8d7d7293458",
+    "seconds": 6.12
+  },
+  "eng/ch13-story": {
+    "hash": "2164f13b8906",
+    "seconds": 21.26
+  },
+  "eng/ch14-concepts": {
+    "hash": "ed116ebe706a",
+    "seconds": 18.63
+  },
+  "eng/ch14-moral": {
+    "hash": "7ad4b4d8d3ba",
+    "seconds": 5.15
+  },
+  "eng/ch14-scripture": {
+    "hash": "31731abbf4c9",
+    "seconds": 4.24
+  },
+  "eng/ch14-story": {
+    "hash": "3fa55dd52070",
+    "seconds": 20.56
+  },
+  "eng/ch15-concepts": {
+    "hash": "ee8c0cd51f1b",
+    "seconds": 16.8
+  },
+  "eng/ch15-moral": {
+    "hash": "a644eb952a79",
+    "seconds": 5.33
+  },
+  "eng/ch15-scripture": {
+    "hash": "9741fee39560",
+    "seconds": 5.92
+  },
+  "eng/ch15-story": {
+    "hash": "c85613f0bdf9",
+    "seconds": 25.2
+  },
+  "eng/ch2-concepts": {
+    "hash": "04782fcf4cc9",
+    "seconds": 11.44
+  },
+  "eng/ch2-moral": {
+    "hash": "059dbe3e3ca0",
+    "seconds": 4.59
+  },
+  "eng/ch2-scripture": {
+    "hash": "809a87a6cc3d",
+    "seconds": 6.84
+  },
+  "eng/ch2-story": {
+    "hash": "e7350211a22c",
+    "seconds": 25.26
+  },
+  "eng/ch3-concepts": {
+    "hash": "d237f2dd6d3e",
+    "seconds": 13.88
+  },
+  "eng/ch3-moral": {
+    "hash": "46e8c90ff18d",
+    "seconds": 5.76
+  },
+  "eng/ch3-scripture": {
+    "hash": "adff16382698",
+    "seconds": 6.64
+  },
+  "eng/ch3-story": {
+    "hash": "402b1db553dd",
+    "seconds": 26.2
+  },
+  "eng/ch4-concepts": {
+    "hash": "1383e1492474",
+    "seconds": 12.88
+  },
+  "eng/ch4-moral": {
+    "hash": "ca303a3d01ad",
+    "seconds": 5.24
+  },
+  "eng/ch4-scripture": {
+    "hash": "95f8f6ca0f9e",
+    "seconds": 6.44
+  },
+  "eng/ch4-story": {
+    "hash": "6a18e777f501",
+    "seconds": 25.64
+  },
+  "eng/ch5-concepts": {
+    "hash": "590563ae6cfc",
+    "seconds": 15.37
+  },
+  "eng/ch5-moral": {
+    "hash": "0ecacec7fd07",
+    "seconds": 4.52
+  },
+  "eng/ch5-scripture": {
+    "hash": "78eb1c4d74bb",
+    "seconds": 5.48
+  },
+  "eng/ch5-story": {
+    "hash": "67d383713466",
+    "seconds": 23.0
+  },
+  "eng/ch6-concepts": {
+    "hash": "176dd5af63d7",
+    "seconds": 13.77
+  },
+  "eng/ch6-moral": {
+    "hash": "d36d88ffb9d9",
+    "seconds": 4.2
+  },
+  "eng/ch6-scripture": {
+    "hash": "0031328e1e0a",
+    "seconds": 6.32
+  },
+  "eng/ch6-story": {
+    "hash": "e8150e11857f",
+    "seconds": 24.37
+  },
+  "eng/ch7-concepts": {
+    "hash": "fd5ffd6cd7d0",
+    "seconds": 13.57
+  },
+  "eng/ch7-moral": {
+    "hash": "5bd8160429b6",
+    "seconds": 4.98
+  },
+  "eng/ch7-scripture": {
+    "hash": "538ec62d80f0",
+    "seconds": 5.12
+  },
+  "eng/ch7-story": {
+    "hash": "628c51179ffe",
+    "seconds": 20.92
+  },
+  "eng/ch8-concepts": {
+    "hash": "3c48a023256d",
+    "seconds": 15.25
+  },
+  "eng/ch8-moral": {
+    "hash": "19e30ba687e2",
+    "seconds": 5.35
+  },
+  "eng/ch8-scripture": {
+    "hash": "3efd987de1d2",
+    "seconds": 10.32
+  },
+  "eng/ch8-story": {
+    "hash": "523db3a9a05b",
+    "seconds": 21.12
+  },
+  "eng/ch9-concepts": {
+    "hash": "5f6590c01210",
+    "seconds": 13.36
+  },
+  "eng/ch9-moral": {
+    "hash": "a173aab8b12f",
+    "seconds": 4.8
+  },
+  "eng/ch9-scripture": {
+    "hash": "7010c3be1aa4",
+    "seconds": 5.4
+  },
+  "eng/ch9-story": {
+    "hash": "17aa97303f66",
+    "seconds": 25.18
+  },
+  "eng/exam-2023_s1_q1": {
+    "hash": "d8362900cbfd",
+    "seconds": 8.24
+  },
+  "eng/exam-2023_s1_q1-simple": {
+    "hash": "1401d6e49b6c",
+    "seconds": 7.44
+  },
+  "eng/exam-2023_s1_q10": {
+    "hash": "c84c39936d67",
+    "seconds": 11.14
+  },
+  "eng/exam-2023_s1_q10-simple": {
+    "hash": "12d75e58c629",
+    "seconds": 8.92
+  },
+  "eng/exam-2023_s1_q2": {
+    "hash": "83ddbadcba6f",
+    "seconds": 9.37
+  },
+  "eng/exam-2023_s1_q2-simple": {
+    "hash": "7c40fa23b10c",
+    "seconds": 6.84
+  },
+  "eng/exam-2023_s1_q3": {
+    "hash": "1cb23d2ea073",
+    "seconds": 4.92
+  },
+  "eng/exam-2023_s1_q3-simple": {
+    "hash": "a125191dda93",
+    "seconds": 7.92
+  },
+  "eng/exam-2023_s1_q4": {
+    "hash": "7e596c89403d",
+    "seconds": 7.76
+  },
+  "eng/exam-2023_s1_q4-simple": {
+    "hash": "387ec29349b0",
+    "seconds": 8.12
+  },
+  "eng/exam-2023_s1_q5": {
+    "hash": "f862b11f4f6a",
+    "seconds": 6.48
+  },
+  "eng/exam-2023_s1_q5-simple": {
+    "hash": "2b5b28f9437b",
+    "seconds": 9.42
+  },
+  "eng/exam-2023_s1_q6": {
+    "hash": "52090763aa11",
+    "seconds": 5.72
+  },
+  "eng/exam-2023_s1_q6-simple": {
+    "hash": "3cd481b532de",
+    "seconds": 6.04
+  },
+  "eng/exam-2023_s1_q7": {
+    "hash": "f87b4076bafc",
+    "seconds": 10.05
+  },
+  "eng/exam-2023_s1_q7-simple": {
+    "hash": "aaf9d8a3141c",
+    "seconds": 8.48
+  },
+  "eng/exam-2023_s1_q8": {
+    "hash": "2b1075152eaa",
+    "seconds": 11.44
+  },
+  "eng/exam-2023_s1_q8-simple": {
+    "hash": "576a53fbdcc1",
+    "seconds": 9.28
+  },
+  "eng/exam-2023_s1_q9": {
+    "hash": "491efcc2b940",
+    "seconds": 10.76
+  },
+  "eng/exam-2023_s1_q9-simple": {
+    "hash": "a023815d919a",
+    "seconds": 5.0
+  },
+  "eng/exam-2023_s2_q1": {
+    "hash": "698f912d14d7",
+    "seconds": 8.15
+  },
+  "eng/exam-2023_s2_q1-simple": {
+    "hash": "4b8d1ef0aa5f",
+    "seconds": 6.92
+  },
+  "eng/exam-2023_s2_q10": {
+    "hash": "fe395df7610b",
+    "seconds": 5.92
+  },
+  "eng/exam-2023_s2_q10-simple": {
+    "hash": "8cc7c2869519",
+    "seconds": 7.8
+  },
+  "eng/exam-2023_s2_q2": {
+    "hash": "b287354fb060",
+    "seconds": 8.56
+  },
+  "eng/exam-2023_s2_q2-simple": {
+    "hash": "7b96882ffef2",
+    "seconds": 6.6
+  },
+  "eng/exam-2023_s2_q3": {
+    "hash": "bdf8810aa313",
+    "seconds": 8.74
+  },
+  "eng/exam-2023_s2_q3-simple": {
+    "hash": "36bb07e7ea2d",
+    "seconds": 5.76
+  },
+  "eng/exam-2023_s2_q4": {
+    "hash": "a84b58bb8e87",
+    "seconds": 8.27
+  },
+  "eng/exam-2023_s2_q4-simple": {
+    "hash": "17a32ecf211e",
+    "seconds": 6.83
+  },
+  "eng/exam-2023_s2_q5": {
+    "hash": "789e5f3b82c0",
+    "seconds": 9.85
+  },
+  "eng/exam-2023_s2_q5-simple": {
+    "hash": "2e8152ef423a",
+    "seconds": 7.16
+  },
+  "eng/exam-2023_s2_q6": {
+    "hash": "6ac5feb4ce1a",
+    "seconds": 7.82
+  },
+  "eng/exam-2023_s2_q6-simple": {
+    "hash": "cbc8fb6c5b02",
+    "seconds": 7.88
+  },
+  "eng/exam-2023_s2_q7": {
+    "hash": "d8253a0e24b0",
+    "seconds": 8.48
+  },
+  "eng/exam-2023_s2_q7-simple": {
+    "hash": "7548f2d8a2de",
+    "seconds": 6.44
+  },
+  "eng/exam-2023_s2_q8": {
+    "hash": "b96298906c82",
+    "seconds": 13.44
+  },
+  "eng/exam-2023_s2_q8-simple": {
+    "hash": "858f69518069",
+    "seconds": 9.4
+  },
+  "eng/exam-2023_s2_q9": {
+    "hash": "7d659ccfeba3",
+    "seconds": 13.06
+  },
+  "eng/exam-2023_s2_q9-simple": {
+    "hash": "645c4f7cc60a",
+    "seconds": 6.72
+  },
+  "eng/exam-2024_s1_q1": {
+    "hash": "cb7e7990fa73",
+    "seconds": 5.63
+  },
+  "eng/exam-2024_s1_q1-simple": {
+    "hash": "4b2cff1be006",
+    "seconds": 7.52
+  },
+  "eng/exam-2024_s1_q10": {
+    "hash": "73531a34c1b5",
+    "seconds": 4.72
+  },
+  "eng/exam-2024_s1_q10-simple": {
+    "hash": "6bd664b6c3de",
+    "seconds": 3.92
+  },
+  "eng/exam-2024_s1_q11": {
+    "hash": "2d5c6a72d8f3",
+    "seconds": 20.88
+  },
+  "eng/exam-2024_s1_q11-simple": {
+    "hash": "37516042e3ae",
+    "seconds": 4.2
+  },
+  "eng/exam-2024_s1_q12": {
+    "hash": "d4302ed7d954",
+    "seconds": 14.2
+  },
+  "eng/exam-2024_s1_q12-simple": {
+    "hash": "b26225d6a45b",
+    "seconds": 8.36
+  },
+  "eng/exam-2024_s1_q2": {
+    "hash": "ccfca0dda9cf",
+    "seconds": 8.19
+  },
+  "eng/exam-2024_s1_q2-simple": {
+    "hash": "9a3a9a8897b5",
+    "seconds": 6.1
+  },
+  "eng/exam-2024_s1_q3": {
+    "hash": "34019e6ab485",
+    "seconds": 10.15
+  },
+  "eng/exam-2024_s1_q3-simple": {
+    "hash": "1d021dc963ed",
+    "seconds": 5.2
+  },
+  "eng/exam-2024_s1_q4": {
+    "hash": "72c9054e4f4f",
+    "seconds": 8.94
+  },
+  "eng/exam-2024_s1_q4-simple": {
+    "hash": "39ac523df91e",
+    "seconds": 6.32
+  },
+  "eng/exam-2024_s1_q5": {
+    "hash": "2e8ed3b49512",
+    "seconds": 9.75
+  },
+  "eng/exam-2024_s1_q5-simple": {
+    "hash": "2bc0a30321f4",
+    "seconds": 4.4
+  },
+  "eng/exam-2024_s1_q6": {
+    "hash": "23655a5b190e",
+    "seconds": 4.72
+  },
+  "eng/exam-2024_s1_q6-simple": {
+    "hash": "d06ab6b8b183",
+    "seconds": 6.92
+  },
+  "eng/exam-2024_s1_q7": {
+    "hash": "a1c1bce496a0",
+    "seconds": 4.68
+  },
+  "eng/exam-2024_s1_q7-simple": {
+    "hash": "31f604ba0d3e",
+    "seconds": 4.88
+  },
+  "eng/exam-2024_s1_q8": {
+    "hash": "c4ad18ad8e7f",
+    "seconds": 3.44
+  },
+  "eng/exam-2024_s1_q8-simple": {
+    "hash": "6be3c23da161",
+    "seconds": 6.07
+  },
+  "eng/exam-2024_s1_q9": {
+    "hash": "6d8fe3c24b77",
+    "seconds": 4.96
+  },
+  "eng/exam-2024_s1_q9-simple": {
+    "hash": "a2f6f74dbee3",
+    "seconds": 6.0
+  },
+  "eng/exam-2025_s1_q1": {
+    "hash": "35d8d349841b",
+    "seconds": 7.64
+  },
+  "eng/exam-2025_s1_q1-simple": {
+    "hash": "8d9c925dd8e2",
+    "seconds": 4.72
+  },
+  "eng/exam-2025_s1_q10": {
+    "hash": "1e9f0f072f3d",
+    "seconds": 4.88
+  },
+  "eng/exam-2025_s1_q10-simple": {
+    "hash": "616e3eef9254",
+    "seconds": 5.13
+  },
+  "eng/exam-2025_s1_q11": {
+    "hash": "ce191b012682",
+    "seconds": 8.28
+  },
+  "eng/exam-2025_s1_q11-simple": {
+    "hash": "efc3e812eea5",
+    "seconds": 3.16
+  },
+  "eng/exam-2025_s1_q12": {
+    "hash": "a342c8715ecf",
+    "seconds": 14.64
+  },
+  "eng/exam-2025_s1_q12-simple": {
+    "hash": "474db68ff109",
+    "seconds": 9.96
+  },
+  "eng/exam-2025_s1_q2": {
+    "hash": "cd6a2606c853",
+    "seconds": 10.0
+  },
+  "eng/exam-2025_s1_q2-simple": {
+    "hash": "46f912e6fce6",
+    "seconds": 5.96
+  },
+  "eng/exam-2025_s1_q3": {
+    "hash": "c105783b44a8",
+    "seconds": 8.37
+  },
+  "eng/exam-2025_s1_q3-simple": {
+    "hash": "c1c55ed2b792",
+    "seconds": 5.36
+  },
+  "eng/exam-2025_s1_q4": {
+    "hash": "d84981e35d21",
+    "seconds": 8.68
+  },
+  "eng/exam-2025_s1_q4-simple": {
+    "hash": "1b01e322144e",
+    "seconds": 5.58
+  },
+  "eng/exam-2025_s1_q5": {
+    "hash": "4bd4c17cf566",
+    "seconds": 8.92
+  },
+  "eng/exam-2025_s1_q5-simple": {
+    "hash": "51ef3c5c21e2",
+    "seconds": 5.44
+  },
+  "eng/exam-2025_s1_q6": {
+    "hash": "b96f629bf6a2",
+    "seconds": 3.76
+  },
+  "eng/exam-2025_s1_q6-simple": {
+    "hash": "af24f5e162ef",
+    "seconds": 5.0
+  },
+  "eng/exam-2025_s1_q7": {
+    "hash": "70d85c0a6485",
+    "seconds": 5.92
+  },
+  "eng/exam-2025_s1_q7-simple": {
+    "hash": "5bf05c5b0bfd",
+    "seconds": 4.16
+  },
+  "eng/exam-2025_s1_q8": {
+    "hash": "578f370aca57",
+    "seconds": 5.0
+  },
+  "eng/exam-2025_s1_q8-simple": {
+    "hash": "9389403ab0c4",
+    "seconds": 3.44
+  },
+  "eng/exam-2025_s1_q9": {
+    "hash": "66318bea7d46",
+    "seconds": 7.24
+  },
+  "eng/exam-2025_s1_q9-simple": {
+    "hash": "2d2626e05ae7",
+    "seconds": 6.08
+  },
+  "eng/exam-2025_s2_q1": {
+    "hash": "64477bf422b6",
+    "seconds": 6.77
+  },
+  "eng/exam-2025_s2_q1-simple": {
+    "hash": "35fd326a1e9e",
+    "seconds": 4.76
+  },
+  "eng/exam-2025_s2_q10": {
+    "hash": "db59351ba4c9",
+    "seconds": 4.28
+  },
+  "eng/exam-2025_s2_q10-simple": {
+    "hash": "0b34eba01c62",
+    "seconds": 6.16
+  },
+  "eng/exam-2025_s2_q11": {
+    "hash": "11cf6de14c3b",
+    "seconds": 18.56
+  },
+  "eng/exam-2025_s2_q11-simple": {
+    "hash": "6f8d4ae698db",
+    "seconds": 5.34
+  },
+  "eng/exam-2025_s2_q12": {
+    "hash": "1793240cd548",
+    "seconds": 10.24
+  },
+  "eng/exam-2025_s2_q12-simple": {
+    "hash": "5b1b687797d7",
+    "seconds": 7.64
+  },
+  "eng/exam-2025_s2_q2": {
+    "hash": "8099c6e9430f",
+    "seconds": 9.62
+  },
+  "eng/exam-2025_s2_q2-simple": {
+    "hash": "237845624744",
+    "seconds": 5.61
+  },
+  "eng/exam-2025_s2_q3": {
+    "hash": "9fcd905f6fe8",
+    "seconds": 6.58
+  },
+  "eng/exam-2025_s2_q3-simple": {
+    "hash": "702e1ee6a03d",
+    "seconds": 5.94
+  },
+  "eng/exam-2025_s2_q4": {
+    "hash": "c284489d718f",
+    "seconds": 9.68
+  },
+  "eng/exam-2025_s2_q4-simple": {
+    "hash": "c545238d6b6f",
+    "seconds": 4.23
+  },
+  "eng/exam-2025_s2_q5": {
+    "hash": "7588c26a9419",
+    "seconds": 10.24
+  },
+  "eng/exam-2025_s2_q5-simple": {
+    "hash": "6841609764b5",
+    "seconds": 5.72
+  },
+  "eng/exam-2025_s2_q6": {
+    "hash": "0ece528d2560",
+    "seconds": 5.28
+  },
+  "eng/exam-2025_s2_q6-simple": {
+    "hash": "f794c501ca7b",
+    "seconds": 5.32
+  },
+  "eng/exam-2025_s2_q7": {
+    "hash": "40f8eadecfaf",
+    "seconds": 4.32
+  },
+  "eng/exam-2025_s2_q7-simple": {
+    "hash": "7deca13dfc71",
+    "seconds": 7.19
+  },
+  "eng/exam-2025_s2_q8": {
+    "hash": "b774aedef160",
+    "seconds": 3.92
+  },
+  "eng/exam-2025_s2_q8-simple": {
+    "hash": "b56964fc50ed",
+    "seconds": 4.77
+  },
+  "eng/exam-2025_s2_q9": {
+    "hash": "271c63030af6",
+    "seconds": 3.4
+  },
+  "eng/exam-2025_s2_q9-simple": {
+    "hash": "09a1559d13b6",
+    "seconds": 6.03
+  },
+  "eng/node-agent_kg": {
+    "hash": "8389450a1c4c",
+    "seconds": 4.2
+  },
+  "eng/node-agent_orchestrator": {
+    "hash": "9f584040fed2",
+    "seconds": 4.08
+  },
+  "eng/node-agent_quiz": {
+    "hash": "d274e1cc65dc",
+    "seconds": 3.92
+  },
+  "eng/node-agent_solver": {
+    "hash": "933cdbc56deb",
+    "seconds": 3.92
+  },
+  "eng/node-agent_storyteller": {
+    "hash": "80d70ae10824",
+    "seconds": 4.48
+  },
+  "eng/node-agent_voice": {
+    "hash": "67d6795ad486",
+    "seconds": 3.84
+  },
+  "eng/node-cluster_healing": {
+    "hash": "3ac5cb138f26",
+    "seconds": 1.92
+  },
+  "eng/node-cluster_initiation": {
+    "hash": "7b853cbddac7",
+    "seconds": 2.04
+  },
+  "eng/node-cluster_service": {
+    "hash": "5400fbd8b954",
+    "seconds": 1.96
+  },
+  "eng/node-concept_jesus_life": {
+    "hash": "a348f7e2a25c",
+    "seconds": 4.44
+  },
+  "eng/node-paper_2023_s1": {
+    "hash": "157b807aac74",
+    "seconds": 6.4
+  },
+  "eng/node-paper_2023_s2": {
+    "hash": "0306279dd643",
+    "seconds": 6.48
+  },
+  "eng/node-paper_2024_s1": {
+    "hash": "2028e95d7745",
+    "seconds": 6.4
+  },
+  "eng/node-paper_2025_s1": {
+    "hash": "79b85965c5f6",
+    "seconds": 6.4
+  },
+  "eng/node-paper_2025_s2": {
+    "hash": "3f5bd618f5fb",
+    "seconds": 6.48
+  },
+  "eng/node-sac_anointing": {
+    "hash": "7293a031b1f9",
+    "seconds": 4.64
+  },
+  "eng/node-sac_baptism": {
+    "hash": "36543156cdf4",
+    "seconds": 5.16
+  },
+  "eng/node-sac_confirmation": {
+    "hash": "dba6ad6ade86",
+    "seconds": 4.4
+  },
+  "eng/node-sac_eucharist": {
+    "hash": "ba0aab7e6c97",
+    "seconds": 4.64
+  },
+  "eng/node-sac_matrimony": {
+    "hash": "2d4cbec35017",
+    "seconds": 4.4
+  },
+  "eng/node-sac_orders": {
+    "hash": "17b8858b5a68",
+    "seconds": 4.08
+  },
+  "eng/node-sac_reconciliation": {
+    "hash": "61fe476b40ae",
+    "seconds": 4.39
+  },
+  "eng/quiz-kq_1": {
+    "hash": "88795eeb9b9e",
+    "seconds": 6.4
+  },
+  "eng/quiz-kq_1-hint": {
+    "hash": "69261c5ee56a",
+    "seconds": 6.44
+  },
+  "eng/quiz-kq_10": {
+    "hash": "9d06ea4e0877",
+    "seconds": 8.88
+  },
+  "eng/quiz-kq_10-hint": {
+    "hash": "c166e73b73e6",
+    "seconds": 5.42
+  },
+  "eng/quiz-kq_11": {
+    "hash": "fbb902d7eb48",
+    "seconds": 8.56
+  },
+  "eng/quiz-kq_11-hint": {
+    "hash": "bf43e1bb8787",
+    "seconds": 6.28
+  },
+  "eng/quiz-kq_12": {
+    "hash": "010f474d8003",
+    "seconds": 8.2
+  },
+  "eng/quiz-kq_12-hint": {
+    "hash": "5342bc2cd524",
+    "seconds": 4.8
+  },
+  "eng/quiz-kq_13": {
+    "hash": "ac4bdc29d155",
+    "seconds": 8.22
+  },
+  "eng/quiz-kq_13-hint": {
+    "hash": "5da90e102e2a",
+    "seconds": 5.84
+  },
+  "eng/quiz-kq_2": {
+    "hash": "84aacc847577",
+    "seconds": 6.56
+  },
+  "eng/quiz-kq_2-hint": {
+    "hash": "cac82300d2fd",
+    "seconds": 4.68
+  },
+  "eng/quiz-kq_3": {
+    "hash": "37a9a0df2ea1",
+    "seconds": 7.92
+  },
+  "eng/quiz-kq_3-hint": {
+    "hash": "3d3245fbefc4",
+    "seconds": 5.86
+  },
+  "eng/quiz-kq_4": {
+    "hash": "3790ce1b73f3",
+    "seconds": 7.43
+  },
+  "eng/quiz-kq_4-hint": {
+    "hash": "6a3456c67169",
+    "seconds": 5.92
+  },
+  "eng/quiz-kq_5": {
+    "hash": "01ed4e86d656",
+    "seconds": 8.68
+  },
+  "eng/quiz-kq_5-hint": {
+    "hash": "e3cd54bdbd8e",
+    "seconds": 6.12
+  },
+  "eng/quiz-kq_6": {
+    "hash": "9ff01166299f",
+    "seconds": 7.23
+  },
+  "eng/quiz-kq_6-hint": {
+    "hash": "dcc6c161b194",
+    "seconds": 4.89
+  },
+  "eng/quiz-kq_7": {
+    "hash": "8153b9d86304",
+    "seconds": 9.75
+  },
+  "eng/quiz-kq_7-hint": {
+    "hash": "53d29ae5d2b3",
+    "seconds": 5.45
+  },
+  "eng/quiz-kq_8": {
+    "hash": "0f00445a02c0",
+    "seconds": 8.52
+  },
+  "eng/quiz-kq_8-hint": {
+    "hash": "66d808e13bfb",
+    "seconds": 5.84
+  },
+  "eng/quiz-kq_9": {
+    "hash": "fbf817f18c15",
+    "seconds": 9.48
+  },
+  "eng/quiz-kq_9-hint": {
+    "hash": "47c916f3b4d1",
+    "seconds": 4.96
+  },
+  "mal/ch1-concepts": {
+    "hash": "e145a40c2075",
+    "seconds": 4.83
+  },
+  "mal/ch1-moral": {
+    "hash": "90ac6a98c7cc",
+    "seconds": 7.36
+  },
+  "mal/ch1-scripture": {
+    "hash": "291c1777d877",
+    "seconds": 10.31
+  },
+  "mal/ch1-story": {
+    "hash": "7ba1ee36ef0e",
+    "seconds": 29.53
+  },
+  "mal/ch10-concepts": {
+    "hash": "f2c072b3694c",
+    "seconds": 6.91
+  },
+  "mal/ch10-moral": {
+    "hash": "8d5ca91439e2",
+    "seconds": 6.26
+  },
+  "mal/ch10-scripture": {
+    "hash": "a0034f5e5af7",
+    "seconds": 8.63
+  },
+  "mal/ch10-story": {
+    "hash": "50beae16d551",
+    "seconds": 17.31
+  },
+  "mal/ch11-concepts": {
+    "hash": "0e736d54037c",
+    "seconds": 3.78
+  },
+  "mal/ch11-moral": {
+    "hash": "4d62f65968f9",
+    "seconds": 7.55
+  },
+  "mal/ch11-scripture": {
+    "hash": "4a9548225b4a",
+    "seconds": 12.94
+  },
+  "mal/ch11-story": {
+    "hash": "062a0574c565",
+    "seconds": 17.37
+  },
+  "mal/ch12-concepts": {
+    "hash": "61030bce6409",
+    "seconds": 5.19
+  },
+  "mal/ch12-moral": {
+    "hash": "71fbd9c6813b",
+    "seconds": 6.49
+  },
+  "mal/ch12-scripture": {
+    "hash": "f33479271f07",
+    "seconds": 11.11
+  },
+  "mal/ch12-story": {
+    "hash": "400e335fc4fc",
+    "seconds": 14.63
+  },
+  "mal/ch13-concepts": {
+    "hash": "23667ca06ff8",
+    "seconds": 5.39
+  },
+  "mal/ch13-moral": {
+    "hash": "88e9de45a12f",
+    "seconds": 5.4
+  },
+  "mal/ch13-scripture": {
+    "hash": "af7b51618a75",
+    "seconds": 6.2
+  },
+  "mal/ch13-story": {
+    "hash": "59c509728d25",
+    "seconds": 15.37
+  },
+  "mal/ch14-concepts": {
+    "hash": "11338d93316a",
+    "seconds": 6.95
+  },
+  "mal/ch14-moral": {
+    "hash": "beeba2c3a8c9",
+    "seconds": 6.0
+  },
+  "mal/ch14-scripture": {
+    "hash": "10f855cfa582",
+    "seconds": 6.55
+  },
+  "mal/ch14-story": {
+    "hash": "f5b7cf05b855",
+    "seconds": 17.12
+  },
+  "mal/ch15-concepts": {
+    "hash": "0a47a2b6781b",
+    "seconds": 6.68
+  },
+  "mal/ch15-moral": {
+    "hash": "7b39de736a09",
+    "seconds": 5.76
+  },
+  "mal/ch15-scripture": {
+    "hash": "a6b40f694522",
+    "seconds": 9.07
+  },
+  "mal/ch15-story": {
+    "hash": "823dd81b55bc",
+    "seconds": 20.83
+  },
+  "mal/ch2-concepts": {
+    "hash": "637115edc19c",
+    "seconds": 3.51
+  },
+  "mal/ch2-moral": {
+    "hash": "54063ff2fd8c",
+    "seconds": 7.64
+  },
+  "mal/ch2-scripture": {
+    "hash": "bbc5be52a3d0",
+    "seconds": 8.23
+  },
+  "mal/ch2-story": {
+    "hash": "897b2d66a5ba",
+    "seconds": 19.61
+  },
+  "mal/ch3-concepts": {
+    "hash": "bf673f762c64",
+    "seconds": 5.15
+  },
+  "mal/ch3-moral": {
+    "hash": "7c026ba82e93",
+    "seconds": 6.22
+  },
+  "mal/ch3-scripture": {
+    "hash": "e19123c9422c",
+    "seconds": 6.64
+  },
+  "mal/ch3-story": {
+    "hash": "37d6840dc8d3",
+    "seconds": 24.72
+  },
+  "mal/ch4-concepts": {
+    "hash": "15d02df5af3c",
+    "seconds": 5.23
+  },
+  "mal/ch4-moral": {
+    "hash": "c2516312bfee",
+    "seconds": 6.82
+  },
+  "mal/ch4-scripture": {
+    "hash": "7056573d78df",
+    "seconds": 9.03
+  },
+  "mal/ch4-story": {
+    "hash": "278c48a683e8",
+    "seconds": 24.55
+  },
+  "mal/ch5-concepts": {
+    "hash": "8114f7bebc73",
+    "seconds": 5.59
+  },
+  "mal/ch5-moral": {
+    "hash": "03cd11713c61",
+    "seconds": 5.76
+  },
+  "mal/ch5-scripture": {
+    "hash": "adf77ee7506a",
+    "seconds": 8.23
+  },
+  "mal/ch5-story": {
+    "hash": "d1fda6d72cbe",
+    "seconds": 19.6
+  },
+  "mal/ch6-concepts": {
+    "hash": "cee3d0ad4cf8",
+    "seconds": 3.39
+  },
+  "mal/ch6-moral": {
+    "hash": "13e1d4e4963b",
+    "seconds": 5.6
+  },
+  "mal/ch6-scripture": {
+    "hash": "426ec2223286",
+    "seconds": 9.64
+  },
+  "mal/ch6-story": {
+    "hash": "579da4f5a3a9",
+    "seconds": 22.51
+  },
+  "mal/ch7-concepts": {
+    "hash": "59673b3d13ce",
+    "seconds": 4.47
+  },
+  "mal/ch7-moral": {
+    "hash": "a337716b4838",
+    "seconds": 6.22
+  },
+  "mal/ch7-scripture": {
+    "hash": "6598375882d3",
+    "seconds": 7.63
+  },
+  "mal/ch7-story": {
+    "hash": "7c27115da908",
+    "seconds": 17.57
+  },
+  "mal/ch8-concepts": {
+    "hash": "146c5e537e8c",
+    "seconds": 4.71
+  },
+  "mal/ch8-moral": {
+    "hash": "8d2f60873e85",
+    "seconds": 6.18
+  },
+  "mal/ch8-scripture": {
+    "hash": "5a254ae38fdf",
+    "seconds": 13.99
+  },
+  "mal/ch8-story": {
+    "hash": "3507a8ca274a",
+    "seconds": 18.43
+  },
+  "mal/ch9-concepts": {
+    "hash": "312967015c52",
+    "seconds": 4.71
+  },
+  "mal/ch9-moral": {
+    "hash": "7e94c7048bf3",
+    "seconds": 6.0
+  },
+  "mal/ch9-scripture": {
+    "hash": "fdcf9b9732dc",
+    "seconds": 6.95
+  },
+  "mal/ch9-story": {
+    "hash": "09ef5a63826e",
+    "seconds": 24.37
+  },
+  "mal/exam-2023_s1_q1": {
+    "hash": "f1a951495658",
+    "seconds": 11.1
+  },
+  "mal/exam-2023_s1_q10": {
+    "hash": "9289b8b6cc68",
+    "seconds": 16.77
+  },
+  "mal/exam-2023_s1_q2": {
+    "hash": "c599b166f907",
+    "seconds": 9.07
+  },
+  "mal/exam-2023_s1_q3": {
+    "hash": "b360db4cf33a",
+    "seconds": 5.12
+  },
+  "mal/exam-2023_s1_q4": {
+    "hash": "e56ee5c278df",
+    "seconds": 8.57
+  },
+  "mal/exam-2023_s1_q5": {
+    "hash": "a19df12c532a",
+    "seconds": 7.52
+  },
+  "mal/exam-2023_s1_q6": {
+    "hash": "fd00bb98c282",
+    "seconds": 5.77
+  },
+  "mal/exam-2023_s1_q7": {
+    "hash": "ef03aee67981",
+    "seconds": 12.28
+  },
+  "mal/exam-2023_s1_q8": {
+    "hash": "7be6a82e181d",
+    "seconds": 13.21
+  },
+  "mal/exam-2023_s1_q9": {
+    "hash": "09fe906bcafb",
+    "seconds": 14.88
+  },
+  "mal/exam-2023_s2_q1": {
+    "hash": "61b7c5544842",
+    "seconds": 8.69
+  },
+  "mal/exam-2023_s2_q10": {
+    "hash": "2ca0229a62ae",
+    "seconds": 8.43
+  },
+  "mal/exam-2023_s2_q2": {
+    "hash": "40e2bd3e8ac7",
+    "seconds": 8.25
+  },
+  "mal/exam-2023_s2_q3": {
+    "hash": "428d64b2faf2",
+    "seconds": 13.58
+  },
+  "mal/exam-2023_s2_q4": {
+    "hash": "4dab13f2dbb3",
+    "seconds": 7.87
+  },
+  "mal/exam-2023_s2_q5": {
+    "hash": "64c21fee1897",
+    "seconds": 9.15
+  },
+  "mal/exam-2023_s2_q6": {
+    "hash": "2de69cd8c3fd",
+    "seconds": 11.84
+  },
+  "mal/exam-2023_s2_q7": {
+    "hash": "6d6d7bfa40b9",
+    "seconds": 14.07
+  },
+  "mal/exam-2023_s2_q8": {
+    "hash": "e7d1a2df41bb",
+    "seconds": 18.52
+  },
+  "mal/exam-2023_s2_q9": {
+    "hash": "9294ac54256e",
+    "seconds": 14.97
+  },
+  "mal/exam-2024_s1_q1": {
+    "hash": "eb0a92966a11",
+    "seconds": 7.25
+  },
+  "mal/exam-2024_s1_q10": {
+    "hash": "61894422324f",
+    "seconds": 6.52
+  },
+  "mal/exam-2024_s1_q11": {
+    "hash": "f10ee813191a",
+    "seconds": 24.84
+  },
+  "mal/exam-2024_s1_q12": {
+    "hash": "34223ce29c22",
+    "seconds": 16.87
+  },
+  "mal/exam-2024_s1_q2": {
+    "hash": "6dd2bd676b18",
+    "seconds": 9.28
+  },
+  "mal/exam-2024_s1_q3": {
+    "hash": "4ab6c8d947f8",
+    "seconds": 9.39
+  },
+  "mal/exam-2024_s1_q4": {
+    "hash": "3764f2cbb7c2",
+    "seconds": 10.6
+  },
+  "mal/exam-2024_s1_q5": {
+    "hash": "68d084d7ee12",
+    "seconds": 10.34
+  },
+  "mal/exam-2024_s1_q6": {
+    "hash": "dc8e50a1d474",
+    "seconds": 4.84
+  },
+  "mal/exam-2024_s1_q7": {
+    "hash": "fa5ba8f17ef4",
+    "seconds": 4.89
+  },
+  "mal/exam-2024_s1_q8": {
+    "hash": "d99462ba8a27",
+    "seconds": 4.6
+  },
+  "mal/exam-2024_s1_q9": {
+    "hash": "ba01774d2103",
+    "seconds": 5.0
+  },
+  "mal/exam-2025_s1_q1": {
+    "hash": "7d9a1032f7c4",
+    "seconds": 8.9
+  },
+  "mal/exam-2025_s1_q10": {
+    "hash": "b0f0669f390a",
+    "seconds": 5.27
+  },
+  "mal/exam-2025_s1_q11": {
+    "hash": "938ccf391c5e",
+    "seconds": 11.44
+  },
+  "mal/exam-2025_s1_q12": {
+    "hash": "146403e48069",
+    "seconds": 17.82
+  },
+  "mal/exam-2025_s1_q2": {
+    "hash": "b2337c89c471",
+    "seconds": 8.77
+  },
+  "mal/exam-2025_s1_q3": {
+    "hash": "bf2cd47203d9",
+    "seconds": 7.62
+  },
+  "mal/exam-2025_s1_q4": {
+    "hash": "3d9dd53bd77c",
+    "seconds": 9.49
+  },
+  "mal/exam-2025_s1_q5": {
+    "hash": "ead884a4b2cf",
+    "seconds": 12.59
+  },
+  "mal/exam-2025_s1_q6": {
+    "hash": "ff954660d49c",
+    "seconds": 3.76
+  },
+  "mal/exam-2025_s1_q7": {
+    "hash": "ce5c535e0230",
+    "seconds": 7.28
+  },
+  "mal/exam-2025_s1_q8": {
+    "hash": "32586dc11bfa",
+    "seconds": 7.28
+  },
+  "mal/exam-2025_s1_q9": {
+    "hash": "be2f1742d330",
+    "seconds": 9.52
+  },
+  "mal/exam-2025_s2_q1": {
+    "hash": "55a579309a5e",
+    "seconds": 8.99
+  },
+  "mal/exam-2025_s2_q10": {
+    "hash": "59641ed65e55",
+    "seconds": 5.38
+  },
+  "mal/exam-2025_s2_q11": {
+    "hash": "65c2bd26e6a1",
+    "seconds": 21.96
+  },
+  "mal/exam-2025_s2_q12": {
+    "hash": "aceefdfeec48",
+    "seconds": 14.62
+  },
+  "mal/exam-2025_s2_q2": {
+    "hash": "fd297c4a94c2",
+    "seconds": 11.2
+  },
+  "mal/exam-2025_s2_q3": {
+    "hash": "b03032481299",
+    "seconds": 9.01
+  },
+  "mal/exam-2025_s2_q4": {
+    "hash": "895b4b34850c",
+    "seconds": 9.21
+  },
+  "mal/exam-2025_s2_q5": {
+    "hash": "1a8c869dc676",
+    "seconds": 14.32
+  },
+  "mal/exam-2025_s2_q6": {
+    "hash": "e29bbf5c5ce3",
+    "seconds": 4.37
+  },
+  "mal/exam-2025_s2_q7": {
+    "hash": "37f30c7563ba",
+    "seconds": 5.8
+  },
+  "mal/exam-2025_s2_q8": {
+    "hash": "acbf974b824f",
+    "seconds": 4.39
+  },
+  "mal/exam-2025_s2_q9": {
+    "hash": "e9c02857523a",
+    "seconds": 4.19
+  },
+  "mal/node-concept_jesus_life": {
+    "hash": "7ed681a4b24f",
+    "seconds": 4.46
+  },
+  "mal/node-paper_2023_s1": {
+    "hash": "e90f3540531e",
+    "seconds": 1.29
+  },
+  "mal/node-paper_2023_s2": {
+    "hash": "e90f3540531e",
+    "seconds": 1.15
+  },
+  "mal/node-paper_2024_s1": {
+    "hash": "e90f3540531e",
+    "seconds": 1.12
+  },
+  "mal/node-paper_2025_s1": {
+    "hash": "e90f3540531e",
+    "seconds": 1.25
+  },
+  "mal/node-paper_2025_s2": {
+    "hash": "e90f3540531e",
+    "seconds": 1.32
+  },
+  "mal/node-sac_anointing": {
+    "hash": "7794fce67e7c",
+    "seconds": 2.96
+  },
+  "mal/node-sac_baptism": {
+    "hash": "c430dd1289fa",
+    "seconds": 3.76
+  },
+  "mal/node-sac_confirmation": {
+    "hash": "257031e6abad",
+    "seconds": 4.14
+  },
+  "mal/node-sac_eucharist": {
+    "hash": "c852ad699ad7",
+    "seconds": 4.0
+  },
+  "mal/node-sac_matrimony": {
+    "hash": "ec58c34937ec",
+    "seconds": 2.42
+  },
+  "mal/node-sac_orders": {
+    "hash": "54f04305a17f",
+    "seconds": 3.35
+  },
+  "mal/node-sac_reconciliation": {
+    "hash": "ae55c435dfb3",
+    "seconds": 3.36
+  },
+  "mal/quiz-kq_1": {
+    "hash": "c12508c3f2f0",
+    "seconds": 7.55
+  },
+  "mal/quiz-kq_10": {
+    "hash": "847bd29467e3",
+    "seconds": 8.52
+  },
+  "mal/quiz-kq_11": {
+    "hash": "07e0f624b38c",
+    "seconds": 8.01
+  },
+  "mal/quiz-kq_12": {
+    "hash": "3d6eaae85a7e",
+    "seconds": 8.87
+  },
+  "mal/quiz-kq_13": {
+    "hash": "2ebce4a87aeb",
+    "seconds": 8.51
+  },
+  "mal/quiz-kq_2": {
+    "hash": "b27b5e007459",
+    "seconds": 7.74
+  },
+  "mal/quiz-kq_3": {
+    "hash": "aa96802ade31",
+    "seconds": 8.84
+  },
+  "mal/quiz-kq_4": {
+    "hash": "054278acdf51",
+    "seconds": 10.25
+  },
+  "mal/quiz-kq_5": {
+    "hash": "53acd5f44378",
+    "seconds": 8.36
+  },
+  "mal/quiz-kq_6": {
+    "hash": "e3282d43ce6d",
+    "seconds": 8.06
+  },
+  "mal/quiz-kq_7": {
+    "hash": "2f7a4a7ca7df",
+    "seconds": 11.2
+  },
+  "mal/quiz-kq_8": {
+    "hash": "f440834ccc05",
+    "seconds": 10.07
+  },
+  "mal/quiz-kq_9": {
+    "hash": "2378cb5fca14",
+    "seconds": 7.4
+  }
+}

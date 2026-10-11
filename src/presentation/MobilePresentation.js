@@ -502,8 +502,11 @@ export class MobilePresentation {
               ` : ''}
 
               <div class="mob-q-audio-row">
-                <button class="mob-btn-audio-pill" onclick="window.app && window.app.speakMalayalam && window.app.speakMalayalam('${(q.qMal + '. ഉത്തരം: ' + (q.answerMal || '')).replace(/'/g, "\\'")}')">
-                  🔊 കേൾക്കുക (Listen)
+                <button class="mob-btn-audio-pill" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'mal')">
+                  🔊 മലയാളം
+                </button>
+                <button class="mob-btn-audio-pill" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'eng')">
+                  🔊 English
                 </button>
                 <button class="mob-btn-stop-audio-pill" onclick="window.app && window.app.stopVoice && window.app.stopVoice()">
                   🛑 Stop
@@ -597,6 +600,9 @@ export class MobilePresentation {
           <div class="mob-quiz-emoji">${q.emoji || '✨'}</div>
           <h3 class="mob-quiz-question-mal">${q.questionMal || q.q || ''}</h3>
           ${q.questionEng ? `<p class="mob-quiz-question-eng">${q.questionEng}</p>` : ''}
+          <button class="mob-btn-audio-pill mob-quiz-read-aloud" onclick="window.app && window.app.narrate && window.app.narrate('quiz-${q.id}')" title="Read the question and choices aloud">
+            🔊 Read Aloud
+          </button>
         </div>
 
         <div class="mob-quiz-options-list" id="mob-quiz-options-list">
@@ -666,7 +672,8 @@ export class MobilePresentation {
       if (isCorrect) {
         if (this.app?.sfx?.playChime) this.app.sfx.playChime();
         if (this.app?.sfx?.playFanfare) this.app.sfx.playFanfare();
-        if (this.app?.addStar) this.app.addStar(1);
+        // One star per question, the first time it is answered correctly
+        const newStar = Boolean(q && this.app?.awardQuizStar && this.app.awardQuizStar(q.id));
         this.updateStars(this.app?.starsCount || 0);
 
         feedback.className = 'mob-quiz-feedback success';
@@ -674,7 +681,7 @@ export class MobilePresentation {
           <div class="mob-feedback-header">
             <img src="assets/generated/angel-cherub-cutout.webp" alt="Angel Mascot" class="mob-quiz-angel-img" />
             <div class="mob-feedback-text-col">
-              <strong>വളരെ ശരി! (Super Job!) +1 Star ⭐</strong>
+              <strong>വളരെ ശരി! (Super Job!)${newStar ? ' +1 Star ⭐' : ''}</strong>
               <p>${q?.encouragement || 'Wonderful answer! Jesus is smiling at your heart!'}</p>
             </div>
           </div>
@@ -727,7 +734,12 @@ export class MobilePresentation {
   toggleQuizHint() {
     const hintBox = document.getElementById('mob-quiz-hint-box');
     if (hintBox) {
-      hintBox.style.display = hintBox.style.display === 'none' ? 'block' : 'none';
+      const opening = hintBox.style.display === 'none';
+      hintBox.style.display = opening ? 'block' : 'none';
+      // Read the clue aloud when it opens (clues exist in English only)
+      const questions = this.app?.quiz?.questions?.length ? this.app.quiz.questions : KID_QUIZ_QUESTIONS;
+      const q = questions[this.currentQuizIndex];
+      if (opening && q && q.eli5Hint && this.app?.narrate) this.app.narrate(`quiz-${q.id}-hint`, 'eng');
     }
   }
 

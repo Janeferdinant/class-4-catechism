@@ -37,11 +37,8 @@ export class ExamSolverView {
   }
 
   renderQuestionCardHTML(q) {
-    const escapedQMal = (q.qMal || '').replace(/'/g, "\\'");
-    const escapedQEng = (q.qEng || '').replace(/'/g, "\\'");
-    const escapedAnsMal = (q.answerMal || '').replace(/'/g, "\\'");
-    const escapedAnsEng = (q.answerEng || '').replace(/'/g, "\\'");
-
+    // Audio buttons pass the question id; the app plays that question's
+    // pre-rendered OmniVoice narration (question + answer).
     return `
       <div class="solver-split-card glass-panel" id="${q.id}">
         <!-- Left Column: Question Details -->
@@ -55,10 +52,10 @@ export class ExamSolverView {
             <p class="solver-q-text-english">${q.qEng}</p>
           </div>
           <div class="solver-q-audio-actions">
-            <button class="btn-audio-mini" onclick="window.app && window.app.speakMalayalam && window.app.speakMalayalam('${escapedQMal}. ഉത്തരം: ${escapedAnsMal}')" title="Listen in Malayalam">
+            <button class="btn-audio-mini" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'mal')" title="Listen to the question and answer in Malayalam">
               🔊 മലയാളം
             </button>
-            <button class="btn-audio-mini" onclick="window.app && window.app.speakText && window.app.speakText('${escapedQEng}. Answer: ${escapedAnsEng}')" title="Listen in English">
+            <button class="btn-audio-mini" onclick="window.app && window.app.speakExamQuestion && window.app.speakExamQuestion('${q.id}', 'eng')" title="Listen to the question and answer in English">
               🔊 English
             </button>
             <button class="btn-audio-mini btn-audio-mini-stop" onclick="window.app && window.app.stopVoice && window.app.stopVoice()" title="Stop Audio">
@@ -90,6 +87,9 @@ export class ExamSolverView {
                 </summary>
                 <div class="solver-eli5-content">
                   <p>${q.eli5}</p>
+                  <button class="btn-audio-mini" onclick="window.app && window.app.speakExamExplanation && window.app.speakExamExplanation('${q.id}')" title="Listen to the simple explanation">
+                    🔊 Listen
+                  </button>
                 </div>
               </details>
             ` : ''}

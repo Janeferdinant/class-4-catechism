@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] - redesign branch `new-ui/ux`
+
+### Added
+- **OmniVoice narration everywhere**: 357 clips (137 Malayalam, 220 English, about 52 minutes) rendered with [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice) - chapter stories, moral lessons, scripture and key concepts; every exam question with its answer (plus the simple explanation); every quiz question with its choices and clue; and the Adventure Map details. One designed narrator voice per language, cloned for every clip.
+- `src/data/narration.js`: single source of the read-aloud text, shared by the site and the generator. Malayalam scripts speak numbers as Malayalam words and drop English glosses.
+- `scripts/extract_narration.mjs`, `scripts/generate_omnivoice_audio.py` (renders only new or changed text, normalises loudness, writes `src/data/narrationManifest.js`) and `scripts/verify_narration.py` (speech-recognition spot check).
+- Speech pace slider (0.5x-1.5x) in the settings panel, applied live with the voice's pitch preserved.
+- Read Aloud on the mobile quiz; Malayalam and English buttons on mobile exam questions; clues are read aloud when opened.
+- `ProgressStore`: per-browser progress (one star per chapter, one per quiz question).
+
+### Changed
+- Narration language in settings now actually switches the voice, including the clip that is playing.
+- Story Lessons audio reads whichever tab is open (story, moral lesson, key concepts, scripture).
+- Adventure Map details show the Malayalam button only where there is Malayalam to read (chapters, scripture, sacraments).
+- Every new visitor starts with 0 stars; stars are counted from what was earned, so repeating an action cannot add more. Old running totals are discarded.
+
+### Fixed
+- "Collect Chapter Star" could be pressed repeatedly for unlimited stars; replaying the quiz re-awarded stars.
+- Settings gear: one click opened and closed the popup (duplicate handlers). Escape now closes it.
+- Sound effects switch did not mute sound effects.
+
+### Removed
+- Browser speech synthesis (robotic voice) and the Gemini voice path; Microsoft Edge TTS generator scripts, the `msedge-tts` dependency and the old `assets/audio/ch*_mal|eng.mp3` files.
+
+---
+
 ## [1.2.0] - 2026-10-10
 
 ### Added
