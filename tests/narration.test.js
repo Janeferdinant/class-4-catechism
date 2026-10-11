@@ -60,7 +60,7 @@ test('Narration: every script has a rendered clip in the manifest', async () => 
   const { clips } = await load();
   const { NARRATION_MANIFEST } = await import('../src/data/narrationManifest.js');
   const missing = clips.filter(c => !(NARRATION_MANIFEST[c.id] && NARRATION_MANIFEST[c.id][c.lang]));
-  assert.deepEqual(missing.map(c => `${c.lang}/${c.id}`), [], 'run: python scripts/generate_omnivoice_audio.py');
+  assert.deepEqual(missing.map(c => `${c.lang}/${c.id}`), [], 'run: python scripts/audio/generate_omnivoice_audio.py');
   for (const [id, langs] of Object.entries(NARRATION_MANIFEST)) {
     for (const [lang, entry] of Object.entries(langs)) {
       const file = path.resolve(entry.src.split('?')[0]);

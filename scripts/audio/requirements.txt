@@ -1,0 +1,14 @@
+# Narration pipeline (scripts/audio/*.py) - tested on Python 3.11, NVIDIA GPU, CUDA 12.8.
+# Install PyTorch with CUDA first, then the rest:
+#   python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128
+#   python -m pip install -r scripts/audio/requirements.txt
+# ffmpeg must also be on PATH.
+
+# Rendering (generate_omnivoice_audio.py). OmniVoice model weights are CC-BY-NC.
+omnivoice==0.2.1
+soundfile>=0.12
+numpy>=1.24
+
+# Checking (verify_narration.py)
+faster-whisper>=1.1
+transformers>=4.45

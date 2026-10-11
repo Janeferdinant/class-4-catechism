@@ -17,11 +17,8 @@ test('GeminiAIService key management and prompt construction', async () => {
   service.clearApiKey();
   assert.equal(service.hasKey(), false);
 
-  // Build TTS payload for Malayalam voice
-  const ttsPayload = service.buildTTSPayload('ഈശോ നമ്മെ സ്നേഹിക്കുന്നു');
-  assert.ok(ttsPayload.input.text.includes('ഈശോ'));
-  assert.equal(ttsPayload.voice.languageCode, 'ml-IN');
-  assert.equal(ttsPayload.audioConfig.audioEncoding, 'MP3');
+  // Narration no longer goes through Gemini: every clip is pre-rendered with OmniVoice.
+  assert.equal(typeof service.synthesizeMalayalamVoice, 'undefined');
 
   // Build 4K 3D Pixar art prompt for Chapter 1
   const chapterMock = {
@@ -34,6 +31,5 @@ test('GeminiAIService key management and prompt construction', async () => {
   assert.ok(artPrompt.includes('3D Pixar'));
   assert.ok(artPrompt.includes('Sacred Heart of Jesus'));
   assert.ok(artPrompt.includes('4K'));
-  // Narration no longer goes through Gemini: every clip is pre-rendered with OmniVoice.
 });
 

@@ -28,13 +28,13 @@
       },
       {
         "id": "visualizer_3d",
-        "name": "3D Universe & Motion Graphics Specialist",
-        "role": "Three.js WebGL node graphs and Ken Burns animations"
+        "name": "Adventure Map & Motion Graphics Specialist",
+        "role": "Adventure Map (Three.js) and Ken Burns animations"
       },
       {
         "id": "voiceover",
         "name": "Bilingual Voiceover Specialist",
-        "role": "Neural Malayalam and English voice narration"
+        "role": "Malayalam and English narration pre-rendered with OmniVoice"
       },
       {
         "id": "quiz_master",

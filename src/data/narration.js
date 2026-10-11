@@ -3,8 +3,8 @@
  * Malayalam ('mal') and English ('eng'), keyed by a stable clip id.
  *
  * This module is the single source for both:
- *   - scripts/extract_narration.mjs, which exports these scripts so
- *     scripts/generate_omnivoice_audio.py can render them with OmniVoice, and
+ *   - scripts/audio/extract_narration.mjs, which exports these scripts so
+ *     scripts/audio/generate_omnivoice_audio.py can render them with OmniVoice, and
  *   - the site, which plays the matching pre-rendered clip by id.
  * Keeping one source guarantees the audio always matches the words on screen.
  */

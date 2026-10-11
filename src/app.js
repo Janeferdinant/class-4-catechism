@@ -1368,7 +1368,7 @@ class AppController {
     if (this.geminiService && this.geminiService.hasKey()) {
       btn.classList.add('key-active');
       statusText.textContent = '🟢 Gemini Ready';
-      btn.title = 'Google AI Studio Gemini Active: Natural Neural Malayalam Voice & 4K AI Art Enabled';
+      btn.title = 'Google AI Studio Gemini active: AI chapter art enabled';
     } else {
       btn.classList.remove('key-active');
       statusText.textContent = '🔑 Gemini AI';

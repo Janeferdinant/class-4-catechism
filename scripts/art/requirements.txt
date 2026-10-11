@@ -1,0 +1,4 @@
+# Artwork pipeline (scripts/art/process_generated_art.py)
+#   python -m pip install -r scripts/art/requirements.txt
+Pillow>=10.0.0
+numpy>=1.24.0

@@ -1,7 +1,7 @@
 /**
  * VoiceoverManager
  * Plays the pre-rendered narration clips (generated with OmniVoice by
- * scripts/generate_omnivoice_audio.py and listed in src/data/narrationManifest.js).
+ * scripts/audio/generate_omnivoice_audio.py and listed in src/data/narrationManifest.js).
  *
  * - One audio element at a time: starting anything stops what was playing.
  * - Plays a single clip or a sequence (e.g. a chapter's story, then its moral).

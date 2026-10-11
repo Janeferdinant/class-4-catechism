@@ -499,7 +499,7 @@ body.audio-playing .btn-stop-audio:hover {
 }
 
 /* Temporary: the current cutout still has painted clouds behind the figures, so its
-   edge is feathered into the sky. scripts/process_generated_art.py removes this class
+   edge is feathered into the sky. scripts/art/process_generated_art.py removes this class
    when a clean cutout is supplied. */
 .jesus-cutout-img.feather-edges {
   -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 70%, transparent 100%);

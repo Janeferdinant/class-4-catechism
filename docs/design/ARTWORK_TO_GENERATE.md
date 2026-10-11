@@ -13,7 +13,7 @@ The site already runs with placeholder art at every path below, so you can add i
 3. **Run** this from the project folder:
 
    ```
-   python scripts/process_generated_art.py
+   python scripts/art/process_generated_art.py
    ```
 
    You can also just tell Claude the files are in place. The script:
@@ -33,7 +33,7 @@ Nothing else is needed. The code already loads every file at the path the script
 - If your tool can export a transparent PNG, use that, and delete the last line of the prompt (the magenta background line).
 - If it can't, keep that line. A flat magenta background is easy to remove cleanly, because nothing in the art is magenta.
 - The script also cleans up soft shadows and glows that the generator painted onto the magenta. They become neutral shadows and white light, so you don't get pink smudges.
-- If a file shows FAIL, re-run with a looser setting: `python scripts/process_generated_art.py 90`. If it still fails, regenerate that image.
+- If a file shows FAIL, re-run with a looser setting: `python scripts/art/process_generated_art.py 90`. If it still fails, regenerate that image.
 - **Island 13** has pink roses, which sit too close to magenta. Generate that one on a solid cyan (#00FFFF) background instead. The script detects whatever background color you use.
 
 **Rules for every image:**

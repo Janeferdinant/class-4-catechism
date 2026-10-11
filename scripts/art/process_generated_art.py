@@ -4,7 +4,7 @@ Process hand-generated artwork for the Class 4 Catechism redesign.
 Drop raw images (PNG, JPG or WebP) into assets/generated/incoming/ using the
 file names listed in docs/design/ARTWORK_TO_GENERATE.md, then run:
 
-    python scripts/process_generated_art.py
+    python scripts/art/process_generated_art.py
 
 For every file it finds, the script:
   1. cuts out a solid background (sampled from the corners) when the asset needs
@@ -240,7 +240,7 @@ def main():
                 failed += 1
                 print(f'FAIL  {name:22s} -> {out_path}: corners are not transparent. '
                       f'Regenerate on a flat solid background, or re-run with a higher tolerance, '
-                      f'e.g. python scripts/process_generated_art.py 90')
+                      f'e.g. python scripts/art/process_generated_art.py 90')
         else:
             print(f'OK    {name:22s} -> {out_path} {img.size}')
         if name == 'jesus-children':
